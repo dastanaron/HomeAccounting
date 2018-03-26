@@ -18,12 +18,8 @@ class RevCategories extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('rev', 2);
-            $table->integer('category_id');
-            $table->integer('sum');
-            $table->string('cause', 255);
-            $table->timestamp('date');
+            $table->unsignedInteger('user_id');
+            $table->string('name', 255);
 
             $table->timestamps();
 
@@ -39,22 +35,6 @@ class RevCategories extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists($this->tableName);
     }
 }
-/*
- * CREATE TABLE IF NOT EXISTS `accounting`.`rev_categories` (
-  `id` INT NOT NULL,
-  `user_id` INT NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
-  `created_at` TIMESTAMP NULL,
-  `updated_at` TIMESTAMP NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_rev_categories_1_idx` (`user_id` ASC),
-  CONSTRAINT `fk_rev_categories_1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `accounting`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
- */

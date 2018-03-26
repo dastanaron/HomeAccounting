@@ -6,6 +6,9 @@ use Illuminate\Database\Migrations\Migration;
 
 class Events extends Migration
 {
+
+    public $tableName = 'events';
+
     /**
      * Run the migrations.
      *
@@ -13,7 +16,20 @@ class Events extends Migration
      */
     public function up()
     {
-        //
+        Schema::create($this->tableName, function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->integer('type_event')->nullable();
+            $table->string('head', 50);
+            $table->text('message')->nullable();
+            $table->integer('completed');
+            $table->timestamp('date_notif');
+
+            $table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('id')->on('users');
+        });
     }
 
     /**
@@ -23,6 +39,6 @@ class Events extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists($this->tableName);
     }
 }

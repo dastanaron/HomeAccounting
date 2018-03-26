@@ -18,9 +18,9 @@ class Funds extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('bills_id');
-            $table->integer('rev', 2);
-            $table->integer('category_id');
+            $table->unsignedInteger('bills_id');
+            $table->tinyInteger('rev');
+            $table->unsignedInteger('category_id');
             $table->integer('sum');
             $table->string('cause', 255);
             $table->timestamp('date');
@@ -28,7 +28,7 @@ class Funds extends Migration
             $table->timestamps();
 
             $table->foreign('bills_id')
-                ->references('id')->on('bills');
+                ->references('id')->on('bills')->onDelete('cascade');
         });
     }
 

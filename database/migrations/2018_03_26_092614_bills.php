@@ -18,10 +18,10 @@ class Bills extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
+            $table->unsignedInteger('user_id');
             $table->string('name', 255);
             $table->integer('sum');
-            $table->timestamp('deadline');
+            $table->timestamp('deadline')->nullable();
             $table->text('comment')->nullable();
 
             $table->timestamps();
