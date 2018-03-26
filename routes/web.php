@@ -14,3 +14,16 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+
+
+/**
+ * Personal Area routes
+ */
+
+Route::get('/pa', 'PrivateAreaController@index');
+Route::get('/pa/get-bills', 'PrivateAreaController@getBills');
