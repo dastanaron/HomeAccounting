@@ -15,12 +15,28 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+import Vuex from 'vuex'
 import Vuetify from 'vuetify';
 
+Vue.use(Vuex);
 Vue.use(Vuetify);
 
 Vue.component('private-area', require('./components/PrivateArea.vue'));
 
+
+const store = new Vuex.Store({
+    state: {
+
+    },
+    mutations: {
+
+    },
+    getters: {
+
+    },
+});
+
 const app = new Vue({
-    el: '#privateArea'
+    el: '#privateArea',
+    store
 });

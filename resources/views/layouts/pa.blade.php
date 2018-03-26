@@ -21,10 +21,8 @@
     <link href="{{ asset('css/pa.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="content">
-        <main class="py-4">
-            @yield('content')
-        </main>
+    <div class="wrap">
+        @yield('content')
     </div>
 </body>
 </html>

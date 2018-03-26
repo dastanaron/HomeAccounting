@@ -1,14 +1,44 @@
-
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import 'gfont';
 
 // Variables
 @import "variables";
 
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap/scss/bootstrap-grid';
 
-.navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+//Vuetify
+@import "~vuetify/dist/vuetify.min.css";
+
+//Font Awesome
+@import "fontawesome/scss/fa-brands";
+@import "fontawesome/scss/fa-regular";
+@import "fontawesome/scss/fa-solid";
+@import "fontawesome/scss/fontawesome";
+
+
+span.application-menu-title {
+  font-size: 1.7em;
+  font-weight: bold;
+  color: #194b92;
+}
+
+.application-menu-element {
+
+  border: 1px solid #e2f0ff;
+  margin: 1px;
+  height: 99%;
+
+  .application-menu-element-logo {
+    font-size: 5em;
+    color: #3275d2;
+    text-align: center;
+  }
+
+  .application-menu-element-text {
+    text-align: center;
+    font-size: 1.3em;
+    color: #3274d2;
+  }
+
 }
