@@ -4,18 +4,21 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**+
- * Class revCategories
- * @package App
+/**
+ * App\revCategories
  *
- * @property integer $id;
- * @property integer $user_id;
- * @property string $name;
- * @property \DateTime $created_at;
- * @property \DateTime $updated_at;
- *
- * Relation property
- * @property User $user;
+ * @property int $id
+ * @property int $user_id
+ * @property string $name
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\revCategories whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\revCategories whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\revCategories whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\revCategories whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\revCategories whereUserId($value)
+ * @mixin \Eloquent
  */
 class revCategories extends Model
 {

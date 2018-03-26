@@ -26,4 +26,10 @@ Route::get('/home', 'HomeController@index')->name('home');
  */
 
 Route::get('/pa', 'PrivateAreaController@index');
+
+/**
+ * Bills methods
+ */
 Route::get('/pa/get-bills', 'PrivateAreaController@getBills');
+Route::post('/pa/create-bills', 'PrivateAreaController@createBill');
+Route::put('/pa/update-bills', 'PrivateAreaController@setBill');

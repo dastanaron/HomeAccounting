@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Bills;
+use App\Http\helpers\BillsHelper;
 use Illuminate\Http\Request;
 
 class PrivateAreaController extends Controller
@@ -17,16 +18,26 @@ class PrivateAreaController extends Controller
 
     public function index()
     {
-        return 'success';
+        return view('funds/pa-index');
     }
 
     public function getBills()
     {
-        return Bills::where('user_id', 'in', 1)->get();
+        $userId = \Auth::user()->id;
+        return Bills::whereUserId( $userId )->get();
     }
-    public function setBill()
+
+    public function createBill(Request $request)
     {
-        return null;
+        $billsHelper = new BillsHelper($request);
+        $billsHelper->createBill();
     }
+
+    public function setBill(Request $request)
+    {
+        $billsHelper = new BillsHelper($request);
+        $billsHelper->setBill();
+    }
+
 
 }

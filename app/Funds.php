@@ -5,23 +5,28 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Funds
- * @package App
+ * App\Funds
  *
- * @property integer $id;
- * @property integer $bills_id;
- * @property integer $rev;
- * @property integer $category_id;
- * @property integer $sum;
- * @property string $cause;
- * @property \DateTime $date;
- * @property \DateTime $created_at;
- * @property \DateTime $updated_at;
- *
- * Relation property
- *
- * @property Bills $bills;
- *
+ * @property int $id
+ * @property int $bills_id
+ * @property int $rev
+ * @property int $category_id
+ * @property int $sum
+ * @property string $cause
+ * @property string $date
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\Bills $bills
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereBillsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereCause($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereRev($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereSum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Funds extends Model
 {
