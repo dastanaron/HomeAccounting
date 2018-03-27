@@ -29,6 +29,9 @@ class Funds extends Migration
 
             $table->foreign('bills_id')
                 ->references('id')->on('bills')->onDelete('cascade');
+
+            $table->foreign('category_id')
+                ->references('id')->on('rev_categories');
         });
     }
 

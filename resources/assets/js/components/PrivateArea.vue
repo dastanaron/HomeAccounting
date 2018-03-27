@@ -27,60 +27,62 @@
                     <v-spacer></v-spacer>
                     <v-btn color="primary" flat @click.stop="applicationMenu=false"><i class="fas fa-times"></i></v-btn>
                 </v-card-title>
-                <v-container>
-                    <v-layout row fill-height>
-                        <v-flex xs12 md4>
-                            <div class="application-menu-element" @click="billsControlApplication()">
-                                <div class="application-menu-element-logo">
-                                    <i class="fas fa-money-bill-alt"></i>
+                <v-card-text>
+                    <v-container grid-list-md>
+                        <v-layout wrap fill-height>
+                            <v-flex xs12 md4>
+                                <div class="application-menu-element" @click="billsControlApplication()">
+                                    <div class="application-menu-element-logo">
+                                        <i class="fas fa-money-bill-alt"></i>
+                                    </div>
+                                    <div class="application-menu-element-text">
+                                        Счета
+                                    </div>
                                 </div>
-                                <div class="application-menu-element-text">
-                                    Счета
+                            </v-flex>
+                            <v-flex xs12 md4>
+                                <div class="application-menu-element">
+                                    <div class="application-menu-element-logo">
+                                        <i class="fab fa-gg-circle"></i>
+                                    </div>
+                                    <div class="application-menu-element-text">
+                                        Приход/Расход
+                                    </div>
                                 </div>
-                            </div>
-                        </v-flex>
-                        <v-flex xs12 md4>
-                            <div class="application-menu-element">
-                                <div class="application-menu-element-logo">
-                                    <i class="fab fa-gg-circle"></i>
+                            </v-flex>
+                            <v-flex xs12 md4>
+                                <div class="application-menu-element">
+                                    <div class="application-menu-element-logo">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="application-menu-element-text">
+                                        Перемещение средств
+                                    </div>
                                 </div>
-                                <div class="application-menu-element-text">
-                                    Приход/Расход
+                            </v-flex >
+                            <v-flex xs12 md4>
+                                <div class="application-menu-element">
+                                    <div class="application-menu-element-logo">
+                                        <i class="fas fa-th-list"></i>
+                                    </div>
+                                    <div class="application-menu-element-text">
+                                        Редактор статей движения средств
+                                    </div>
                                 </div>
-                            </div>
-                        </v-flex>
-                        <v-flex xs12 md4>
-                            <div class="application-menu-element">
-                                <div class="application-menu-element-logo">
-                                    <i class="fas fa-credit-card"></i>
+                            </v-flex>
+                            <v-flex xs12 md4>
+                                <div class="application-menu-element">
+                                    <div class="application-menu-element-logo">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div class="application-menu-element-text">
+                                        Напоминания
+                                    </div>
                                 </div>
-                                <div class="application-menu-element-text">
-                                    Перемещение средств
-                                </div>
-                            </div>
-                        </v-flex >
-                        <v-flex xs12 md4>
-                            <div class="application-menu-element">
-                                <div class="application-menu-element-logo">
-                                    <i class="fas fa-th-list"></i>
-                                </div>
-                                <div class="application-menu-element-text">
-                                    Редактор статей движения средств
-                                </div>
-                            </div>
-                        </v-flex>
-                        <v-flex xs12 md4>
-                            <div class="application-menu-element">
-                                <div class="application-menu-element-logo">
-                                    <i class="fas fa-bell"></i>
-                                </div>
-                                <div class="application-menu-element-text">
-                                    Напоминания
-                                </div>
-                            </div>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-card-text>
             </v-card>
         </v-dialog>
         <bills-control :showBillsTable="billsControl"></bills-control>
