@@ -78,6 +78,10 @@ class BillsHelper
 
     }
 
+    /**
+     * Function to DELETE request in controller
+     * @return $this|bool|mixed|null
+     */
     public function deleteBill()
     {
         $bill = Bills::whereId($this->request->input('bill_id'))->where('user_id', '=', $this->user_id)->first();

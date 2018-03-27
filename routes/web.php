@@ -30,8 +30,17 @@ Route::get('/pa', 'PrivateAreaController@index');
 /**
  * Bills methods
  */
-Route::get('/pa/bills-list', 'PrivateAreaController@getBills');
+Route::get('/pa/bills-list', 'BillsController@getBills');
 
-Route::post('/pa/bills', 'PrivateAreaController@createBill');
-Route::put('/pa/bills', 'PrivateAreaController@setBill');
-Route::delete('/pa/bills', 'PrivateAreaController@deleteBill');
+Route::post('/pa/bills', 'BillsController@createBill');
+Route::put('/pa/bills', 'BillsController@setBill');
+Route::delete('/pa/bills', 'BillsController@deleteBill');
+
+/**
+ * Funds methods
+ */
+Route::get('/pa/funds-list', 'BillsController@getFunds');
+
+Route::post('/pa/funds', 'BillsController@createFund');
+Route::put('/pa/funds', 'BillsController@setFund');
+Route::delete('/pa/funds', 'BillsController@deleteFund');
