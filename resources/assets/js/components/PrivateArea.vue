@@ -20,6 +20,7 @@
                 <v-icon>more_vert</v-icon>
             </v-btn>!-->
         </v-toolbar>
+        <!--Запихать загрузчик!-->
         <v-dialog v-model="applicationMenu" max-width="50%">
             <v-card>
                 <v-card-title>
@@ -41,7 +42,7 @@
                                 </div>
                             </v-flex>
                             <v-flex xs12 md4>
-                                <div class="application-menu-element">
+                                <div class="application-menu-element" @click="fundsControlApplication()">
                                     <div class="application-menu-element-logo">
                                         <i class="fab fa-gg-circle"></i>
                                     </div>
@@ -86,11 +87,13 @@
             </v-card>
         </v-dialog>
         <bills-control :showBillsTable="billsControl"></bills-control>
+        <funds-control :showFundsComponent="fundsControl"></funds-control>
     </v-app>
 </template>
 
 <script>
     import BillsControl from "./BillsControl";
+    import FundsControl from "./FundsControl";
 
     export default {
         name: "private-area",
@@ -101,6 +104,7 @@
 
             //Control Applications
             billsControl: true, //bills-control
+            fundsControl: false,
 
         }),
         methods: {
@@ -109,7 +113,13 @@
             },
             billsControlApplication() {
                 this.billsControl = true;
-                this.applicationMenu=false
+                this.applicationMenu=false;
+                this.fundsControl = false;
+            },
+            fundsControlApplication() {
+                this.billsControl = false;
+                this.applicationMenu=false;
+                this.fundsControl = true;
             }
 
 
@@ -118,6 +128,7 @@
 
         },
         components: {
+            FundsControl,
             BillsControl,
         },
 
