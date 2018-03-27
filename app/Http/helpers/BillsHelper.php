@@ -63,7 +63,7 @@ class BillsHelper
      */
     public function setBill()
     {
-        $bill = Bills::whereId($this->request->input('bill_id'))->where('user_id', '=', $this->user_id);
+        $bill = Bills::whereId($this->request->input('bill_id'))->where('user_id', '=', $this->user_id)->first();
 
         if(empty($bill)) {
             return Response::json(['status' => 404, 'message' => 'User is not Found'])->setStatusCode(404);
@@ -75,6 +75,17 @@ class BillsHelper
         $bill->comment = $this->request->input('comment');
 
         return $bill->save();
+
+    }
+
+    public function deleteBill()
+    {
+        $bill = Bills::whereId($this->request->input('bill_id'))->where('user_id', '=', $this->user_id)->first();
+
+        if(empty($bill)) {
+            return Response::json(['status' => 404, 'message' => 'User is not Found'])->setStatusCode(404);
+        }
+        return $bill->delete();
 
     }
 

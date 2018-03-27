@@ -28,17 +28,33 @@ span.application-menu-title {
   border: 1px solid #e2f0ff;
   margin: 1px;
   height: 99%;
+  cursor: pointer;
+
+  &:hover {
+    border: 1px solid $success-color;
+    .application-menu-element-logo {
+      color: $success-color;
+    }
+
+    .application-menu-element-text {
+      color: $success-color;
+    }
+
+  }
 
   .application-menu-element-logo {
     font-size: 5em;
-    color: #3275d2;
+    color: $primary-color;
     text-align: center;
   }
 
   .application-menu-element-text {
     text-align: center;
     font-size: 1.3em;
-    color: #3274d2;
+    color: $primary-color;
   }
 
+}
+.new-button {
+  font-size: 2em;
 }

@@ -1,15 +1,21 @@
 <template>
     <v-app id="inspire">
         <v-toolbar dark color="primary">
-            <v-toolbar-side-icon></v-toolbar-side-icon>
+            <!--<v-toolbar-side-icon></v-toolbar-side-icon>!-->
             <v-toolbar-title class="white--text">{{ menuTitle }}</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn icon @click="applicationMenu=true">
-                <v-icon>apps</v-icon>
-            </v-btn>
-            <v-btn icon @click="reload()">
-                <v-icon>refresh</v-icon>
-            </v-btn>
+            <v-tooltip bottom>
+                <v-btn icon @click="applicationMenu=true" slot="activator">
+                    <v-icon>apps</v-icon>
+                </v-btn>
+                <span>Меню программ</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+                <v-btn icon @click="reload()" slot="activator">
+                    <v-icon>refresh</v-icon>
+                </v-btn>
+                <span>Обновить страницу</span>
+            </v-tooltip>
             <!--<v-btn icon>
                 <v-icon>more_vert</v-icon>
             </v-btn>!-->
@@ -23,8 +29,8 @@
                 </v-card-title>
                 <v-container>
                     <v-layout row fill-height>
-                        <v-flex xs4>
-                            <div class="application-menu-element">
+                        <v-flex xs12 md4>
+                            <div class="application-menu-element" @click="billsControlApplication()">
                                 <div class="application-menu-element-logo">
                                     <i class="fas fa-money-bill-alt"></i>
                                 </div>
@@ -33,7 +39,7 @@
                                 </div>
                             </div>
                         </v-flex>
-                        <v-flex xs4>
+                        <v-flex xs12 md4>
                             <div class="application-menu-element">
                                 <div class="application-menu-element-logo">
                                     <i class="fab fa-gg-circle"></i>
@@ -43,7 +49,7 @@
                                 </div>
                             </div>
                         </v-flex>
-                        <v-flex xs4>
+                        <v-flex xs12 md4>
                             <div class="application-menu-element">
                                 <div class="application-menu-element-logo">
                                     <i class="fas fa-credit-card"></i>
@@ -53,7 +59,7 @@
                                 </div>
                             </div>
                         </v-flex >
-                        <v-flex xs4>
+                        <v-flex xs12 md4>
                             <div class="application-menu-element">
                                 <div class="application-menu-element-logo">
                                     <i class="fas fa-th-list"></i>
@@ -63,7 +69,7 @@
                                 </div>
                             </div>
                         </v-flex>
-                        <v-flex xs4>
+                        <v-flex xs12 md4>
                             <div class="application-menu-element">
                                 <div class="application-menu-element-logo">
                                     <i class="fas fa-bell"></i>
@@ -77,23 +83,41 @@
                 </v-container>
             </v-card>
         </v-dialog>
+        <bills-control :showBillsTable="billsControl"></bills-control>
     </v-app>
 </template>
 
 <script>
+    import BillsControl from "./BillsControl";
+
     export default {
         name: "private-area",
 
         data: () => ({
             menuTitle: 'Личный кабинет',
             applicationMenu: false,
+
+            //Control Applications
+            billsControl: true, //bills-control
+
         }),
         methods: {
             reload() {
                 window.location.reload()
             },
+            billsControlApplication() {
+                this.billsControl = true;
+                this.applicationMenu=false
+            }
 
-        }
+
+        },
+        mounted() {
+
+        },
+        components: {
+            BillsControl,
+        },
 
     }
 </script>

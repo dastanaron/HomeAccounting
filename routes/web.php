@@ -30,6 +30,8 @@ Route::get('/pa', 'PrivateAreaController@index');
 /**
  * Bills methods
  */
-Route::get('/pa/get-bills', 'PrivateAreaController@getBills');
-Route::post('/pa/create-bills', 'PrivateAreaController@createBill');
-Route::put('/pa/update-bills', 'PrivateAreaController@setBill');
+Route::get('/pa/bills-list', 'PrivateAreaController@getBills');
+
+Route::post('/pa/bills', 'PrivateAreaController@createBill');
+Route::put('/pa/bills', 'PrivateAreaController@setBill');
+Route::delete('/pa/bills', 'PrivateAreaController@deleteBill');
