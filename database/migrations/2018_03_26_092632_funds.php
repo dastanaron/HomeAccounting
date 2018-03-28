@@ -19,6 +19,7 @@ class Funds extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('bills_id');
+            $table->unsignedInteger('user_id');
             $table->tinyInteger('rev');
             $table->unsignedInteger('category_id');
             $table->integer('sum');
@@ -30,8 +31,11 @@ class Funds extends Migration
             $table->foreign('bills_id')
                 ->references('id')->on('bills')->onDelete('cascade');
 
+            $table->foreign('user_id')
+                ->references('id')->on('users')->onDelete('cascade');
+
             $table->foreign('category_id')
-                ->references('id')->on('rev_categories');
+                ->references('id')->on('rev_categories')->onDelete('cascade');
         });
     }
 

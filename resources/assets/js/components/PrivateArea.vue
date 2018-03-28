@@ -103,8 +103,8 @@
             applicationMenu: false,
 
             //Control Applications
-            billsControl: true, //bills-control
-            fundsControl: false,
+            billsControl: false, //bills-control
+            fundsControl: true, //funds-control
 
         }),
         methods: {

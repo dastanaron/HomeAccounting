@@ -39,8 +39,8 @@ Route::delete('/pa/bills', 'BillsController@deleteBill');
 /**
  * Funds methods
  */
-Route::get('/pa/funds-list', 'BillsController@getFunds');
+Route::get('/pa/funds-list', 'FundsController@getFunds');
 
-Route::post('/pa/funds', 'BillsController@createFund');
-Route::put('/pa/funds', 'BillsController@setFund');
-Route::delete('/pa/funds', 'BillsController@deleteFund');
+Route::post('/pa/funds', 'FundsController@createFund');
+Route::put('/pa/funds', 'FundsController@setFund');
+Route::delete('/pa/funds', 'FundsController@deleteFund');

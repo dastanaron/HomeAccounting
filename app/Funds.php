@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $bills_id
+ * @property int $user_id
  * @property int $rev
  * @property int $category_id
  * @property int $sum
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Bills $bills
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereBillsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereCause($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Funds whereCreatedAt($value)

@@ -11,10 +11,17 @@ use Auth;
 class FundsHelper
 {
 
+    /**
+     * @var Request
+     */
     protected $request;
-
+    /**
+     * @var int
+     */
     protected $user_id;
-
+    /**
+     * @var array|null|string
+     */
     protected $bills_id;
 
     public function __construct(Request $request)
@@ -26,7 +33,18 @@ class FundsHelper
 
     public function getFunds()
     {
-        return Funds::whereBillsId($this->bills_id)->paginate(20);
+
+        $paginate = $this->request->input('paginate');
+
+        if(empty($paginate)) {
+            $paginate = 20;
+        }
+
+        return Funds::select('funds.*', 'bills.name as bills_name', 'rev_categories.name as category_name')
+            ->leftJoin('bills', 'funds.bills_id', '=', 'bills.id')
+            ->leftJoin('rev_categories', 'funds.category_id', 'rev_categories.id')
+            ->where('funds.user_id', '=', $this->user_id)
+            ->paginate($paginate);
     }
 
     public function createFunds()
