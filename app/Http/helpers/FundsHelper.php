@@ -51,6 +51,7 @@ class FundsHelper
     {
         $funds = new Funds();
 
+        $funds->user_id = $this->user_id;
         $funds->bills_id = $this->bills_id;
         $funds->rev = $this->request->input('rev');
         $funds->category_id = $this->request->input('category_id');
@@ -111,6 +112,8 @@ class FundsHelper
         if(empty($funds)) {
             return false;
         }
+
+        $this->bills_id = $funds->bills_id;
 
         /**
          * Если удаляем, то берем значение, что это было расход или доход.

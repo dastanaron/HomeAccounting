@@ -226,6 +226,11 @@
                 this.getBills();
             },
         },
+        watch: {
+            showBillsTable: function (val) {
+                this.getBills();
+            },
+        },
         mounted() {
             this.getBills();
         }

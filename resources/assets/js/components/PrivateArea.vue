@@ -104,7 +104,7 @@
 
             //Control Applications
             billsControl: false, //bills-control
-            fundsControl: true, //funds-control
+            fundsControl: false, //funds-control
 
         }),
         methods: {
@@ -112,11 +112,13 @@
                 window.location.reload()
             },
             billsControlApplication() {
+                this.menuTitle = 'Управление счетами';
                 this.billsControl = true;
                 this.applicationMenu=false;
                 this.fundsControl = false;
             },
             fundsControlApplication() {
+                this.menuTitle = 'Управление расходами';
                 this.billsControl = false;
                 this.applicationMenu=false;
                 this.fundsControl = true;
@@ -125,7 +127,7 @@
 
         },
         mounted() {
-
+            this.fundsControlApplication();
         },
         components: {
             FundsControl,
