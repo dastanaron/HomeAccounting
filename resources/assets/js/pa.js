@@ -26,13 +26,26 @@ Vue.component('private-area', require('./components/PrivateArea.vue'));
 
 const store = new Vuex.Store({
     state: {
-
+        preloader: false,
     },
     mutations: {
+        setPreloader(state, status=true) {
 
+            if(status === false) {
+                setTimeout(() => {
+                    state.preloader = status;
+                }, 1000)
+            }
+            else {
+                state.preloader = status;
+            }
+
+        },
     },
     getters: {
-
+        getPreloader: state=> {
+            return state.preloader;
+        }
     },
 });
 

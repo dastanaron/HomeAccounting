@@ -227,9 +227,11 @@
         }),
         methods: {
             getFunds(page=1) {
+                this.$store.commit('setPreloader', true);
                 axios.get('/pa/funds-list?page='+page)
                     .then(response=> {
                         this.dataTables = response.data.data;
+                        this.$store.commit('setPreloader', false);
                     })
                     .catch(function (error) {
                         console.log(error)
@@ -248,7 +250,6 @@
                                 name: response.data[key]['name'],
                             })
                         }
-
                     })
                     .catch(function (error) {
                         console.log(error)
@@ -270,15 +271,17 @@
                 var url = '/pa/funds';
                 var method = '';
 
-                if(this.fundsFormType == 'create') {
+                if(this.fundsFormType === 'create') {
                     method = 'post';
                 }
-                else if(this.fundsFormType == 'update') {
+                else if(this.fundsFormType === 'update') {
                     method = 'put';
                 }
-                else if(this.fundsFormType == 'delete') {
+                else if(this.fundsFormType === 'delete') {
                     method = 'delete';
                 }
+
+                this.$store.commit('setPreloader', true);
 
                 axios({
                     method: method,
@@ -289,6 +292,7 @@
                         if(response.data.status == 200) {
                             this.fundsFormShow = false;
                             this.getFunds();
+                            this.$store.commit('setPreloader', false);
                         }
                         else {
                             console.log(response);
@@ -311,7 +315,7 @@
 
             },
             editFund(object) {
-
+                this.$store.commit('setPreloader', true);
                 //form render data
                 this.fundsFormData.category_id = object.category_id;
                 this.fundsFormData.funds_id = object.id;
@@ -323,6 +327,7 @@
 
                 this.fundsFormType = 'update';
                 this.fundsFormShow = true;
+                this.$store.commit('setPreloader', false);
 
             },
             deleteFund(object) {

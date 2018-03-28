@@ -20,7 +20,7 @@
                 <v-icon>more_vert</v-icon>
             </v-btn>!-->
         </v-toolbar>
-        <!--Запихать загрузчик!-->
+        <v-progress-linear indeterminate :active="ListenPreloader" height="3" color="primary"></v-progress-linear>
         <v-dialog v-model="applicationMenu" max-width="50%">
             <v-card>
                 <v-card-title>
@@ -125,6 +125,11 @@
             }
 
 
+        },
+        computed: {
+          ListenPreloader() {
+            return this.$store.getters.getPreloader;
+          },
         },
         mounted() {
             this.fundsControlApplication();

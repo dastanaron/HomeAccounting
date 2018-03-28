@@ -145,9 +145,15 @@
         }),
         methods: {
             getBills() {
+
+                this.$store.commit('setPreloader', true);
+
                 axios.get('/pa/bills-list')
                     .then(response=> {
                         this.dataTables = response.data;
+
+                        this.$store.commit('setPreloader', false);
+
                     })
                     .catch(function (error) {
                         console.log(error)
