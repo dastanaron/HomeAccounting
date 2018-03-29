@@ -52,6 +52,16 @@
                                 </div>
                             </v-flex>
                             <v-flex xs12 md4>
+                                <div class="application-menu-element" @click="categoryControlApplication()">
+                                    <div class="application-menu-element-logo">
+                                        <i class="fas fa-th-list"></i>
+                                    </div>
+                                    <div class="application-menu-element-text">
+                                        Управление категориями
+                                    </div>
+                                </div>
+                            </v-flex>
+                            <v-flex xs12 md4>
                                 <div class="application-menu-element">
                                     <div class="application-menu-element-logo">
                                         <i class="fas fa-credit-card"></i>
@@ -61,16 +71,6 @@
                                     </div>
                                 </div>
                             </v-flex >
-                            <v-flex xs12 md4>
-                                <div class="application-menu-element">
-                                    <div class="application-menu-element-logo">
-                                        <i class="fas fa-th-list"></i>
-                                    </div>
-                                    <div class="application-menu-element-text">
-                                        Редактор статей движения средств
-                                    </div>
-                                </div>
-                            </v-flex>
                             <v-flex xs12 md4>
                                 <div class="application-menu-element">
                                     <div class="application-menu-element-logo">
@@ -88,12 +88,14 @@
         </v-dialog>
         <bills-control :showBillsTable="billsControl"></bills-control>
         <funds-control :showFundsComponent="fundsControl"></funds-control>
+        <category-control :showCategoryComponent="categoryControl"></category-control>
     </v-app>
 </template>
 
 <script>
     import BillsControl from "./BillsControl";
     import FundsControl from "./FundsControl";
+    import CategoryControl from "./CategoryControl";
 
     export default {
         name: "private-area",
@@ -105,6 +107,7 @@
             //Control Applications
             billsControl: false, //bills-control
             fundsControl: false, //funds-control
+            categoryControl: false, //category-control
 
         }),
         methods: {
@@ -116,13 +119,22 @@
                 this.billsControl = true;
                 this.applicationMenu=false;
                 this.fundsControl = false;
+                this.categoryControl = false;
             },
             fundsControlApplication() {
                 this.menuTitle = 'Управление расходами';
                 this.billsControl = false;
                 this.applicationMenu=false;
                 this.fundsControl = true;
-            }
+                this.categoryControl = false;
+            },
+            categoryControlApplication() {
+                this.menuTitle = 'Управление категориями';
+                this.billsControl = false;
+                this.applicationMenu=false;
+                this.fundsControl = false;
+                this.categoryControl = true;
+            },
 
 
         },
@@ -135,6 +147,7 @@
             this.fundsControlApplication();
         },
         components: {
+            CategoryControl,
             FundsControl,
             BillsControl,
         },

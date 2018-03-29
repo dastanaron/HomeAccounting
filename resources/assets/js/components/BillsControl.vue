@@ -23,7 +23,7 @@
                     <tr>
                         <td>{{ props.item.id }}</td>
                         <td class="text-xs-right">{{ props.item.name}}</td>
-                        <td class="text-xs-right">{{ props.item.sum }}</td>
+                        <td class="text-xs-right">{{ sumFormat(props.item.sum) }}</td>
                         <td class="text-xs-right">{{ props.item.deadline }}</td>
                         <td class="text-xs-right">{{ props.item.comment }}</td>
                         <td class="text-xs-right control">
@@ -173,8 +173,8 @@
             },
             billSave() {
 
-                var url = '/pa/bills';
-                var method = '';
+                let url = '/pa/bills';
+                let method = '';
 
                 if(this.billFormType == 'create') {
                     method = 'post';
@@ -230,6 +230,9 @@
                 this.billFormData.id = object.id;
                 this.billSave();
                 this.getBills();
+            },
+            sumFormat(sum) {
+                return sum.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
             },
         },
         watch: {

@@ -7,40 +7,128 @@
                 </v-btn>
                 <span>Создать новый</span>
             </v-tooltip>
-
+            <v-card>
+                <v-card-title>
+                    <h2>Фильтры</h2>
+                    <v-container grid-list-md>
+                        <v-layout wrap>
+                            <v-flex xs12 sm4 md2>
+                                <v-select
+                                        :items="revList"
+                                        v-model="fundsFilterForm.rev"
+                                        item-text="name"
+                                        item-value="value"
+                                        label="Доход или расход"
+                                        autocomplete
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12 sm4 md2>
+                                <v-select
+                                        :items="billsList"
+                                        v-model="fundsFilterForm.bills_id"
+                                        item-text="name"
+                                        item-value="id"
+                                        label="Выберите счёт"
+                                        autocomplete
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12 sm4 md2>
+                                <v-select
+                                        :items="categoryList"
+                                        v-model="fundsFilterForm.category_id"
+                                        item-text="name"
+                                        item-value="id"
+                                        label="Категория"
+                                        autocomplete
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12 sm4 md2>
+                                <v-text-field v-model="fundsFilterForm.sum" label="Сумма"></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-dialog
+                                        ref="dialog"
+                                        persistent
+                                        v-model="DatePickerFilter"
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <v-text-field
+                                            slot="activator"
+                                            label="Дата"
+                                            hint="Дата, когда совершена транзакция"
+                                            v-model="fundsFilterForm.date"
+                                            prepend-icon="event"
+                                            readonly
+                                    ></v-text-field>
+                                    <v-date-picker type="date" locale="ru" v-model="fundsFilterForm.date" scrollable>
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary" @click="DatePickerFilter=false">OK</v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-card-title>
+            </v-card>
+            <v-card>
+                <v-card-title>
+                    <v-spacer></v-spacer>
+                    <v-text-field
+                            append-icon="search"
+                            label="Поиск"
+                            single-line
+                            hide-details
+                            v-model="search"
+                    ></v-text-field>
+                </v-card-title>
+            </v-card>
             <v-data-table
-                    :loading="loadingDataTable"
-                    :headers="headers"
-                    :items="dataTables"
-                    v-bind:pagination.sync="pagination"
-                    hide-actions
-                    class="elevation-1"
-                    :search="search"
-                    item-key="uuid"
-            >
-                <v-progress-linear slot="progress" color="success" indeterminate></v-progress-linear>
-                <template slot="items" slot-scope="props">
-                    <tr>
-                        <td>{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.bills_name}}</td>
-                        <td class="text-xs-right">{{ convertRev(props.item.rev) }}</td>
-                        <td class="text-xs-right">{{ props.item.category_name }}</td>
-                        <td class="text-xs-right">{{ props.item.sum }}</td>
-                        <td class="text-xs-right">{{ props.item.date }}</td>
-                        <td class="text-xs-right control">
-                            <v-tooltip top>
-                                <v-btn flat small color="primary" slot="activator" @click="editFund(props.item)"><i class="fas fa-pencil-alt"></i></v-btn>
-                                <span>Редактировать</span>
-                            </v-tooltip>
-                            <v-tooltip top>
-                                <v-btn flat small color="error" slot="activator" @click="deleteFund(props.item)"><i class="fas fa-trash-alt"></i></v-btn>
-                                <span>Удалить</span>
-                            </v-tooltip>
+                        :loading="loadingDataTable"
+                        :headers="headers"
+                        :items="dataTables"
+                        v-bind:pagination.sync="pagination"
+                        hide-actions
+                        class="elevation-1"
+                        :search="search"
+                        item-key="uuid"
+                >
+                    <v-progress-linear slot="progress" color="success" indeterminate></v-progress-linear>
+                    <template slot="items" slot-scope="props">
+                        <tr>
+                            <td>{{ props.item.id }}</td>
+                            <td class="text-xs-right">{{ props.item.bills_name}}</td>
+                            <td class="text-xs-right">{{ convertRev(props.item.rev) }}</td>
+                            <td class="text-xs-right">{{ props.item.category_name }}</td>
+                            <td class="text-xs-right">{{ sumFormat(props.item.sum) }}</td>
+                            <td class="text-xs-right">{{ props.item.cause }}</td>
+                            <td class="text-xs-right">{{ props.item.date }}</td>
+                            <td class="text-xs-right control">
+                                <v-tooltip top>
+                                    <v-btn flat small color="primary" slot="activator" @click="editFund(props.item)"><i class="fas fa-pencil-alt"></i></v-btn>
+                                    <span>Редактировать</span>
+                                </v-tooltip>
+                                <v-tooltip top>
+                                    <v-btn flat small color="error" slot="activator" @click="deleteFund(props.item)"><i class="fas fa-trash-alt"></i></v-btn>
+                                    <span>Удалить</span>
+                                </v-tooltip>
 
-                        </td>
-                    </tr>
-                </template>
-            </v-data-table>
+                            </td>
+                        </tr>
+                    </template>
+                    <template slot="footer">
+                        <tr>
+                            <td colspan="4">
+                                <strong>Итого:</strong>
+                            </td>
+                            <td class="text-xs-right">
+                                <strong>{{ totalValue }}</strong>
+                            </td>
+                            <td></td><td></td>
+                        </tr>
+                    </template>
+                </v-data-table>
         </div>
         <v-layout row justify-center>
             <v-dialog v-model="fundsFormShow" persistent max-width="700px">
@@ -156,6 +244,7 @@
                 { text: 'Доход или расход', value: 'rev', align: 'right' },
                 { text: 'Категория', value: 'category_name', align: 'right' },
                 { text: 'Сумма', value: 'sum', align: 'right' },
+                { text: 'Причина', value: 'cause', align: 'right' },
                 { text: 'Дата', value: 'date', align: 'right'},
                 { text: 'Управление', value: '', align: 'right'},
             ],
@@ -164,6 +253,8 @@
             fundsFormShow: false,
             fundsFormTitle: 'Форма редактирования',
             DatePicker: false,
+
+            DatePickerFilter: false,
 
             fundsFormType: 'create',
 
@@ -197,6 +288,15 @@
                 causeRules: [
                     v => !!v || 'Поле причины должно быть заполнено',
                 ],
+            },
+
+
+            fundsFilterForm: {
+                bills_id: 0,
+                rev: 0,
+                category_id: 0,
+                sum: 0,
+                date: '',
             },
 
             billsList: [
@@ -256,6 +356,17 @@
                     });
 
             },
+            getCategories() {
+                this.$store.commit('setPreloader', true);
+                axios.get('/pa/categories-list')
+                    .then(response=> {
+                        this.categoryList = response.data;
+                        this.$store.commit('setPreloader', false);
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    });
+            },
             convertRev(rev) {
                 if(rev === 1) {
                     return 'Приход';
@@ -268,8 +379,8 @@
             },
             fundsSave() {
 
-                var url = '/pa/funds';
-                var method = '';
+                let url = '/pa/funds';
+                let method = '';
 
                 if(this.fundsFormType === 'create') {
                     method = 'post';
@@ -305,6 +416,8 @@
             },
             newFund() {
 
+                this.getCategories();
+
                 //clear form
                 this.fundsFormData.bills_id = this.fundsFormData.rev = this.fundsFormData.category_id = this.fundsFormData.sum = 0;
                 this.fundsFormData.cause = this.fundsFormData.date = '';
@@ -315,6 +428,9 @@
 
             },
             editFund(object) {
+
+                this.getCategories();
+
                 this.$store.commit('setPreloader', true);
                 //form render data
                 this.fundsFormData.category_id = object.category_id;
@@ -335,20 +451,38 @@
                 this.fundsFormData.funds_id = object.id;
                 this.fundsSave();
                 this.getFunds();
+            },
+            sumFormat(sum) {
+                return sum.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+            },
+            fundFilter() {
+                console.log(this.fundsFilterForm);
             }
         },
         computed: {
+            totalValue() {
+                let total = 0;
+
+                for(let key in this.dataTables) {
+                    total += this.dataTables[key]['sum'];
+                }
+
+                return this.sumFormat(total);
+            },
 
         },
         watch: {
             showFundsComponent: function (val) {
                 this.getBills();
             },
+            fundsFilterForm: function (val) {
+                this.fundFilter();
+            },
         },
         mounted() {
           this.getFunds();
           this.getBills();
-          //this.getCategories();
+          this.getCategories();
         },
     }
 </script>
