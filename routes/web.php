@@ -44,3 +44,12 @@ Route::get('/pa/funds-list', 'FundsController@getFunds');
 Route::post('/pa/funds', 'FundsController@createFund');
 Route::put('/pa/funds', 'FundsController@setFund');
 Route::delete('/pa/funds', 'FundsController@deleteFund');
+
+/**
+ * Categories methods
+ */
+Route::get('/pa/categories-list', 'CategoriesController@getCategories');
+
+Route::post('/pa/categories', 'CategoriesController@createCategory');
+Route::put('/pa/categories', 'CategoriesController@setCategory');
+Route::delete('/pa/categories', 'CategoriesController@deleteCategory');
