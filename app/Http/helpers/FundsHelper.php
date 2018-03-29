@@ -40,11 +40,69 @@ class FundsHelper
             $paginate = 20;
         }
 
+        $query = $this->SelectFilter()->orderBy('funds.date', 'desc');
+
+        return $query->paginate($paginate);
+    }
+
+    protected function SelectFilter()
+    {
+        $rev = $this->request->input('rev');
+        $bills_id = $this->request->input('bills_id');
+        $category_id = $this->request->input('category_id');
+        $date = ['start' => $this->request->input('date_start'), 'end' => $this->request->input('date_end')];
+        $sum = $this->request->input('sum');
+
+        $query = $this->FundsSelectQuery();
+
+        if(!empty($rev)) {
+            $query->where('funds.rev', '=', $rev);
+        }
+
+        if(!empty($bills_id)) {
+            $query->where('funds.bills_id', '=', $bills_id);
+        }
+
+        if(!empty($category_id)) {
+            $query->where('funds.category_id', '=', $category_id);
+        }
+
+        if(!empty($date)) {
+
+            if(!empty($date['start'])) {
+                $dateStart = new \DateTime($date['start']);
+            }
+            else {
+                $dateStart = null;
+            }
+
+            if(!empty($date['end'])) {
+                $dateEnd= new \DateTime($date['end']);
+            }
+            else {
+                $dateEnd = new \DateTime();
+            }
+
+            $dayPervious = !empty($dateStart) ? $dateStart->format('Y-m-d 00:00:00') : 0;
+            $dayNext = $dateEnd->format('Y-m-d 23:59:59');
+
+            $query->whereBetween('funds.date', [$dayPervious, $dayNext]);
+        }
+
+        if(!empty($sum)) {
+            $query->where('funds.sum', '=', $sum);
+        }
+
+        return $query;
+
+    }
+
+    protected function FundsSelectQuery()
+    {
         return Funds::select('funds.*', 'bills.name as bills_name', 'rev_categories.name as category_name')
             ->leftJoin('bills', 'funds.bills_id', '=', 'bills.id')
             ->leftJoin('rev_categories', 'funds.category_id', 'rev_categories.id')
-            ->where('funds.user_id', '=', $this->user_id)
-            ->paginate($paginate);
+            ->where('funds.user_id', '=', $this->user_id);
     }
 
     public function createFunds()

@@ -19,6 +19,7 @@
                                         item-text="name"
                                         item-value="value"
                                         label="Доход или расход"
+                                        clearable
                                         autocomplete
                                 ></v-select>
                             </v-flex>
@@ -29,6 +30,7 @@
                                         item-text="name"
                                         item-value="id"
                                         label="Выберите счёт"
+                                        clearable
                                         autocomplete
                                 ></v-select>
                             </v-flex>
@@ -39,32 +41,56 @@
                                         item-text="name"
                                         item-value="id"
                                         label="Категория"
+                                        clearable
                                         autocomplete
                                 ></v-select>
                             </v-flex>
                             <v-flex xs12 sm4 md2>
-                                <v-text-field v-model="fundsFilterForm.sum" label="Сумма"></v-text-field>
+                                <v-text-field v-model="fundsFilterForm.sum" clearable label="Сумма"></v-text-field>
                             </v-flex>
-                            <v-flex xs12 sm6 md4>
+                            <v-flex xs12 sm4 md2>
                                 <v-dialog
                                         ref="dialog"
                                         persistent
-                                        v-model="DatePickerFilter"
+                                        v-model="DatePickerFilterStart"
                                         lazy
                                         full-width
                                         width="290px"
                                 >
                                     <v-text-field
                                             slot="activator"
-                                            label="Дата"
-                                            hint="Дата, когда совершена транзакция"
-                                            v-model="fundsFilterForm.date"
+                                            label="Дата от"
+                                            v-model="fundsFilterForm.date_start"
                                             prepend-icon="event"
                                             readonly
+                                            clearable
                                     ></v-text-field>
-                                    <v-date-picker type="date" locale="ru" v-model="fundsFilterForm.date" scrollable>
+                                    <v-date-picker type="date" locale="ru" v-model="fundsFilterForm.date_start" scrollable>
                                         <v-spacer></v-spacer>
-                                        <v-btn flat color="primary" @click="DatePickerFilter=false">OK</v-btn>
+                                        <v-btn flat color="primary" @click="DatePickerFilterStart=false">OK</v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+                            <v-flex xs12 sm4 md2>
+                                <v-dialog
+                                        ref="dialog"
+                                        persistent
+                                        v-model="DatePickerFilterEnd"
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <v-text-field
+                                            slot="activator"
+                                            label="Дата до"
+                                            v-model="fundsFilterForm.date_end"
+                                            prepend-icon="event"
+                                            readonly
+                                            clearable
+                                    ></v-text-field>
+                                    <v-date-picker type="date" locale="ru" v-model="fundsFilterForm.date_end" scrollable>
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary" @click="DatePickerFilterEnd=false">OK</v-btn>
                                     </v-date-picker>
                                 </v-dialog>
                             </v-flex>
@@ -74,7 +100,12 @@
             </v-card>
             <v-card>
                 <v-card-title>
-                    <v-spacer></v-spacer>
+                    <v-content>
+                        <div><b>Страница:</b> {{ fundsAllData.current_page }}</div>
+                        <div><b>Число страниц:</b> {{ fundsAllData.last_page }}</div>
+                        <div><b>На странице:</b> {{ dataTables.length }}</div>
+                        <div><b>Всего элементов:</b> {{ fundsAllData.total }}</div>
+                    </v-content>
                     <v-text-field
                             append-icon="search"
                             label="Поиск"
@@ -83,6 +114,10 @@
                             v-model="search"
                     ></v-text-field>
                 </v-card-title>
+                <v-card-text>
+                    Для корректных рассчетов, необходимо настроить фильтры, например по расходу и доходу, чтобы
+                    система их не суммировала
+                </v-card-text>
             </v-card>
             <v-data-table
                         :loading="loadingDataTable"
@@ -125,10 +160,13 @@
                             <td class="text-xs-right">
                                 <strong>{{ totalValue }}</strong>
                             </td>
-                            <td></td><td></td>
+                            <td></td><td></td><td></td>
                         </tr>
                     </template>
                 </v-data-table>
+                <div class="text-xs-center">
+                    <v-pagination :length="fundsAllData.last_page" v-model="fundsFilterForm.page" :total-visible="4"></v-pagination>
+                </div>
         </div>
         <v-layout row justify-center>
             <v-dialog v-model="fundsFormShow" persistent max-width="700px">
@@ -254,10 +292,17 @@
             fundsFormTitle: 'Форма редактирования',
             DatePicker: false,
 
-            DatePickerFilter: false,
+            DatePickerFilterStart: false,
+            DatePickerFilterEnd: false,
 
             fundsFormType: 'create',
 
+            fundsAllData: {
+                current_page: 0,
+                total: 0,
+                last_page: 0,
+
+            },
             fundsFormData: {
                 funds_id: 0,
                 bills_id: 0,
@@ -292,11 +337,14 @@
 
 
             fundsFilterForm: {
-                bills_id: 0,
                 rev: 0,
+                bills_id: 0,
                 category_id: 0,
+                date_start: '',
+                date_end: '',
                 sum: 0,
-                date: '',
+                paginate: 20,
+                page: 1,
             },
 
             billsList: [
@@ -326,10 +374,19 @@
 
         }),
         methods: {
-            getFunds(page=1) {
+            getFunds() {
                 this.$store.commit('setPreloader', true);
-                axios.get('/pa/funds-list?page='+page)
+
+                let data = this.fundsFilterForm;
+
+                if(data.page == '') {
+                    data.page = 1;
+                }
+
+                axios.get('/pa/funds-list', {params: data})
                     .then(response=> {
+                        console.log(response.data);
+                        this.fundsAllData = response.data;
                         this.dataTables = response.data.data;
                         this.$store.commit('setPreloader', false);
                     })
@@ -469,14 +526,20 @@
 
                 return this.sumFormat(total);
             },
+            slugData() {
+
+            }
 
         },
         watch: {
             showFundsComponent: function (val) {
                 this.getBills();
             },
-            fundsFilterForm: function (val) {
-                this.fundFilter();
+            fundsFilterForm: {
+                handler: function (val, oldVal) {
+                    this.getFunds();
+                    },
+                deep: true,
             },
         },
         mounted() {
