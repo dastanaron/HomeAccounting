@@ -21,71 +21,51 @@
             </v-btn>!-->
         </v-toolbar>
         <v-progress-linear indeterminate :active="ListenPreloader" height="3" color="primary"></v-progress-linear>
-        <v-dialog v-model="applicationMenu" max-width="50%">
+        <v-menu
+                transition="slide-x-transition"
+                bottom
+                right
+                :close-on-content-click="false"
+                :nudge-width="200"
+                v-model="applicationMenu"
+        >
             <v-card>
-                <v-card-title>
-                    <span class="application-menu-title">Меню программ</span>
-                    <v-spacer></v-spacer>
-                    <v-btn color="primary" flat @click.stop="applicationMenu=false"><i class="fas fa-times"></i></v-btn>
-                </v-card-title>
-                <v-card-text>
-                    <v-container grid-list-md>
-                        <v-layout wrap fill-height>
-                            <v-flex xs12 md4>
-                                <div class="application-menu-element" @click="billsControlApplication()">
-                                    <div class="application-menu-element-logo">
-                                        <i class="fas fa-money-bill-alt"></i>
-                                    </div>
-                                    <div class="application-menu-element-text">
-                                        Счета
-                                    </div>
-                                </div>
-                            </v-flex>
-                            <v-flex xs12 md4>
-                                <div class="application-menu-element" @click="fundsControlApplication()">
-                                    <div class="application-menu-element-logo">
-                                        <i class="fab fa-gg-circle"></i>
-                                    </div>
-                                    <div class="application-menu-element-text">
-                                        Приход/Расход
-                                    </div>
-                                </div>
-                            </v-flex>
-                            <v-flex xs12 md4>
-                                <div class="application-menu-element" @click="categoryControlApplication()">
-                                    <div class="application-menu-element-logo">
-                                        <i class="fas fa-th-list"></i>
-                                    </div>
-                                    <div class="application-menu-element-text">
-                                        Управление категориями
-                                    </div>
-                                </div>
-                            </v-flex>
-                            <v-flex xs12 md4>
-                                <div class="application-menu-element">
-                                    <div class="application-menu-element-logo">
-                                        <i class="fas fa-credit-card"></i>
-                                    </div>
-                                    <div class="application-menu-element-text">
-                                        Перемещение средств
-                                    </div>
-                                </div>
-                            </v-flex >
-                            <v-flex xs12 md4>
-                                <div class="application-menu-element">
-                                    <div class="application-menu-element-logo">
-                                        <i class="fas fa-bell"></i>
-                                    </div>
-                                    <div class="application-menu-element-text">
-                                        Напоминания
-                                    </div>
-                                </div>
-                            </v-flex>
-                        </v-layout>
-                    </v-container>
-                </v-card-text>
+                <v-list>
+                    <v-list-tile avatar  @click="fundsControlApplication()">
+                        <v-list-tile-avatar>
+                            <v-icon>account_balance</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Транзакции</v-list-tile-title>
+                            <v-list-tile-sub-title>Управление транзакциями приходов и расходов</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+                <v-divider></v-divider>
+                <v-list>
+                    <v-list-tile avatar  @click="billsControlApplication()">
+                        <v-list-tile-avatar>
+                            <v-icon>account_balance_wallet</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Счета</v-list-tile-title>
+                            <v-list-tile-sub-title>Управление счетами</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+                <v-list>
+                    <v-list-tile avatar  @click="categoryControlApplication()">
+                        <v-list-tile-avatar>
+                            <v-icon>folder</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Категории</v-list-tile-title>
+                            <v-list-tile-sub-title>Управление категориями транзакций</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
             </v-card>
-        </v-dialog>
+        </v-menu>
         <bills-control :showBillsTable="billsControl"></bills-control>
         <funds-control :showFundsComponent="fundsControl"></funds-control>
         <category-control :showCategoryComponent="categoryControl"></category-control>

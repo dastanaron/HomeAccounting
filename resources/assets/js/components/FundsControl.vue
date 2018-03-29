@@ -185,6 +185,7 @@
                                             item-value="id"
                                             label="Выберите счёт"
                                             :rules="fundsFormData.billsRules"
+                                            :disabled="billDisabled"
                                             autocomplete
                                             required
                                     ></v-select>
@@ -334,6 +335,7 @@
                     v => !!v || 'Поле причины должно быть заполнено',
                 ],
             },
+            billDisabled: false,
 
 
             fundsFilterForm: {
@@ -385,7 +387,6 @@
 
                 axios.get('/pa/funds-list', {params: data})
                     .then(response=> {
-                        console.log(response.data);
                         this.fundsAllData = response.data;
                         this.dataTables = response.data.data;
                         this.$store.commit('setPreloader', false);
@@ -474,6 +475,7 @@
             newFund() {
 
                 this.getCategories();
+                this.billDisabled = false;
 
                 //clear form
                 this.fundsFormData.bills_id = this.fundsFormData.rev = this.fundsFormData.category_id = this.fundsFormData.sum = 0;
@@ -487,6 +489,7 @@
             editFund(object) {
 
                 this.getCategories();
+                this.billDisabled = true;
 
                 this.$store.commit('setPreloader', true);
                 //form render data
