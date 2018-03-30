@@ -86,7 +86,7 @@
         data: () => ({
             search: '',
             loadingDataTable: false,
-            pagination: {'sortBy': 'name', 'descending': true, 'rowsPerPage': -1},
+            pagination: {'sortBy': 'name', 'ascending': true, 'rowsPerPage': -1},
             headers: [
                 {
                     text: 'ID',

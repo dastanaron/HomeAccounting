@@ -271,7 +271,7 @@
         data: () => ({
             search: '',
             loadingDataTable: false,
-            pagination: {'sortBy': 'sum', 'descending': true, 'rowsPerPage': -1},
+            pagination: {'sortBy': 'date', 'descending': true, 'rowsPerPage': -1},
             headers: [
                 {
                     text: 'ID',
