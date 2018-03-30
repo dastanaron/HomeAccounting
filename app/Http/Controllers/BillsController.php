@@ -55,4 +55,17 @@ class BillsController extends Controller
         }
     }
 
+
+    public function MoneyTransaction(Request $request)
+    {
+        $billsHelper = new BillsHelper($request);
+
+        if($billsHelper->MoneyTransaction() === true) {
+            return Response::json(['status' => 200, 'message' => 'Transaction is corrected'])->setStatusCode(200);
+        }
+        else {
+            return Response::json(['status' => 400, 'message' => 'Transaction is invalid'])->setStatusCode(400);
+        }
+    }
+
 }

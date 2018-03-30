@@ -27,6 +27,12 @@ Vue.component('private-area', require('./components/PrivateArea.vue'));
 const store = new Vuex.Store({
     state: {
         preloader: false,
+
+        alertControl: {
+            show: false,
+            type: 'success',
+            message: '',
+        },
     },
     mutations: {
         setPreloader(state, status=true) {
@@ -41,11 +47,19 @@ const store = new Vuex.Store({
             }
 
         },
+        setAlert(state, object) {
+            state.alertControl.type = object.type;
+            state.alertControl.show = object.status;
+            state.alertControl.message = object.message;
+        },
     },
     getters: {
         getPreloader: state=> {
             return state.preloader;
-        }
+        },
+        getAlert: state => {
+            return state.alertControl;
+        },
     },
 });
 

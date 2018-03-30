@@ -58,6 +58,28 @@ class BillsHelper
     }
 
     /**
+     * @return bool
+     */
+    public function MoneyTransaction()
+    {
+        $billSource = Bills::whereId($this->request->input('bill_source'))->where('user_id', '=', $this->user_id)->first();
+        $billDestination = Bills::whereId($this->request->input('bill_destination'))->where('user_id', '=', $this->user_id)->first();
+
+        $sum = (int) $this->request->input('sum');
+
+        if(empty($billSource) || empty($billDestination) || empty($sum)) {
+            return false;
+        }
+
+        $billSource->sum = $billSource->sum - $sum;
+
+        $billDestination->sum = $billDestination->sum + $sum;
+
+        return $billSource->save() && $billDestination->save();
+
+    }
+
+    /**
      * Function to PUT request in controller
      * @return $this|bool
      */

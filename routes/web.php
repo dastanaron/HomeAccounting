@@ -36,6 +36,8 @@ Route::post('/pa/bills', 'BillsController@createBill');
 Route::put('/pa/bills', 'BillsController@setBill');
 Route::delete('/pa/bills', 'BillsController@deleteBill');
 
+Route::post('/pa/bills/transfer', 'BillsController@MoneyTransaction');
+
 /**
  * Funds methods
  */
