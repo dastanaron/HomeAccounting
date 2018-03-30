@@ -2,9 +2,9 @@
     <div id="fundsControl" v-if="showCategoryComponent">
         <div class="my-4">
             <v-tooltip bottom>
-                <v-btn class="new-button" slot="activator" flat large color="success" @click="newForm()">
+                <v-btn class="new-button" slot="activator" flat icon large color="success" @click="newForm()">
                     <div class="creating-control">
-                        <i class="fas fa-plus-square"></i>
+                        <v-icon>add_box</v-icon>
                     </div>
                 </v-btn>
                 <span>Создать новый</span>
@@ -18,13 +18,13 @@
                 ></v-text-field>
                 <v-tooltip bottom>
                     <v-btn class="new-button" slot="activator" flat icon color="success" @click="categorySave()">
-                        <i class="fas fa-check"></i>
+                        <v-icon>done</v-icon>
                     </v-btn>
                     <span>Сохранить</span>
                 </v-tooltip>
                 <v-tooltip bottom>
                     <v-btn class="new-button" slot="activator" flat icon color="error" @click="createForm=false">
-                        <i class="fas fa-times"></i>
+                        <v-icon>clear</v-icon>
                     </v-btn>
                     <span>Закрыть</span>
                 </v-tooltip>
@@ -61,7 +61,7 @@
                         </td>
                         <td class="text-xs-right control">
                             <v-tooltip top>
-                                <v-btn flat small color="error" slot="activator" @click="deleteCategory(props.item)"><i class="fas fa-trash-alt"></i></v-btn>
+                                <v-btn flat icon small color="error" slot="activator" @click="deleteCategory(props.item)"><v-icon>delete</v-icon></v-btn>
                                 <span>Удалить</span>
                             </v-tooltip>
 
@@ -137,9 +137,15 @@
                 this.categoryFormData.name = '';
             },
             deleteCategory(object) {
-                this.categoryFormType="delete";
-                this.categoryFormData.category_id = object.id;
-                this.categorySave();
+
+                let confirm = window.confirm('Вы действительно хотите удалить элемент?');
+
+                if(confirm === true) {
+                    this.categoryFormType="delete";
+                    this.categoryFormData.category_id = object.id;
+                    this.categorySave();
+                }
+
             },
             categorySave() {
                 let url = '/pa/categories';

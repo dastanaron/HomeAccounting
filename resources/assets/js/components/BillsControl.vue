@@ -2,8 +2,8 @@
     <v-app id="billsControl" v-if="showBillsTable">
         <div class="my-4">
             <v-tooltip bottom>
-                <v-btn class="new-button" slot="activator" flat large color="success" @click="createBillsForm()">
-                    <i class="fas fa-plus-square"></i>
+                <v-btn class="new-button" slot="activator" flat large icon color="success" @click="createBillsForm()">
+                    <v-icon>add_box</v-icon>
                 </v-btn>
                 <span>Создать новый</span>
             </v-tooltip>
@@ -28,11 +28,11 @@
                         <td class="text-xs-right">{{ props.item.comment }}</td>
                         <td class="text-xs-right control">
                             <v-tooltip top>
-                                <v-btn flat small color="primary" slot="activator" @click="billEditForm(props.item)"><i class="fas fa-pencil-alt"></i></v-btn>
+                                <v-btn flat icon small color="primary" slot="activator" @click="billEditForm(props.item)"><v-icon>mode_edit</v-icon></v-btn>
                                 <span>Редактировать</span>
                             </v-tooltip>
                             <v-tooltip top>
-                                <v-btn flat small color="error" slot="activator" @click="billDelete(props.item)"><i class="fas fa-trash-alt"></i></v-btn>
+                                <v-btn flat icon small color="error" slot="activator" @click="billDelete(props.item)"><v-icon>delete</v-icon></v-btn>
                                 <span>Удалить</span>
                             </v-tooltip>
 
@@ -237,10 +237,16 @@
 
             },
             billDelete(object) {
-                this.billFormType = 'delete';
-                this.billFormData.id = object.id;
-                this.billSave();
-                this.getBills();
+
+                let confirm = window.confirm('Вы действительно хотите удалить элемент?');
+
+                if(confirm === true) {
+                    this.billFormType = 'delete';
+                    this.billFormData.id = object.id;
+                    this.billSave();
+                    this.getBills();
+                }
+
             },
             sumFormat(sum) {
                 return sum.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
