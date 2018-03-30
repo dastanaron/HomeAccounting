@@ -39,6 +39,17 @@
                         </td>
                     </tr>
                 </template>
+                <template slot="footer">
+                    <tr>
+                        <td colspan="2">
+                            <strong>Итого:</strong>
+                        </td>
+                        <td class="text-xs-right">
+                            <strong>{{ totalValue }}</strong>
+                        </td>
+                        <td colspan="3"></td>
+                    </tr>
+                </template>
             </v-data-table>
         </div>
         <v-layout row justify-center>
@@ -233,6 +244,17 @@
             },
             sumFormat(sum) {
                 return sum.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+            },
+        },
+        computed: {
+            totalValue() {
+                let total = 0;
+
+                for(let key in this.dataTables) {
+                    total += this.dataTables[key]['sum'];
+                }
+
+                return this.sumFormat(total);
             },
         },
         watch: {
