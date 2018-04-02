@@ -389,6 +389,10 @@
                     .then(response=> {
                         this.fundsAllData = response.data;
                         this.dataTables = response.data.data;
+
+                        for(let key in this.dataTables) {
+                            this.dataTables[key].date = this.dateFormat(this.dataTables[key].date)
+                        }
                         this.$store.commit('setPreloader', false);
                     })
                     .catch(function (error) {
@@ -479,7 +483,9 @@
 
                 //clear form
                 this.fundsFormData.bills_id = this.fundsFormData.rev = this.fundsFormData.category_id = this.fundsFormData.sum = 0;
-                this.fundsFormData.cause = this.fundsFormData.date = '';
+                this.fundsFormData.cause;
+
+                this.fundsFormData.date = this.getCurrentDate();
 
                 this.fundsFormTitle = 'Новая транзакция';
                 this.fundsFormShow = true;
@@ -523,6 +529,31 @@
             },
             fundFilter() {
                 console.log(this.fundsFilterForm);
+            },
+            getCurrentDate() {
+
+                let date = new Date();
+
+                return this.dateFormat(date.toString());
+
+            },
+            dateFormat(date) {
+
+                let dateInput = Date.parse(date);
+
+                let dateObject = new Date(dateInput);
+
+                let dateString = '';
+
+                let dd = dateObject.getDate();
+                if (dd < 10) dd = '0' + dd;
+
+                let mm = dateObject.getMonth() + 1;
+                if (mm < 10) mm = '0' + mm;
+
+                dateString = dateObject.getFullYear()+'-'+mm+'-'+dd;
+
+                return dateString;
             }
         },
         computed: {
