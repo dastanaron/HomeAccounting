@@ -7,7 +7,13 @@
                 </v-btn>
                 <span>Создать новый</span>
             </v-tooltip>
-            <v-card>
+            <v-tooltip bottom>
+                <v-btn class="new-button" slot="activator" flat icon large color="blue-grey darken-4" @click="filtersControl()">
+                    <v-icon>filter_list</v-icon>
+                </v-btn>
+                <span>Фильтры</span>
+            </v-tooltip>
+            <v-card v-if="filters">
                 <v-card-title>
                     <h2>Фильтры</h2>
                     <v-container grid-list-md>
@@ -120,7 +126,6 @@
                 </v-card-text>
             </v-card>
             <v-data-table
-                        :loading="loadingDataTable"
                         :headers="headers"
                         :items="dataTables"
                         v-bind:pagination.sync="pagination"
@@ -128,8 +133,8 @@
                         class="elevation-1"
                         :search="search"
                         item-key="uuid"
+                        v-if="!isMobile()"
                 >
-                    <v-progress-linear slot="progress" color="success" indeterminate></v-progress-linear>
                     <template slot="items" slot-scope="props">
                         <tr>
                             <td>{{ props.item.id }}</td>
@@ -164,6 +169,31 @@
                         </tr>
                     </template>
                 </v-data-table>
+            <!--
+                Для телефона нужно реализовать отображение списка со значками, для удобства просмотра.
+                На телефоне должны быть все данные, со значками, для каждой категории(в будущем).
+                Категориям нужно добавить возможность добавлять значки
+                При нажатии на инфо, показать всю информацию
+            !-->
+                <v-list two-line v-if="isMobile()">
+                    <v-list-tile avatar v-for="item in dataTables" :key="item.id" @click="">
+                        <v-list-tile-avatar>
+                            <v-icon :color="colorCategory(item.rev)">account_balance_wallet</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{ item.category_name }}</v-list-tile-title>
+                            <v-list-tile-sub-title><b>{{ sumFormat(item.sum) }}</b></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                        <v-list-tile-action>
+                            <v-btn flat icon color="primary" @click="editFund(item)">
+                                <v-icon>mode_edit</v-icon>
+                            </v-btn>
+                            <v-btn flat icon color="error" @click="deleteFund(item)">
+                                <v-icon>delete</v-icon>
+                            </v-btn>
+                        </v-list-tile-action>
+                    </v-list-tile>
+                </v-list>
                 <div class="text-xs-center">
                     <v-pagination :length="fundsAllData.last_page" v-model="fundsFilterForm.page" :total-visible="4"></v-pagination>
                 </div>
@@ -250,7 +280,7 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="info darken-1" flat @click.native="fundsFormShow = false">Закрыть</v-btn>
+                        <v-btn color="info darken-1" flat @click="fundsFormShow = false">Закрыть</v-btn>
                         <v-btn color="success darken-1" flat @click="fundsSave()">Сохранить</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -271,6 +301,7 @@
         data: () => ({
             search: '',
             loadingDataTable: false,
+            filters: true,
             pagination: {'sortBy': 'date', 'descending': true, 'rowsPerPage': -1},
             headers: [
                 {
@@ -439,6 +470,16 @@
                 console.error('convertRev input: ' + rev);
                 return 'Ошибка';
             },
+            colorCategory(rev) {
+                if(rev === 1) {
+                    return 'success';
+                }
+                else if(rev === 2) {
+                    return 'error';
+                }
+                console.error('colorCategory input: ' + rev);
+                return 'warning';
+            },
             fundsSave() {
 
                 let url = '/pa/funds';
@@ -554,7 +595,28 @@
                 dateString = dateObject.getFullYear()+'-'+mm+'-'+dd;
 
                 return dateString;
-            }
+            },
+            filtersControl() {
+                if(this.filters === true) {
+                    this.filters = false;
+                }
+                else {
+                    this.filters = true;
+                }
+            },
+            isMobile() {
+                let mobile_getter = this.$store.getters.mobile;
+
+                let mobile = false;
+
+                if(mobile_getter !== null) {
+                    mobile = true;
+                }
+                return mobile;
+            },
+            mobileFilterDefaultDisable() {
+                this.filters = !this.isMobile();
+            },
         },
         computed: {
             totalValue() {
@@ -568,7 +630,7 @@
             },
             slugData() {
 
-            }
+            },
 
         },
         watch: {
@@ -586,6 +648,7 @@
           this.getFunds();
           this.getBills();
           this.getCategories();
+          this.mobileFilterDefaultDisable()
         },
     }
 </script>

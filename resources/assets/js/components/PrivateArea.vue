@@ -154,7 +154,7 @@
             this.$on('closeMoneyTransaction', function () {
                 this.billsControlApplication();
                 this.$children[0].$children.find(child => { return child.$options.name === "bills-control"; }).$emit('reloadTable');
-            })
+            });
         },
         components: {
             MoneyTransaction,

@@ -24,9 +24,20 @@ Vue.use(Vuetify);
 Vue.component('private-area', require('./components/PrivateArea.vue'));
 
 
+/**
+ * Mobile detected
+ * @type {MobileDetect}
+ */
+let MobileDetect = require('mobile-detect');
+let md = new MobileDetect(window.navigator.userAgent);
+
+const mobile = md.mobile();
+
 const store = new Vuex.Store({
     state: {
         preloader: false,
+
+        mobile: mobile,
 
         alertControl: {
             show: false,
@@ -65,6 +76,9 @@ const store = new Vuex.Store({
         getAlert: state => {
             return state.alertControl;
         },
+        mobile: state => {
+            return state.mobile;
+        }
     },
 });
 
