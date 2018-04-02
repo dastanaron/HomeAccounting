@@ -395,8 +395,8 @@
                         }
                         this.$store.commit('setPreloader', false);
                     })
-                    .catch(function (error) {
-                        console.log(error)
+                    .catch(error => {
+                        this.$store.commit('AlertError', error.message);
                     });
 
             },
@@ -413,8 +413,8 @@
                             })
                         }
                     })
-                    .catch(function (error) {
-                        console.log(error)
+                    .catch(error => {
+                        this.$store.commit('AlertError', error.message);
                     });
 
             },
@@ -425,8 +425,8 @@
                         this.categoryList = response.data;
                         this.$store.commit('setPreloader', false);
                     })
-                    .catch(function (error) {
-                        console.log(error)
+                    .catch(error => {
+                        this.$store.commit('AlertError', error.message);
                     });
             },
             convertRev(rev) {
@@ -472,8 +472,8 @@
                         }
 
                     })
-                    .catch(function (error) {
-                        console.log(error)
+                    .catch(error => {
+                        this.$store.commit('AlertError', error.message);
                     });
             },
             newFund() {

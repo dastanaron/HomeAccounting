@@ -121,8 +121,8 @@
                         this.dataTables = response.data;
                         this.$store.commit('setPreloader', false);
                     })
-                    .catch(function (error) {
-                        console.log(error)
+                    .catch(error => {
+                        this.$store.commit('AlertError', error.message);
                     });
             },
             editForm(object) {
@@ -179,8 +179,8 @@
                         }
 
                     })
-                    .catch(function (error) {
-                        console.log(error)
+                    .catch(error => {
+                        this.$store.commit('AlertError', error.message);
                     });
             },
         },

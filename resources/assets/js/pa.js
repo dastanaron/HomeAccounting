@@ -52,6 +52,11 @@ const store = new Vuex.Store({
             state.alertControl.show = object.status;
             state.alertControl.message = object.message;
         },
+        AlertError(state, error) {
+            state.alertControl.type = 'error';
+            state.alertControl.show = true;
+            state.alertControl.message = 'Ошибка передачи транзакции, попробуйте перезапустить страницу. Ответ сервера: '+error;
+        },
     },
     getters: {
         getPreloader: state=> {

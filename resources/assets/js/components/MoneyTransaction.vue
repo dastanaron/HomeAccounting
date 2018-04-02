@@ -90,8 +90,8 @@
                             })
                         }
                     })
-                    .catch(function (error) {
-                        console.log(error)
+                    .catch(error => {
+                        this.$store.commit('AlertError', error.message);
                     });
 
             },

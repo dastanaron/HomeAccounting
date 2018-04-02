@@ -166,8 +166,8 @@
                         this.$store.commit('setPreloader', false);
 
                     })
-                    .catch(function (error) {
-                        console.log(error)
+                    .catch(error => {
+                        this.$store.commit('AlertError', error.message);
                     });
 
             },
@@ -219,8 +219,8 @@
                         }
 
                     })
-                    .catch(function (error) {
-                        console.log(error)
+                    .catch(error => {
+                        this.$store.commit('AlertError', error.message);
                     });
             },
             billEditForm(object) {
