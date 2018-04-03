@@ -17,6 +17,7 @@
                     class="elevation-1"
                     :search="search"
                     item-key="uuid"
+                    v-if="!isMobile()"
             >
                 <v-progress-linear slot="progress" color="success" indeterminate></v-progress-linear>
                 <template slot="items" slot-scope="props">
@@ -51,6 +52,36 @@
                     </tr>
                 </template>
             </v-data-table>
+            <v-list two-line v-if="isMobile()">
+                <v-list-tile avatar v-for="item in dataTables" :key="item.id" @click="">
+                    <v-list-tile-avatar>
+                        <v-icon color="primary">monetization_on</v-icon>
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+                        <v-list-tile-sub-title><b>{{ sumFormat(item.sum) }}</b></v-list-tile-sub-title>
+                    </v-list-tile-content>
+                    <v-list-tile-action>
+                        <v-btn flat icon color="primary" @click="billEditForm(item)">
+                            <v-icon>mode_edit</v-icon>
+                        </v-btn>
+                        <v-btn flat icon color="error" @click="billDelete(item)">
+                            <v-icon>delete</v-icon>
+                        </v-btn>
+                    </v-list-tile-action>
+                </v-list-tile>
+            </v-list>
+            <v-list two-line v-if="isMobile()">
+                <v-list-tile avatar>
+                    <v-list-tile-avatar>
+                        <v-icon color="primary">store</v-icon>
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Итого:</v-list-tile-title>
+                        <v-list-tile-sub-title><b>{{ totalValue }}</b></v-list-tile-sub-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+            </v-list>
         </div>
         <v-layout row justify-center>
             <v-dialog v-model="billsFormShow" persistent max-width="700px">
@@ -250,6 +281,16 @@
             },
             sumFormat(sum) {
                 return sum.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+            },
+            isMobile() {
+                let mobile_getter = this.$store.getters.mobile;
+
+                let mobile = false;
+
+                if(mobile_getter !== null) {
+                    mobile = true;
+                }
+                return mobile;
             },
         },
         computed: {

@@ -118,6 +118,7 @@
                             single-line
                             hide-details
                             v-model="search"
+                            v-if="!isMobile()"
                     ></v-text-field>
                 </v-card-title>
                 <v-card-text>
@@ -192,6 +193,17 @@
                                 <v-icon>delete</v-icon>
                             </v-btn>
                         </v-list-tile-action>
+                    </v-list-tile>
+                </v-list>
+                <v-list two-line v-if="isMobile()">
+                    <v-list-tile avatar>
+                        <v-list-tile-avatar>
+                            <v-icon color="primary">store</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Итого:</v-list-tile-title>
+                            <v-list-tile-sub-title><b>{{ totalValue }}</b></v-list-tile-sub-title>
+                        </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
                 <div class="text-xs-center">
@@ -370,12 +382,12 @@
 
 
             fundsFilterForm: {
-                rev: 0,
+                rev: 2,
                 bills_id: 0,
                 category_id: 0,
                 date_start: '',
                 date_end: '',
-                sum: 0,
+                sum: null,
                 paginate: 20,
                 page: 1,
             },
