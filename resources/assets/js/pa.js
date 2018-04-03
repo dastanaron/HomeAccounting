@@ -21,8 +21,9 @@ import Vuetify from 'vuetify';
 Vue.use(Vuex);
 Vue.use(Vuetify);
 
-Vue.component('private-area', require('./components/PrivateArea.vue'));
+//import PrivateArea from './components/PrivateArea/PrivateArea.js';
 
+Vue.component('private-area', require('./components/PrivateArea/PrivateArea.vue'));
 
 /**
  * Mobile detected

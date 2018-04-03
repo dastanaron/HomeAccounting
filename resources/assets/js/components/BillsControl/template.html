@@ -1,0 +1,138 @@
+<v-app id="billsControl" v-if="showBillsTable">
+    <div class="my-4">
+        <v-tooltip bottom>
+            <v-btn class="new-button" slot="activator" flat large icon color="success" @click="createBillsForm()">
+                <v-icon>add_box</v-icon>
+            </v-btn>
+            <span>Создать новый</span>
+        </v-tooltip>
+
+        <v-data-table
+                :loading="loadingDataTable"
+                :headers="headers"
+                :items="dataTables"
+                v-bind:pagination.sync="pagination"
+                hide-actions
+                class="elevation-1"
+                :search="search"
+                item-key="uuid"
+                v-if="!isMobile()"
+        >
+            <v-progress-linear slot="progress" color="success" indeterminate></v-progress-linear>
+            <template slot="items" slot-scope="props">
+                <tr>
+                    <td>{{ props.item.id }}</td>
+                    <td class="text-xs-right">{{ props.item.name}}</td>
+                    <td class="text-xs-right">{{ sumFormat(props.item.sum) }}</td>
+                    <td class="text-xs-right">{{ props.item.deadline }}</td>
+                    <td class="text-xs-right">{{ props.item.comment }}</td>
+                    <td class="text-xs-right control">
+                        <v-tooltip top>
+                            <v-btn flat icon small color="primary" slot="activator" @click="billEditForm(props.item)"><v-icon>mode_edit</v-icon></v-btn>
+                            <span>Редактировать</span>
+                        </v-tooltip>
+                        <v-tooltip top>
+                            <v-btn flat icon small color="error" slot="activator" @click="billDelete(props.item)"><v-icon>delete</v-icon></v-btn>
+                            <span>Удалить</span>
+                        </v-tooltip>
+
+                    </td>
+                </tr>
+            </template>
+            <template slot="footer">
+                <tr>
+                    <td colspan="2">
+                        <strong>Итого:</strong>
+                    </td>
+                    <td class="text-xs-right">
+                        <strong>{{ totalValue }}</strong>
+                    </td>
+                    <td colspan="3"></td>
+                </tr>
+            </template>
+        </v-data-table>
+        <v-list two-line v-if="isMobile()">
+            <v-list-tile avatar v-for="item in dataTables" :key="item.id" @click="">
+                <v-list-tile-avatar>
+                    <v-icon color="primary">monetization_on</v-icon>
+                </v-list-tile-avatar>
+                <v-list-tile-content>
+                    <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+                    <v-list-tile-sub-title><b>{{ sumFormat(item.sum) }}</b></v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-list-tile-action>
+                    <v-btn flat icon color="primary" @click="billEditForm(item)">
+                        <v-icon>mode_edit</v-icon>
+                    </v-btn>
+                    <v-btn flat icon color="error" @click="billDelete(item)">
+                        <v-icon>delete</v-icon>
+                    </v-btn>
+                </v-list-tile-action>
+            </v-list-tile>
+        </v-list>
+        <v-list two-line v-if="isMobile()">
+            <v-list-tile avatar>
+                <v-list-tile-avatar>
+                    <v-icon color="primary">store</v-icon>
+                </v-list-tile-avatar>
+                <v-list-tile-content>
+                    <v-list-tile-title>Итого:</v-list-tile-title>
+                    <v-list-tile-sub-title><b>{{ totalValue }}</b></v-list-tile-sub-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list>
+    </div>
+    <v-layout row justify-center>
+        <v-dialog v-model="billsFormShow" persistent max-width="700px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">{{ billFormTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-container grid-list-md>
+                        <v-layout wrap>
+                            <v-flex xs12 sm6 md4>
+                                <v-text-field v-model="billFormData.name" label="Введите название" required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-text-field v-model="billFormData.sum" :rules="billFormData.sumRules" label="Введите сумму" required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-dialog
+                                        ref="dialog"
+                                        persistent
+                                        v-model="DeadLinePicker"
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <v-text-field
+                                            slot="activator"
+                                            label="Срок окончания"
+                                            hint="Может быть нужно, для счета сберегательной программы со сроком действия"
+                                            v-model="billFormData.deadline"
+                                            prepend-icon="event"
+                                            readonly
+                                    ></v-text-field>
+                                    <v-date-picker type="date" locale="ru" v-model="billFormData.deadline" scrollable>
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary" @click="DeadLinePicker=false">OK</v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-text-field v-model="billFormData.comment" label="Коммментарий"></v-text-field>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                    <small>*-поля обязательные для заполнения</small>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="info darken-1" flat @click.native="billsFormShow = false">Закрыть</v-btn>
+                    <v-btn color="success darken-1" flat @click="billSave()">Сохранить</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+    </v-layout>
+</v-app>

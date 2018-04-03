@@ -1,0 +1,300 @@
+<div id="fundsControl" v-if="showFundsComponent">
+    <div class="my-4">
+        <v-tooltip bottom>
+            <v-btn class="new-button" slot="activator" flat icon large color="success" @click="newFund()">
+                <v-icon>add_box</v-icon>
+            </v-btn>
+            <span>Создать новый</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+            <v-btn class="new-button" slot="activator" flat icon large color="blue-grey darken-4" @click="filtersControl()">
+                <v-icon>filter_list</v-icon>
+            </v-btn>
+            <span>Фильтры</span>
+        </v-tooltip>
+        <v-card v-if="filters">
+            <v-card-title>
+                <h2>Фильтры</h2>
+                <v-container grid-list-md>
+                    <v-layout wrap>
+                        <v-flex xs12 sm4 md2>
+                            <v-select
+                                    :items="revList"
+                                    v-model="fundsFilterForm.rev"
+                                    item-text="name"
+                                    item-value="value"
+                                    label="Доход или расход"
+                                    clearable
+                                    autocomplete
+                            ></v-select>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-select
+                                    :items="billsList"
+                                    v-model="fundsFilterForm.bills_id"
+                                    item-text="name"
+                                    item-value="id"
+                                    label="Выберите счёт"
+                                    clearable
+                                    autocomplete
+                            ></v-select>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-select
+                                    :items="categoryList"
+                                    v-model="fundsFilterForm.category_id"
+                                    item-text="name"
+                                    item-value="id"
+                                    label="Категория"
+                                    clearable
+                                    autocomplete
+                            ></v-select>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-text-field v-model="fundsFilterForm.sum" clearable label="Сумма"></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-dialog
+                                    ref="dialog"
+                                    persistent
+                                    v-model="DatePickerFilterStart"
+                                    lazy
+                                    full-width
+                                    width="290px"
+                            >
+                                <v-text-field
+                                        slot="activator"
+                                        label="Дата от"
+                                        v-model="fundsFilterForm.date_start"
+                                        prepend-icon="event"
+                                        readonly
+                                        clearable
+                                ></v-text-field>
+                                <v-date-picker type="date" locale="ru" v-model="fundsFilterForm.date_start" scrollable>
+                                    <v-spacer></v-spacer>
+                                    <v-btn flat color="primary" @click="DatePickerFilterStart=false">OK</v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-dialog
+                                    ref="dialog"
+                                    persistent
+                                    v-model="DatePickerFilterEnd"
+                                    lazy
+                                    full-width
+                                    width="290px"
+                            >
+                                <v-text-field
+                                        slot="activator"
+                                        label="Дата до"
+                                        v-model="fundsFilterForm.date_end"
+                                        prepend-icon="event"
+                                        readonly
+                                        clearable
+                                ></v-text-field>
+                                <v-date-picker type="date" locale="ru" v-model="fundsFilterForm.date_end" scrollable>
+                                    <v-spacer></v-spacer>
+                                    <v-btn flat color="primary" @click="DatePickerFilterEnd=false">OK</v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+            </v-card-title>
+        </v-card>
+        <v-card>
+            <v-card-title>
+                <v-content>
+                    <div><b>Страница:</b> {{ fundsAllData.current_page }}</div>
+                    <div><b>Число страниц:</b> {{ fundsAllData.last_page }}</div>
+                    <div><b>На странице:</b> {{ dataTables.length }}</div>
+                    <div><b>Всего элементов:</b> {{ fundsAllData.total }}</div>
+                </v-content>
+                <v-text-field
+                        append-icon="search"
+                        label="Поиск"
+                        single-line
+                        hide-details
+                        v-model="search"
+                        v-if="!isMobile()"
+                ></v-text-field>
+            </v-card-title>
+            <v-card-text>
+                Для корректных рассчетов, необходимо настроить фильтры, например по расходу и доходу, чтобы
+                система их не суммировала
+            </v-card-text>
+        </v-card>
+        <v-data-table
+                :headers="headers"
+                :items="dataTables"
+                v-bind:pagination.sync="pagination"
+                hide-actions
+                class="elevation-1"
+                :search="search"
+                item-key="uuid"
+                v-if="!isMobile()"
+        >
+            <template slot="items" slot-scope="props">
+                <tr>
+                    <td>{{ props.item.id }}</td>
+                    <td class="text-xs-right">{{ props.item.bills_name}}</td>
+                    <td class="text-xs-right">{{ convertRev(props.item.rev) }}</td>
+                    <td class="text-xs-right">{{ props.item.category_name }}</td>
+                    <td class="text-xs-right">{{ sumFormat(props.item.sum) }}</td>
+                    <td class="text-xs-right">{{ props.item.cause }}</td>
+                    <td class="text-xs-right">{{ props.item.date }}</td>
+                    <td class="text-xs-right control">
+                        <v-tooltip top>
+                            <v-btn flat icon large color="primary" slot="activator" @click="editFund(props.item)"><v-icon>mode_edit</v-icon></v-btn>
+                            <span>Редактировать</span>
+                        </v-tooltip>
+                        <v-tooltip top>
+                            <v-btn flat icon large color="error" slot="activator" @click="deleteFund(props.item)"><v-icon>delete</v-icon></v-btn>
+                            <span>Удалить</span>
+                        </v-tooltip>
+
+                    </td>
+                </tr>
+            </template>
+            <template slot="footer">
+                <tr>
+                    <td colspan="4">
+                        <strong>Итого:</strong>
+                    </td>
+                    <td class="text-xs-right">
+                        <strong>{{ totalValue }}</strong>
+                    </td>
+                    <td></td><td></td><td></td>
+                </tr>
+            </template>
+        </v-data-table>
+        <!--
+            Для телефона нужно реализовать отображение списка со значками, для удобства просмотра.
+            На телефоне должны быть все данные, со значками, для каждой категории(в будущем).
+            Категориям нужно добавить возможность добавлять значки
+            При нажатии на инфо, показать всю информацию
+        !-->
+        <v-list two-line v-if="isMobile()">
+            <v-list-tile avatar v-for="item in dataTables" :key="item.id" @click="">
+                <v-list-tile-avatar>
+                    <v-icon :color="colorCategory(item.rev)">account_balance_wallet</v-icon>
+                </v-list-tile-avatar>
+                <v-list-tile-content>
+                    <v-list-tile-title>{{ item.category_name }}</v-list-tile-title>
+                    <v-list-tile-sub-title><b>{{ sumFormat(item.sum) }}</b></v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-list-tile-action>
+                    <v-btn flat icon color="primary" @click="editFund(item)">
+                        <v-icon>mode_edit</v-icon>
+                    </v-btn>
+                    <v-btn flat icon color="error" @click="deleteFund(item)">
+                        <v-icon>delete</v-icon>
+                    </v-btn>
+                </v-list-tile-action>
+            </v-list-tile>
+        </v-list>
+        <v-list two-line v-if="isMobile()">
+            <v-list-tile avatar>
+                <v-list-tile-avatar>
+                    <v-icon color="primary">store</v-icon>
+                </v-list-tile-avatar>
+                <v-list-tile-content>
+                    <v-list-tile-title>Итого:</v-list-tile-title>
+                    <v-list-tile-sub-title><b>{{ totalValue }}</b></v-list-tile-sub-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list>
+        <div class="text-xs-center">
+            <v-pagination :length="fundsAllData.last_page" v-model="fundsFilterForm.page" :total-visible="4"></v-pagination>
+        </div>
+    </div>
+    <v-layout row justify-center>
+        <v-dialog v-model="fundsFormShow" persistent max-width="700px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">{{ fundsFormTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-container grid-list-md>
+                        <v-layout wrap>
+                            <v-flex xs12 sm6 md4>
+                                <v-select
+                                        :items="billsList"
+                                        v-model="fundsFormData.bills_id"
+                                        item-text="name"
+                                        item-value="id"
+                                        label="Выберите счёт"
+                                        :rules="fundsFormData.billsRules"
+                                        :disabled="billDisabled"
+                                        autocomplete
+                                        required
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-select
+                                        :items="revList"
+                                        v-model="fundsFormData.rev"
+                                        item-text="name"
+                                        item-value="value"
+                                        label="Доход или расход"
+                                        :rules="fundsFormData.revRules"
+                                        autocomplete
+                                        required
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-select
+                                        :items="categoryList"
+                                        v-model="fundsFormData.category_id"
+                                        item-text="name"
+                                        item-value="id"
+                                        label="Категория"
+                                        :rules="fundsFormData.categoryRules"
+                                        autocomplete
+                                        required
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-text-field v-model="fundsFormData.sum" :rules="fundsFormData.sumRules" label="Сумма" required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 sm6 md4>
+                                <v-dialog
+                                        ref="dialog"
+                                        persistent
+                                        v-model="DatePicker"
+                                        lazy
+                                        full-width
+                                        width="290px"
+                                >
+                                    <v-text-field
+                                            slot="activator"
+                                            label="Дата"
+                                            hint="Дата, когда совершена транзакция"
+                                            v-model="fundsFormData.date"
+                                            prepend-icon="event"
+                                            :rules="fundsFormData.dateRules"
+                                            readonly
+                                    ></v-text-field>
+                                    <v-date-picker type="date" locale="ru" v-model="fundsFormData.date" scrollable>
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat color="primary" @click="DatePicker=false">OK</v-btn>
+                                    </v-date-picker>
+                                </v-dialog>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-text-field v-model="fundsFormData.cause" :rules="fundsFormData.causeRules" label="Причина" required></v-text-field>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                    <small>*-поля обязательные для заполнения</small>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="info darken-1" flat @click="fundsFormShow = false">Закрыть</v-btn>
+                    <v-btn color="success darken-1" flat @click="fundsSave()">Сохранить</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+    </v-layout>
+</div>

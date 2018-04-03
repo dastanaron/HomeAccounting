@@ -1,0 +1,54 @@
+<div id="moneyTransactionControl" v-if="showMoneyTransactionComponent">
+    <v-dialog v-model="showMoneyTransactionComponent" persistent max-width="700px">
+        <v-card>
+            <v-card-title>
+                <span class="headline">Перевод между счетами</span>
+            </v-card-title>
+            <v-card-text>
+                <v-form v-model="valid" ref="form" lazy-validation>
+                    <v-container grid-list-md>
+                        <v-layout wrap>
+                            <v-flex xs12 sm6>
+                                <v-select
+                                        :items="billsList"
+                                        v-model="billSource"
+                                        item-text="name"
+                                        item-value="id"
+                                        label="Выберите счёт"
+                                        hint="Счет с которого переводим"
+                                        clearable
+                                        autocomplete
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12 sm6>
+                                <v-select
+                                        :items="billsList"
+                                        v-model="billDestination"
+                                        item-text="name"
+                                        item-value="id"
+                                        label="Выберите счёт"
+                                        hint="Счет на который переводим"
+                                        clearable
+                                        autocomplete
+                                ></v-select>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-text-field
+                                        v-model="billSumTransaction"
+                                        clearable
+                                        label="Сумма"
+                                        hint="Сумма перевода"
+                                ></v-text-field>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-form>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="info darken-1" flat @click="close()">Закрыть</v-btn>
+                <v-btn color="success darken-1" flat @click="transactionSend()">Сохранить</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+</div>

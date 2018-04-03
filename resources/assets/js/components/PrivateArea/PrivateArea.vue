@@ -75,20 +75,32 @@
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
+                <v-list>
+                    <v-list-tile avatar  @click="barcodeControl()">
+                        <v-list-tile-avatar>
+                            <img class="qr-code-icon" src="/image/icons/qrcode.png" />
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Сканировать QR-код</v-list-tile-title>
+                            <v-list-tile-sub-title>Сканировать код для занесения чека(test)</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
             </v-card>
         </v-menu>
         <bills-control :showBillsTable="billsControl"></bills-control>
         <funds-control :showFundsComponent="fundsControl"></funds-control>
         <category-control :showCategoryComponent="categoryControl"></category-control>
         <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
+        <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
     </v-app>
 </template>
-
 <script>
-    import BillsControl from "./BillsControl";
-    import FundsControl from "./FundsControl";
-    import CategoryControl from "./CategoryControl";
-    import MoneyTransaction from "./MoneyTransaction";
+    import BillsControl from "../BillsControl/BillsControl";
+    import FundsControl from "../FundsControl/FundsControl";
+    import CategoryControl from "../CategoryControl/CategoryControl";
+    import MoneyTransaction from "../MoneyTransaction/MoneyTransaction";
+    import BarcodeScanner from "../BarcodeScanner/BarcodeScanner";
 
     export default {
         name: "private-area",
@@ -102,6 +114,7 @@
             fundsControl: false, //funds-control
             categoryControl: false, //category-control
             moneyTransactionControl: false, //money-transaction
+            barcodeScannerControl: false, //barcode-scaner-control
 
             reloadBills: false,
 
@@ -116,6 +129,7 @@
                 this.fundsControl = false;
                 this.categoryControl = false;
                 this.moneyTransactionControl = false;
+                this.barcodeScannerControl = false;
                 this.billsControl = true;
             },
             fundsControlApplication() {
@@ -124,6 +138,7 @@
                 this.applicationMenu=false;
                 this.moneyTransactionControl = false;
                 this.categoryControl = false;
+                this.barcodeScannerControl = false;
                 this.fundsControl = true;
             },
             categoryControlApplication() {
@@ -132,7 +147,18 @@
                 this.applicationMenu=false;
                 this.fundsControl = false;
                 this.moneyTransactionControl = false;
+                this.barcodeScannerControl = false;
                 this.categoryControl = true;
+            },
+            barcodeControl() {
+                this.menuTitle = 'Сканировать чек';
+                this.billsControl = false;
+                this.applicationMenu=false;
+                this.fundsControl = false;
+                this.moneyTransactionControl = false;
+                this.barcodeScannerControl = false;
+                this.categoryControl = false;
+                this.barcodeScannerControl = true;
             },
             moneyTransactionControlControlApplication() {
                 this.applicationMenu=false;
@@ -157,6 +183,7 @@
             });
         },
         components: {
+            BarcodeScanner,
             MoneyTransaction,
             CategoryControl,
             FundsControl,

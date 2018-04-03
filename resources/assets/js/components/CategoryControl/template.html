@@ -1,0 +1,72 @@
+<div id="fundsControl" v-if="showCategoryComponent">
+    <div class="my-4">
+        <v-tooltip bottom>
+            <v-btn class="new-button" slot="activator" flat icon large color="success" @click="newForm()">
+                <div class="creating-control">
+                    <v-icon>add_box</v-icon>
+                </div>
+            </v-btn>
+            <span>Создать новый</span>
+        </v-tooltip>
+        <div class="edit-dialog" v-if="createForm">
+            <v-text-field
+                    label="Введите название"
+                    v-model="categoryFormData.name"
+                    single-line
+                    :rules="[max50chars]"
+            ></v-text-field>
+            <v-tooltip bottom>
+                <v-btn class="new-button" slot="activator" flat icon color="success" @click="categorySave()">
+                    <v-icon>done</v-icon>
+                </v-btn>
+                <span>Сохранить</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+                <v-btn class="new-button" slot="activator" flat icon color="error" @click="createForm=false">
+                    <v-icon>clear</v-icon>
+                </v-btn>
+                <span>Закрыть</span>
+            </v-tooltip>
+        </div>
+
+        <v-data-table
+                :loading="loadingDataTable"
+                :headers="headers"
+                :items="dataTables"
+                v-bind:pagination.sync="pagination"
+                hide-actions
+                class="elevation-1"
+                :search="search"
+                item-key="uuid"
+        >
+            <v-progress-linear slot="progress" color="success" indeterminate></v-progress-linear>
+            <template slot="items" slot-scope="props">
+                <tr>
+                    <td>{{ props.item.id }}</td>
+                    <td class="text-xs-right" @click="editForm(props.item)">
+                        <v-edit-dialog
+                                :return-value.sync="props.item.name"
+                        > {{ props.item.name }}
+                            <v-text-field
+                                    slot="input"
+                                    label="Изменить"
+                                    v-model="categoryFormData.name"
+                                    single-line
+                                    counter="50"
+                                    @change="categorySave()"
+                                    :rules="[max50chars]"
+                            ></v-text-field>
+                        </v-edit-dialog>
+                    </td>
+                    <td class="text-xs-right control">
+                        <v-tooltip top>
+                            <v-btn flat icon small color="error" slot="activator" @click="deleteCategory(props.item)"><v-icon>delete</v-icon></v-btn>
+                            <span>Удалить</span>
+                        </v-tooltip>
+
+                    </td>
+                </tr>
+            </template>
+        </v-data-table>
+    </div>
+</div>

@@ -16,3 +16,13 @@ mix.js('resources/assets/js/app.js', 'public/js')
 
 mix.js('resources/assets/js/pa.js', 'public/js')
     .sass('resources/assets/sass/pa.scss', 'public/css');
+
+
+mix.webpackConfig({
+    resolve: {
+
+    },
+    node: {
+        fs: 'empty',
+    }
+});
