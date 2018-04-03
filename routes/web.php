@@ -55,3 +55,12 @@ Route::get('/pa/categories-list', 'CategoriesController@getCategories');
 Route::post('/pa/categories', 'CategoriesController@createCategory');
 Route::put('/pa/categories', 'CategoriesController@setCategory');
 Route::delete('/pa/categories', 'CategoriesController@deleteCategory');
+
+/**
+ * Event methods
+ */
+Route::get('/pa/event-list', 'EventController@getEvents');
+
+Route::post('/pa/events', 'EventController@createEvent');
+Route::put('/pa/events', 'EventController@setEvent');
+Route::delete('/pa/cevents', 'EventController@deleteEvent');

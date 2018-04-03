@@ -19,7 +19,7 @@ export default {
         fundsControl: false, //funds-control
         categoryControl: false, //category-control
         moneyTransactionControl: false, //money-transaction
-        barcodeScannerControl: false, //barcode-scaner-control
+        barcodeScannerControl: false, //barcode-scanner-control
 
         reloadBills: false,
 
