@@ -86,6 +86,17 @@
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
+                <v-list>
+                    <v-list-tile avatar  @click="eventsControlApplication()">
+                        <v-list-tile-avatar>
+                            <v-icon>notifications</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Управление событиями</v-list-tile-title>
+                            <v-list-tile-sub-title>Управление напоминаниями бота</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
             </v-card>
         </v-menu>
         <bills-control :showBillsTable="billsControl"></bills-control>
@@ -93,6 +104,7 @@
         <category-control :showCategoryComponent="categoryControl"></category-control>
         <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
         <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
+        <events-control :showEventControl="eventsControl"></events-control>
     </v-app>
 </template>
 <script>
@@ -101,6 +113,7 @@
     import CategoryControl from "../CategoryControl/CategoryControl";
     import MoneyTransaction from "../MoneyTransaction/MoneyTransaction";
     import BarcodeScanner from "../BarcodeScanner/BarcodeScanner";
+    import EventsControl from "../EventsControl/EventsControl";
 
     export default {
         name: "private-area",
@@ -114,7 +127,8 @@
             fundsControl: false, //funds-control
             categoryControl: false, //category-control
             moneyTransactionControl: false, //money-transaction
-            barcodeScannerControl: false, //barcode-scaner-control
+            barcodeScannerControl: false, //barcode-scanner-control
+            eventsControl: false, //events-control
 
             reloadBills: false,
 
@@ -130,6 +144,7 @@
                 this.categoryControl = false;
                 this.moneyTransactionControl = false;
                 this.barcodeScannerControl = false;
+                this.eventsControl = false;
                 this.billsControl = true;
             },
             fundsControlApplication() {
@@ -139,6 +154,7 @@
                 this.moneyTransactionControl = false;
                 this.categoryControl = false;
                 this.barcodeScannerControl = false;
+                this.eventsControl = false;
                 this.fundsControl = true;
             },
             categoryControlApplication() {
@@ -148,6 +164,7 @@
                 this.fundsControl = false;
                 this.moneyTransactionControl = false;
                 this.barcodeScannerControl = false;
+                this.eventsControl = false;
                 this.categoryControl = true;
             },
             barcodeControl() {
@@ -158,7 +175,19 @@
                 this.moneyTransactionControl = false;
                 this.barcodeScannerControl = false;
                 this.categoryControl = false;
+                this.eventsControl = false;
                 this.barcodeScannerControl = true;
+            },
+            eventsControlApplication() {
+                this.menuTitle = 'Управление напоминаниями';
+                this.billsControl = false;
+                this.applicationMenu=false;
+                this.fundsControl = false;
+                this.moneyTransactionControl = false;
+                this.barcodeScannerControl = false;
+                this.categoryControl = false;
+                this.barcodeScannerControl = false;
+                this.eventsControl = true;
             },
             moneyTransactionControlControlApplication() {
                 this.applicationMenu=false;
@@ -183,6 +212,7 @@
             });
         },
         components: {
+            EventsControl,
             BarcodeScanner,
             MoneyTransaction,
             CategoryControl,
