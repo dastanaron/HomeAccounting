@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'Login' => 'Авторизация',
-    'E-Mail Address' => 'E-mail адрес',
-    'Password' => 'Пароль',
-    'Remember Me' => 'Запомни меня',
-    'Forgot Your Password?' => 'Забыли пароль?',
-    'Logout' => 'Выход',
+    'Login' => 'Login',
+    'E-Mail Address' => 'E-Mail Address',
+    'Password' => 'Password',
+    'Remember Me' => 'Remember Me',
+    'Forgot Your Password?' => 'Forgot Your Password?',
+    'Logout' => 'Logout',
 ];

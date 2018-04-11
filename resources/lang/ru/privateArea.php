@@ -1,7 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dastanaron
- * Date: 11.04.18
- * Time: 17:45
- */
+
+return [
+    'privateArea' => 'Личный кабинет',
+];

@@ -2,18 +2,11 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used during authentication for various
-    | messages that we need to display to the user. You are free to modify
-    | these language lines according to your application's requirements.
-    |
-    */
-
-    'failed' => 'These credentials do not match our records.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
+    'failed' => 'Нет записей пользователя по указанным данным',
+    'throttle' => 'Слишком много попыток входа, попробуйте через :seconds секунд.',
+    'loginSuccess' => 'Вы успешно залогинены',
+    'Dashboard' => 'Панель управления',
+    'Name' => 'Логин',
+    'Reset Password' => 'Сброс пароля',
+    'Send Password Reset Link' => 'Отправить ссылку на сброс пароля',
 ];
