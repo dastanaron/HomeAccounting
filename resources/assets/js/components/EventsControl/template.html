@@ -39,6 +39,25 @@
             </tr>
         </template>
     </v-data-table>
+    <v-list two-line v-if="isMobile()">
+        <v-list-tile avatar v-for="item in dataTables" :key="item.id" @click="">
+            <v-list-tile-avatar>
+                <v-icon color="success">notifications</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+                <v-list-tile-title>{{ item.head }}</v-list-tile-title>
+                <v-list-tile-sub-title><b>{{ item.message }}</b></v-list-tile-sub-title>
+            </v-list-tile-content>
+            <v-list-tile-action>
+                <v-btn flat icon color="primary" @click="editEventForm(item)">
+                    <v-icon>mode_edit</v-icon>
+                </v-btn>
+                <v-btn flat icon color="error" @click="deleteEvent(item)">
+                    <v-icon>delete</v-icon>
+                </v-btn>
+            </v-list-tile-action>
+        </v-list-tile>
+    </v-list>
     <v-layout row justify-center>
         <v-dialog v-model="eventsFormShow" persistent max-width="700px">
             <v-card>
