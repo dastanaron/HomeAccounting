@@ -47,6 +47,7 @@ export default {
             last_page: 0,
 
         },
+        totalValue: 0,
         fundsFormData: {
             funds_id: 0,
             bills_id: 0,
@@ -130,8 +131,9 @@ export default {
 
             axios.get('/pa/funds-list', {params: data})
                 .then(response=> {
-                    this.fundsAllData = response.data;
-                    this.dataTables = response.data.data;
+                    this.fundsAllData = response.data[0];
+                    this.dataTables = response.data[0].data;
+                    this.totalValue = response.data.totalSum;
 
                     for(let key in this.dataTables) {
                         this.dataTables[key].date = this.dateFormat(this.dataTables[key].date)
@@ -331,7 +333,7 @@ export default {
         },
     },
     computed: {
-        totalValue() {
+        paginateValue() {
             let total = 0;
 
             for(let key in this.dataTables) {

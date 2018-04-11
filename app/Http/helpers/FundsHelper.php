@@ -5,6 +5,7 @@ namespace App\Http\helpers;
 
 use App\Bills;
 use App\Funds;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -42,7 +43,23 @@ class FundsHelper
 
         $query = $this->SelectFilter()->orderBy('funds.date', 'desc');
 
-        return $query->paginate($paginate);
+        $totalSum = $this->totalSum($query);
+
+        return [$query->paginate($paginate), 'totalSum' => $totalSum];
+    }
+
+    protected function totalSum($query)
+    {
+        $result = $query->get();
+
+        $sum = 0;
+
+        foreach ($result as $element) {
+            $sum += $element->sum;
+        }
+
+        return $sum;
+
     }
 
     protected function SelectFilter()

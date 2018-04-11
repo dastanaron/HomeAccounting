@@ -110,6 +110,7 @@
                     <div><b>Число страниц:</b> {{ fundsAllData.last_page }}</div>
                     <div><b>На странице:</b> {{ dataTables.length }}</div>
                     <div><b>Всего элементов:</b> {{ fundsAllData.total }}</div>
+                    <div><b>Общая сумма по фильтру(всех страниц):</b> {{ totalValue }}</div>
                 </v-content>
                 <v-text-field
                         append-icon="search"
@@ -163,7 +164,7 @@
                         <strong>Итого:</strong>
                     </td>
                     <td class="text-xs-right">
-                        <strong>{{ totalValue }}</strong>
+                        <strong>{{ paginateValue }}</strong>
                     </td>
                     <td></td><td></td><td></td>
                 </tr>
@@ -201,7 +202,7 @@
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                     <v-list-tile-title>Итого:</v-list-tile-title>
-                    <v-list-tile-sub-title><b>{{ totalValue }}</b></v-list-tile-sub-title>
+                    <v-list-tile-sub-title><b>{{ paginateValue }}</b></v-list-tile-sub-title>
                 </v-list-tile-content>
             </v-list-tile>
         </v-list>

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Bills;
+use App\Funds;
 use Illuminate\Console\Command;
 
 class test extends Command
@@ -38,8 +39,8 @@ class test extends Command
      */
     public function handle()
     {
-        $bills = Bills::find(1);
+        $funds = Funds::all();
 
-        dump($bills->user);
+        dump($funds);
     }
 }
