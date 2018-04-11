@@ -41,7 +41,7 @@ class EventHelper
         $event->type_event = $this->request->input('type_event');
         $event->head = $this->request->input('head');
         $event->message = $this->request->input('message');
-        $event->completed = $this->request->input('completed');
+        $event->completed = !empty($this->request->input('completed')) ? $this->request->input('completed') : 0;
         $event->date_notif = $this->request->input('date');
 
         return $event->save();
@@ -59,7 +59,7 @@ class EventHelper
         $event->type_event = $this->request->input('type_event');
         $event->head = $this->request->input('head');
         $event->message = $this->request->input('message');
-        $event->completed = $this->request->input('completed');
+        $event->completed = !empty($this->request->input('completed')) ? $this->request->input('completed') : 0;
         $event->date_notif = $this->request->input('date');
 
         return $event->save();

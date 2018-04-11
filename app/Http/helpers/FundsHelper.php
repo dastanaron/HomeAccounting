@@ -45,7 +45,7 @@ class FundsHelper
 
         $totalSum = $this->totalSum($query);
 
-        return [$query->paginate($paginate), 'totalSum' => $totalSum];
+        return ['paginate' =>$query->paginate($paginate), 'totalSum' => $totalSum];
     }
 
     protected function totalSum($query)
