@@ -86,7 +86,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
-                <!--<v-list>
+                <v-list>
                     <v-list-tile avatar  @click="eventsControlApplication()">
                         <v-list-tile-avatar>
                             <v-icon>notifications</v-icon>
@@ -96,7 +96,7 @@
                             <v-list-tile-sub-title>Управление напоминаниями бота</v-list-tile-sub-title>
                         </v-list-tile-content>
                     </v-list-tile>
-                </v-list>!-->
+                </v-list>
             </v-card>
         </v-menu>
         <bills-control :showBillsTable="billsControl"></bills-control>
@@ -104,7 +104,7 @@
         <category-control :showCategoryComponent="categoryControl"></category-control>
         <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
         <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
-        <!--<events-control :showEventControl="eventsControl"></events-control>!-->
+        <events-control :showEventControl="eventsControl"></events-control>
     </v-app>
 </template>
 <script>

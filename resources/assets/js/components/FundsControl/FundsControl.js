@@ -131,8 +131,8 @@ export default {
 
             axios.get('/pa/funds-list', {params: data})
                 .then(response=> {
-                    this.fundsAllData = response.data[0];
-                    this.dataTables = response.data[0].data;
+                    this.fundsAllData = response.data.paginate;
+                    this.dataTables = response.data.paginate.data;
                     this.totalValue = response.data.totalSum;
 
                     for(let key in this.dataTables) {

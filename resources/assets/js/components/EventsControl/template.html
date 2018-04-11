@@ -1,3 +1,42 @@
 <div id="eventControl" v-if="showEventControl">
-    function in development
+    <v-tooltip bottom>
+        <v-btn class="new-button" slot="activator" flat large icon color="success" @click="createBillsForm()">
+            <v-icon>add_box</v-icon>
+        </v-btn>
+        <span>Создать новый</span>
+    </v-tooltip>
+
+    <v-data-table
+            :loading="loadingDataTable"
+            :headers="headers"
+            :items="dataTables"
+            v-bind:pagination.sync="pagination"
+            hide-actions
+            class="elevation-1"
+            :search="search"
+            item-key="uuid"
+            v-if="!isMobile()"
+    >
+        <v-progress-linear slot="progress" color="success" indeterminate></v-progress-linear>
+        <template slot="items" slot-scope="props">
+            <tr>
+                <td>{{ props.item.id }}</td>
+                <td class="text-xs-right">{{ props.item.head}}</td>
+                <td class="text-xs-right">{{ props.item.message }}</td>
+                <td class="text-xs-right">{{ props.item.completed }}</td>
+                <td class="text-xs-right">{{ props.item.date_notif }}</td>
+                <td class="text-xs-right control">
+                    <v-tooltip top>
+                        <v-btn flat icon small color="primary" slot="activator" @click="billEditForm(props.item)"><v-icon>mode_edit</v-icon></v-btn>
+                        <span>Редактировать</span>
+                    </v-tooltip>
+                    <v-tooltip top>
+                        <v-btn flat icon small color="error" slot="activator" @click="billDelete(props.item)"><v-icon>delete</v-icon></v-btn>
+                        <span>Удалить</span>
+                    </v-tooltip>
+
+                </td>
+            </tr>
+        </template>
+    </v-data-table>
 </div>
