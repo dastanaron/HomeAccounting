@@ -40,6 +40,6 @@ class VKAPI extends Command
     {
         $apiKey = env('VK_API_KEY');
 
-        var_dump(APIHelper::init($apiKey)->getUsers('219981829')->execute());
+        var_dump(APIHelper::init($apiKey)->SendMessageUser('219981829', 'Hi', true)->execute());
     }
 }

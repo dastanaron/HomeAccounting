@@ -64,3 +64,8 @@ Route::get('/pa/event-list', 'EventController@getEvents');
 Route::post('/pa/events', 'EventController@createEvent');
 Route::put('/pa/events', 'EventController@setEvent');
 Route::delete('/pa/events', 'EventController@deleteEvent');
+
+/**
+ * VK callback
+ */
+Route::post('/callback/vk', 'CallBackController@vk');
