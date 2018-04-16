@@ -16,3 +16,8 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+/**
+ * VK callback
+ */
+Route::post('/callback/vk', 'CallBackController@vk');

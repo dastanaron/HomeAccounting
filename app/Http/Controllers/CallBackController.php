@@ -9,7 +9,14 @@ class CallBackController extends Controller
 
     public function vk(Request $request)
     {
-        dump($request->json());
+        $data = $request->json()->all();
+
+        $vkId = $data['object']['user_id'];
+
+        $message = $data['object']['body'];
+
+        return 'ok';
+
     }
 
 }
