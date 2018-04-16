@@ -3,8 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Components\VK\APIHelper;
+use App\Events;
 use App\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class VKAPI extends Command
 {
@@ -39,10 +41,26 @@ class VKAPI extends Command
      */
     public function handle()
     {
-        /*$apiKey = env('VK_API_KEY');
+        $apiKey = env('VK_API_KEY');
 
-        var_dump(APIHelper::init($apiKey)->SendMessageUser('219981829', 'Hi', true)->execute());*/
+        $events = Events::where('date_notif', '<=', date('Y-m-d H:i:s'))->whereCompleted(0)->get();
 
+        if(empty($events)) {
+            return null;
+        }
+
+        foreach ($events as $event) {
+            $userId = $event->user->id;
+            $vkId = $this->getVkId($userId);
+            $message = $this->buildMessage($event);
+
+            if($message) {
+                APIHelper::init($apiKey)->SendMessageUser($vkId, $message, false)->execute();
+                $event->completed = 1;
+                $event->save();
+            }
+
+        }
 
 
 
@@ -61,11 +79,26 @@ class VKAPI extends Command
         $socialId = false;
 
         foreach ($socialNetworks as $item) {
+            /**
+             * @var $item \App\SocialNetwork
+             */
             if($item->social_network === 'vk') {
                 $socialId = $item->social_id;
             }
         }
 
         return $socialId;
+    }
+
+    protected function buildMessage(Events $event)
+    {
+        if($event->type_event === 1) {
+            $message = $event->head.PHP_EOL;
+            $message .= $event->message;
+
+            return $message;
+
+        }
+        return false;
     }
 }
