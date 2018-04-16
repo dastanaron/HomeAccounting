@@ -9,3 +9,15 @@
 
 Используется Laravel, Vue.js, Vuetify, Vuex.
 
+
+Настройка обработки событий
+============================
+
+Пока у нас события только для VK бота, подвязываем системный крон, чтобы сохранить мультипоточность:
+
+Пример:
+
+```
+*/1 * * * * /usr/bin/php /path_to/project_dir/artisan vkapi:notifications >> /path_to/logfile/filename.log
+```
+
