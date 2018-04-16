@@ -55,6 +55,6 @@ class User extends Authenticatable
 
     public function social_network()
     {
-        return $this->hasOne('App\SocialNetwork', 'user_id', 'id');
+        return $this->hasMany('App\SocialNetwork', 'user_id', 'id');
     }
 }
