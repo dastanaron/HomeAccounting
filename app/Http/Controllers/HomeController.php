@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\SocialNetwork;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +24,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user_id = \Auth::user()->id;
+
+        $socialNetwork = SocialNetwork::where('user_id', '=', $user_id)->first();
+
+        return view('home', ['socialNetwork' => $socialNetwork]);
+        //return \Response::view('home', ['socialNetwork' => $socialNetwork]);
     }
 }

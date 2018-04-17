@@ -1,7 +1,11 @@
 <template>
     <v-app id="inspire">
         <v-toolbar dark color="primary">
-            <!--<v-toolbar-side-icon></v-toolbar-side-icon>!-->
+
+            <v-tooltip bottom>
+                <v-toolbar-side-icon slot="activator" @click="goToPanel()"></v-toolbar-side-icon>
+                <span>Выйти в панель</span>
+            </v-tooltip>
             <v-toolbar-title class="white--text">{{ menuTitle }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
@@ -192,7 +196,10 @@
             moneyTransactionControlControlApplication() {
                 this.applicationMenu=false;
                 this.moneyTransactionControl = true;
-            }
+            },
+            goToPanel() {
+              window.location.href = '/home';
+            },
 
 
         },
