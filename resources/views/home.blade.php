@@ -39,6 +39,7 @@
                                                     });
                                             }
                                         });
+
                                     </script>
                                 </div>
                                 @else
@@ -50,6 +51,22 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2"><img src="{{ $socialNetwork->photo }}" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><button id="vkDelete" class="btn btn-primary" data-uuid="{{ $socialNetwork->social_id }}" onclick="deleteAccount(this)">Удалить привязку</button></td>
+                                            <script type="text/javascript">
+
+                                                function deleteAccount (elem) {
+                                                    let socialId = elem.getAttribute('data-uuid');
+                                                    axios.post('/callback/vk-unauthorize', {uid: socialId})
+                                                        .then(response=> {
+                                                            window.location.reload();
+                                                        })
+                                                        .catch(error => {
+                                                            console.error(error);
+                                                        });
+                                                };
+                                            </script>
                                         </tr>
                                     </table>
                                 </div>

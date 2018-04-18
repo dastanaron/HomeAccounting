@@ -40,4 +40,20 @@ class CallBackController extends Controller
         return ['status' => 'error', 'message' => 'Error recording data'];
     }
 
+    public function vkUnAthorize(Request $request)
+    {
+        if(!empty($request->input('uid'))) {
+
+            $socialNetwork = SocialNetwork::where('social_id', '=', $request->input('uid'))->first();
+
+            $socialNetwork->social_id = $request->input('uid');
+            $socialNetwork->social_network = 'deleted';
+            $saved = $socialNetwork->save() ? 'true' : 'false';
+
+            return ['status' => 'ok', 'message' => 'Saved data social_network is '.$saved];
+
+        }
+        return ['status' => 'error', 'message' => 'Error deleted data'];
+    }
+
 }

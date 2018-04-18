@@ -70,3 +70,4 @@ Route::delete('/pa/events', 'EventController@deleteEvent');
  */
 
 Route::middleware('auth')->post('/callback/vk-authorize', 'CallBackController@vkAuthorize');
+Route::middleware('auth')->post('/callback/vk-unauthorize', 'CallBackController@vkUnAthorize');

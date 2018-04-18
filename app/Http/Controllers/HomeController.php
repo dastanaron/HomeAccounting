@@ -26,7 +26,7 @@ class HomeController extends Controller
     {
         $user_id = \Auth::user()->id;
 
-        $socialNetwork = SocialNetwork::where('user_id', '=', $user_id)->first();
+        $socialNetwork = SocialNetwork::where('user_id', '=', $user_id)->where('social_network', '!=', 'deleted')->first();
 
         return view('home', ['socialNetwork' => $socialNetwork]);
         //return \Response::view('home', ['socialNetwork' => $socialNetwork]);
