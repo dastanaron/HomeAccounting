@@ -104,10 +104,10 @@
             </v-card>
         </v-menu>
         <swipe ref="swipeComponents" :options="swipeOptions">
-            <swipe-item><bills-control ref="bills" :showBillsTable="billsControl"></bills-control></swipe-item>
-            <swipe-item><funds-control :showFundsComponent="fundsControl"></funds-control></swipe-item>
-            <swipe-item><category-control :showCategoryComponent="categoryControl"></category-control></swipe-item>
-            <swipe-item><events-control :showEventControl="eventsControl"></events-control></swipe-item>
+            <swipe-item><bills-control ref="bills"></bills-control></swipe-item>
+            <swipe-item><funds-control ref="funds"></funds-control></swipe-item>
+            <swipe-item><category-control ref="categories"></category-control></swipe-item>
+            <swipe-item><events-control ref="events"></events-control></swipe-item>
         </swipe>
         <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
         <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
@@ -129,24 +129,23 @@
             menuTitle: 'Личный кабинет',
             applicationMenu: false,
 
+            sliderPosition: 0,
+
             swipeOptions: {
                 startSlide: 1,
                 speed: 300,
                 auto: 0,
+                slide: 0,
                 continuous: true,
                 disableScroll: false,
                 stopPropagation: false,
-                /*callback: function (index, slide) {  },
-                transitionEnd: function (index, slide) {  }*/
+                callback: function (index, slide) { this.slide = index },
+                transitionEnd: function (index, slide) {  }
             },
 
             //Control Applications
-            billsControl: true, //bills-control
-            fundsControl: true, //funds-control
-            categoryControl: true, //category-control
             moneyTransactionControl: false, //money-transaction
             barcodeScannerControl: false, //barcode-scanner-control
-            eventsControl: true, //events-control
 
             reloadBills: false,
 
@@ -155,20 +154,41 @@
             reload() {
                 window.location.reload()
             },
+            swiperCallback(index) {
+
+                switch (index) {
+                    case 0:
+                        this.menuTitle = 'Счета';
+                        break;
+                    case 1:
+                        this.menuTitle = 'Транзакции';
+                        break;
+                    case 2:
+                        this.menuTitle = 'Категории';
+                        break;
+                    case 3:
+                        this.menuTitle = 'Напоминания';
+                        break;
+
+                }
+            },
             billsControlApplication() {
                 this.menuTitle = 'Счета';
                 this.$refs.swipeComponents.slide(0);
                 this.applicationMenu=false;
+                this.$refs.bills.getBills();
             },
             fundsControlApplication() {
                 this.menuTitle = 'Транзакции';
                 this.$refs.swipeComponents.slide(1);
                 this.applicationMenu=false;
+                this.$refs.funds.getFunds();
             },
             categoryControlApplication() {
                 this.menuTitle = 'Категории';
                 this.$refs.swipeComponents.slide(2);
                 this.applicationMenu=false;
+                this.$refs.categories.getCategories();
             },
             barcodeControl() {
                 this.menuTitle = 'Сканировать чек';
@@ -185,6 +205,7 @@
                 this.menuTitle = 'Напоминания';
                 this.$refs.swipeComponents.slide(3);
                 this.applicationMenu=false;
+                this.$refs.events.getEvents();
             },
             moneyTransactionControlControlApplication() {
                 this.applicationMenu=false;
@@ -201,7 +222,19 @@
             },
             alertGet () {
                 return this.$store.getters.getAlert;
-            }
+            },
+        },
+        watch: {
+            sliderPosition() {
+                let index = this.$refs.swipeComponents.getPos();
+                this.swiperCallback(this.sliderPosition);
+            },
+            swipeOptions: {
+                handler: function (val, oldVal) {
+                    this.swiperCallback(val.slide);
+                },
+                deep: true,
+            },
         },
         mounted() {
             this.$on('closeMoneyTransaction', function () {

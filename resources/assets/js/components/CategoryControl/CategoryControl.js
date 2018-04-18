@@ -7,7 +7,7 @@ export default {
     props: {
         showCategoryComponent: {
             type: Boolean,
-            default: false,
+            default: true,
         },
     },
 

@@ -6,7 +6,7 @@ export default {
     props: {
         showEventControl: {
             type: Boolean,
-            default: false,
+            default: true,
         },
     },
     data: () => ({

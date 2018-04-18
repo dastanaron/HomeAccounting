@@ -7,7 +7,7 @@ export default {
     props: {
         showBillsTable: {
             type: Boolean,
-            default: false,
+            default: true,
         },
     },
     data: () => ({

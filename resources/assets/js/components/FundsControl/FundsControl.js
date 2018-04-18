@@ -7,7 +7,7 @@ export default {
     props: {
         showFundsComponent: {
             type: Boolean,
-            default: false,
+            default: true,
         },
     },
     data: () => ({
