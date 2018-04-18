@@ -17,9 +17,11 @@ window.Vue = require('vue');
 
 import Vuex from 'vuex'
 import Vuetify from 'vuetify';
+import Vue2TouchEvents from 'vue2-touch-events'
 
 Vue.use(Vuex);
 Vue.use(Vuetify);
+Vue.use(Vue2TouchEvents)
 
 //import PrivateArea from './components/PrivateArea/PrivateArea.js';
 

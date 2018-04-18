@@ -103,12 +103,14 @@
                 </v-list>
             </v-card>
         </v-menu>
-        <bills-control :showBillsTable="billsControl"></bills-control>
-        <funds-control :showFundsComponent="fundsControl"></funds-control>
-        <category-control :showCategoryComponent="categoryControl"></category-control>
-        <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
-        <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
-        <events-control :showEventControl="eventsControl"></events-control>
+        <span v-touch:swipe="swipe">
+            <bills-control :showBillsTable="billsControl"></bills-control>
+            <funds-control :showFundsComponent="fundsControl"></funds-control>
+            <category-control :showCategoryComponent="categoryControl"></category-control>
+            <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
+            <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
+            <events-control :showEventControl="eventsControl"></events-control>
+        </span>
     </v-app>
 </template>
 <script>
@@ -200,7 +202,45 @@
             goToPanel() {
               window.location.href = '/home';
             },
+            swipe (direction) {
 
+                if(this.billsControl === true) {
+                    if(direction === 'left') {
+                        this.fundsControlApplication();
+                    }
+                    else if(direction === 'right') {
+                        this.eventsControlApplication();
+                    }
+                }
+
+                else if(this.fundsControl === true) {
+                    if(direction === 'left') {
+                        this.categoryControlApplication();
+                    }
+                    else if(direction === 'right') {
+                        this.billsControlApplication();
+                    }
+                }
+
+                else if(this.categoryControl === true) {
+                    if(direction === 'left') {
+                        this.eventsControlApplication();
+                    }
+                    else if(direction === 'right') {
+                        this.fundsControlApplication();
+                    }
+                }
+
+                else if(this.eventsControl === true) {
+                    if(direction === 'left') {
+                        this.billsControlApplication();
+                    }
+                    else if(direction === 'right') {
+                        this.categoryControlApplication();
+                    }
+                }
+                
+            }
 
         },
         computed: {
