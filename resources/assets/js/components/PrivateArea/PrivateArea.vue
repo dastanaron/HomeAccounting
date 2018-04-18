@@ -2,10 +2,10 @@
     <v-app id="inspire">
         <v-toolbar dark color="primary">
 
-            <v-tooltip bottom>
+            <!--<v-tooltip bottom>
                 <v-toolbar-side-icon slot="activator" @click="goToPanel()"></v-toolbar-side-icon>
                 <span>Выйти в панель</span>
-            </v-tooltip>
+            </v-tooltip>!-->
             <v-toolbar-title class="white--text">{{ menuTitle }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
@@ -80,13 +80,13 @@
                     </v-list-tile>
                 </v-list>
                 <v-list>
-                    <v-list-tile avatar  @click="barcodeControl()">
+                    <v-list-tile avatar  @click="goToPanel()">
                         <v-list-tile-avatar>
-                            <img class="qr-code-icon" src="/image/icons/qrcode.png" />
+                            <v-icon>dashboard</v-icon>
                         </v-list-tile-avatar>
                         <v-list-tile-content>
-                            <v-list-tile-title>Сканировать QR-код</v-list-tile-title>
-                            <v-list-tile-sub-title>Сканировать код для занесения чека(test)</v-list-tile-sub-title>
+                            <v-list-tile-title>Перейти в панель</v-list-tile-title>
+                            <v-list-tile-sub-title>Перейти в панель управления</v-list-tile-sub-title>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
