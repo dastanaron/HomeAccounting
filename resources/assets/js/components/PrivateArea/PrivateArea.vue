@@ -103,14 +103,15 @@
                 </v-list>
             </v-card>
         </v-menu>
-        <div v-touch:swipe="swipe">
-            <bills-control :showBillsTable="billsControl"></bills-control>
-            <funds-control :showFundsComponent="fundsControl"></funds-control>
-            <category-control :showCategoryComponent="categoryControl"></category-control>
-            <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
-            <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
-            <events-control :showEventControl="eventsControl"></events-control>
-        </div>
+        <swipe ref="swipeComponents" :options="swipeOptions">
+            <swipe-item><bills-control ref="bills" :showBillsTable="billsControl"></bills-control></swipe-item>
+            <swipe-item><funds-control :showFundsComponent="fundsControl"></funds-control></swipe-item>
+            <swipe-item><category-control :showCategoryComponent="categoryControl"></category-control></swipe-item>
+            <swipe-item><events-control :showEventControl="eventsControl"></events-control></swipe-item>
+        </swipe>
+        <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
+        <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
+
     </v-app>
 </template>
 <script>
@@ -128,13 +129,24 @@
             menuTitle: 'Личный кабинет',
             applicationMenu: false,
 
+            swipeOptions: {
+                startSlide: 1,
+                speed: 300,
+                auto: 0,
+                continuous: true,
+                disableScroll: false,
+                stopPropagation: false,
+                /*callback: function (index, slide) {  },
+                transitionEnd: function (index, slide) {  }*/
+            },
+
             //Control Applications
-            billsControl: false, //bills-control
-            fundsControl: false, //funds-control
-            categoryControl: false, //category-control
+            billsControl: true, //bills-control
+            fundsControl: true, //funds-control
+            categoryControl: true, //category-control
             moneyTransactionControl: false, //money-transaction
             barcodeScannerControl: false, //barcode-scanner-control
-            eventsControl: false, //events-control
+            eventsControl: true, //events-control
 
             reloadBills: false,
 
@@ -144,34 +156,16 @@
                 window.location.reload()
             },
             billsControlApplication() {
-                this.menuTitle = 'Управление счетами';
+                this.$refs.swipeComponents.slide(0);
                 this.applicationMenu=false;
-                this.fundsControl = false;
-                this.categoryControl = false;
-                this.moneyTransactionControl = false;
-                this.barcodeScannerControl = false;
-                this.eventsControl = false;
-                this.billsControl = true;
             },
             fundsControlApplication() {
-                this.menuTitle = 'Управление расходами';
-                this.billsControl = false;
+                this.$refs.swipeComponents.slide(1);
                 this.applicationMenu=false;
-                this.moneyTransactionControl = false;
-                this.categoryControl = false;
-                this.barcodeScannerControl = false;
-                this.eventsControl = false;
-                this.fundsControl = true;
             },
             categoryControlApplication() {
-                this.menuTitle = 'Управление категориями';
-                this.billsControl = false;
+                this.$refs.swipeComponents.slide(2);
                 this.applicationMenu=false;
-                this.fundsControl = false;
-                this.moneyTransactionControl = false;
-                this.barcodeScannerControl = false;
-                this.eventsControl = false;
-                this.categoryControl = true;
             },
             barcodeControl() {
                 this.menuTitle = 'Сканировать чек';
@@ -185,15 +179,8 @@
                 this.barcodeScannerControl = true;
             },
             eventsControlApplication() {
-                this.menuTitle = 'Управление напоминаниями';
-                this.billsControl = false;
+                this.$refs.swipeComponents.slide(3);
                 this.applicationMenu=false;
-                this.fundsControl = false;
-                this.moneyTransactionControl = false;
-                this.barcodeScannerControl = false;
-                this.categoryControl = false;
-                this.barcodeScannerControl = false;
-                this.eventsControl = true;
             },
             moneyTransactionControlControlApplication() {
                 this.applicationMenu=false;
@@ -202,45 +189,6 @@
             goToPanel() {
               window.location.href = '/home';
             },
-            swipe (direction) {
-
-                if(this.billsControl === true) {
-                    if(direction === 'left') {
-                        this.fundsControlApplication();
-                    }
-                    else if(direction === 'right') {
-                        this.eventsControlApplication();
-                    }
-                }
-
-                else if(this.fundsControl === true) {
-                    if(direction === 'left') {
-                        this.categoryControlApplication();
-                    }
-                    else if(direction === 'right') {
-                        this.billsControlApplication();
-                    }
-                }
-
-                else if(this.categoryControl === true) {
-                    if(direction === 'left') {
-                        this.eventsControlApplication();
-                    }
-                    else if(direction === 'right') {
-                        this.fundsControlApplication();
-                    }
-                }
-
-                else if(this.eventsControl === true) {
-                    if(direction === 'left') {
-                        this.billsControlApplication();
-                    }
-                    else if(direction === 'right') {
-                        this.categoryControlApplication();
-                    }
-                }
-                
-            }
 
         },
         computed: {
@@ -252,10 +200,10 @@
             }
         },
         mounted() {
-            this.fundsControlApplication();
             this.$on('closeMoneyTransaction', function () {
+                this.moneyTransactionControl = false;
                 this.billsControlApplication();
-                this.$children[0].$children.find(child => { return child.$options.name === "bills-control"; }).$emit('reloadTable');
+                this.$refs.bills.getBills();
             });
         },
         components: {

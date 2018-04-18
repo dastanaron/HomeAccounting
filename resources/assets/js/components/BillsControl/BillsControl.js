@@ -172,9 +172,6 @@ export default {
         },
     },
     mounted() {
-        this.$on('reloadTable', function () {
-            this.getBills();
-        })
         this.getBills();
     }
 
