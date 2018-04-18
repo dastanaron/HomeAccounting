@@ -156,14 +156,17 @@
                 window.location.reload()
             },
             billsControlApplication() {
+                this.menuTitle = 'Счета';
                 this.$refs.swipeComponents.slide(0);
                 this.applicationMenu=false;
             },
             fundsControlApplication() {
+                this.menuTitle = 'Транзакции';
                 this.$refs.swipeComponents.slide(1);
                 this.applicationMenu=false;
             },
             categoryControlApplication() {
+                this.menuTitle = 'Категории';
                 this.$refs.swipeComponents.slide(2);
                 this.applicationMenu=false;
             },
@@ -179,6 +182,7 @@
                 this.barcodeScannerControl = true;
             },
             eventsControlApplication() {
+                this.menuTitle = 'Напоминания';
                 this.$refs.swipeComponents.slide(3);
                 this.applicationMenu=false;
             },
