@@ -159,15 +159,19 @@
                 switch (index) {
                     case 0:
                         this.menuTitle = 'Счета';
+                        this.$refs.bills.getBills();
                         break;
                     case 1:
                         this.menuTitle = 'Транзакции';
+                        this.$refs.funds.getFunds();
                         break;
                     case 2:
                         this.menuTitle = 'Категории';
+                        this.$refs.categories.getCategories();
                         break;
                     case 3:
                         this.menuTitle = 'Напоминания';
+                        this.$refs.events.getEvents();
                         break;
 
                 }
