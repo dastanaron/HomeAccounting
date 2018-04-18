@@ -103,14 +103,14 @@
                 </v-list>
             </v-card>
         </v-menu>
-        <span v-touch:swipe="swipe">
+        <div v-touch:swipe="swipe">
             <bills-control :showBillsTable="billsControl"></bills-control>
             <funds-control :showFundsComponent="fundsControl"></funds-control>
             <category-control :showCategoryComponent="categoryControl"></category-control>
             <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
             <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
             <events-control :showEventControl="eventsControl"></events-control>
-        </span>
+        </div>
     </v-app>
 </template>
 <script>
