@@ -41,7 +41,6 @@ class VKAPI extends Command
      */
     public function handle()
     {
-
         $this->logMessage('==========Обработка событий===========');
 
         $apiKey = env('VK_API_KEY');

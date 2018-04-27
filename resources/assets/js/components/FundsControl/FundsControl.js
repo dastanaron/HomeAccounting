@@ -238,7 +238,7 @@ export default {
 
             //clear form
             this.fundsFormData.bills_id = this.fundsFormData.rev = this.fundsFormData.category_id = this.fundsFormData.sum = 0;
-            this.fundsFormData.cause;
+            this.fundsFormData.cause = '';
 
             this.fundsFormData.date = this.getCurrentDate();
 
