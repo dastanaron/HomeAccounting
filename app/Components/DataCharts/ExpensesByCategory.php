@@ -5,6 +5,18 @@ namespace App\Components\DataCharts;
 use \App\Funds;
 use \App\revCategories;
 
+/**
+ *
+ * Класс для сбора данных для графика
+ *
+ * Принимает в коструктор user_id, выборку дат и указатель расходов.
+ *
+ * Нужно сборку данных вынести в очередь, поскольку очень сложные пересборки массивов.
+ * Потом из сборки выводить на front'end готовый json.
+ *
+ * Class ExpensesByCategory
+ * @package App\Components\DataCharts
+ */
 class ExpensesByCategory
 {
 
@@ -65,6 +77,9 @@ class ExpensesByCategory
             ->whereBetween('funds.date', [$this->dateStart, $this->dateEnd]);
     }
 
+    /**
+     * @return revCategories
+     */
     public function queryCategories()
     {
         return revCategories::select('id', 'user_id', 'name')->where('user_id', '=', $this->userId);
@@ -109,14 +124,16 @@ class ExpensesByCategory
 
         foreach($fundsData as $date => $itemsCategory) {
 
+            $formattedDate = $this->dateFormat($date);
+
             foreach($itemsCategory as $categoryID=>$items) {
 
-                $newArray[$date][$categoryID]['sum'] = 0;
-                $newArray[$date][$categoryID]['name'] = $items[0]['category_name'];
+                $newArray[$formattedDate][$categoryID]['sum'] = 0;
+                $newArray[$formattedDate][$categoryID]['name'] = $items[0]['category_name'];
 
                 foreach($items as $item) {
 
-                    $newArray[$date][$categoryID]['sum'] += $item['sum'];
+                    $newArray[$formattedDate][$categoryID]['sum'] += $item['sum'];
 
                 }
 
@@ -128,6 +145,20 @@ class ExpensesByCategory
 
     }
 
+    /**
+     * @param $date
+     * @param string $format
+     * @return string
+     */
+    public function dateFormat($date, $format="Y-m-d") {
+
+        return (new \DateTime($date))->format($format);
+
+    }
+
+    /**
+     * @return array
+     */
     public function addSumToOtherCategories()
     {
         $categories = $this->queryCategories()->get()->toArray();
@@ -167,6 +198,9 @@ class ExpensesByCategory
         return json_encode($this->getData());
     }
 
+    /**
+     * @return string
+     */
     public function getJsonByChart()
     {
         $data = $this->getData();
@@ -199,6 +233,9 @@ class ExpensesByCategory
 
     }
 
+    /**
+     * @return array
+     */
     public function buildRowsToChartData()
     {
         $data = $this->getData();
@@ -230,6 +267,10 @@ class ExpensesByCategory
         return $array;
     }
 
+
+    /**
+     * @return array
+     */
     public function buildRowsToChart()
     {
         $data = $this->buildRowsToChartData();
@@ -258,7 +299,28 @@ class ExpensesByCategory
 
         }
 
-        return $newArray;
+
+        $formattedArray = array();
+
+        foreach($newArray as $items) {
+
+            $tmpArray = array();
+
+            foreach($items as $item) {
+
+                if(preg_match('#\d+#', $item)) {
+                    $tmpArray[] = (int) $item;
+                }
+                else {
+                    $tmpArray[] = $item;
+                }
+
+            }
+            $formattedArray[] = $tmpArray;
+
+        }
+
+        return $formattedArray;
 
     }
 
