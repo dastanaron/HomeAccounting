@@ -187,7 +187,13 @@ class ExpensesByCategory
 
         $categoryData = $this->buildRowsToChart();
 
-        $array = array_merge($x,  $categoryData);
+        //$array = array_merge($array, $x,  $categoryData);
+
+        $array[] = $x;
+
+        foreach ($categoryData as $item) {
+            $array[] = $item;
+        }
 
         return json_encode($array);
 
