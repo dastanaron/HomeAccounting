@@ -171,18 +171,88 @@ class ExpensesByCategory
     {
         $data = $this->getData();
 
-        $array = array();
+        $xArray = array();
 
-        $dataArray = array();
+        $string = 'x, ';
 
         foreach($data as $date => $items) {
-            $array['x'][] = $date;
+            $xArray['x'][] = $date;
+        }
+
+        $string .= implode(', ', $xArray['x']);
+
+        $array = array();
+
+        $x = explode(', ', $string);
+
+        $categoryData = $this->buildRowsToChart();
+
+        $array = array_merge($x,  $categoryData);
+
+        return json_encode($array);
+
+    }
+
+    public function buildRowsToChartData()
+    {
+        $data = $this->getData();
+
+        $categories = $this->queryCategories()->get()->toArray();
+
+
+        $array = array();
+
+        $i = 0;
+
+        foreach($categories as $category) {
+
+            $array[$i][$category['name']] = array();
+
+            foreach($data as $date => $items) {
+
+                foreach($items as $categoryId => $item) {
+                    if($categoryId === $category['id']) {
+                        $array[$i][$category['name']][] = $item['sum'];
+                    }
+                }
+
+            }
+
+            $i++;
+        }
+
+        return $array;
+    }
+
+    public function buildRowsToChart()
+    {
+        $data = $this->buildRowsToChartData();
+
+        $array = array();
+
+        $string = '';
+
+        foreach($data as $elements) {
+
+            foreach($elements as $key => $value) {
+
+                $string = $key . ', ' . implode(', ', $value);
+
+            }
+
+            $array[] = $string;
 
         }
 
+        $newArray = array();
 
+        foreach($array as $item) {
 
-        return $array;
+            $newArray[] = explode(', ', $item);
+
+        }
+
+        return $newArray;
 
     }
 
