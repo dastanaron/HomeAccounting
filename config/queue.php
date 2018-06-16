@@ -65,6 +65,15 @@ return [
             'block_for' => null,
         ],
 
+        'rabbitmq' => [
+            'driver' => 'rabbitmq',
+            'host' => env('rabbitmqHost', 'localhost'),
+            'port' => env('rabbitmqPort', 5672),
+            'vhost' => env('rabbitmqVhost', '/'),
+            'login' => env('rabbitmqLogin', 'guest'),
+            'password' => env('rabbitmqPassword', 'guest'),
+        ],
+
     ],
 
     /*

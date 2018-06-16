@@ -1,0 +1,217 @@
+<template>
+    <div class="my-4">
+
+        <v-card>
+            <v-card-title>
+                <h2>Фильтры</h2>
+                <v-container grid-list-md>
+                    <v-layout wrap>
+                        <v-flex xs12 sm4 md2>
+                            <v-select
+                                    :items="revList"
+                                    v-model="filterForm.rev"
+                                    item-text="name"
+                                    item-value="value"
+                                    label="Доход или расход"
+                                    clearable
+                                    autocomplete
+                            ></v-select>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-dialog
+                                    ref="dialog"
+                                    persistent
+                                    v-model="DatePickerFilterStart"
+                                    lazy
+                                    full-width
+                                    width="290px"
+                            >
+                                <v-text-field
+                                        slot="activator"
+                                        label="Дата от"
+                                        v-model="filterForm.dateStart"
+                                        prepend-icon="event"
+                                        readonly
+                                        clearable
+                                ></v-text-field>
+                                <v-date-picker type="date" locale="ru" v-model="filterForm.dateStart" scrollable>
+                                    <v-spacer></v-spacer>
+                                    <v-btn flat color="primary" @click="DatePickerFilterStart=false">OK</v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-dialog
+                                    ref="dialog"
+                                    persistent
+                                    v-model="DatePickerFilterEnd"
+                                    lazy
+                                    full-width
+                                    width="290px"
+                            >
+                                <v-text-field
+                                        slot="activator"
+                                        label="Дата до"
+                                        v-model="filterForm.dateEnd"
+                                        prepend-icon="event"
+                                        readonly
+                                        clearable
+                                ></v-text-field>
+                                <v-date-picker type="date" locale="ru" v-model="filterForm.dateEnd" scrollable>
+                                    <v-spacer></v-spacer>
+                                    <v-btn flat color="primary" @click="DatePickerFilterEnd=false">OK</v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-btn color="primary" @click="createValidator()" :disabled="requestButtonDisabled">Запросить</v-btn>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+            </v-card-title>
+        </v-card>
+        <v-card>
+            <div id="chart"></div>
+        </v-card>
+        <v-card>
+            <v-card-text>
+                Выберите даты и тип, после нажмите кнопку запросить. Система будет подготавливать данные. Как только они будут готовы,
+                система автоматически нарисует график. Для удобства можно щелкать по категориям, чтобы отфильтровать данные на графике.
+            </v-card-text>
+        </v-card>
+
+    </div>
+</template>
+<script>
+    import Chart from 'c3';
+    import axios from "axios";
+
+    export default {
+        name: "analytics",
+
+        data: () => ({
+            fileId: '',
+
+            chartData: [],
+
+            DatePickerFilterStart: false,
+            DatePickerFilterEnd: false,
+
+            filterForm: {
+                rev: 2,
+                dateStart: '',
+                dateEnd: '',
+            },
+
+            revList: [
+                {
+                    value: 1,
+                    name: 'Доход',
+                },
+                {
+                    value: 2,
+                    name: 'Расход',
+                },
+            ],
+
+            interval: null,
+
+            requestButtonDisabled: false,
+
+        }),
+        methods: {
+            //ПОлучает готовый json для графика, выключает интервал, прелоадер и разблокирует кнопку
+            getData() {
+                axios.post('/analytics/get-chart-data', {
+                    file_id: this.fileId,
+                })
+                    .then(response=> {
+
+                        if(response.data.status !== 400) {
+                            this.chartData = response.data;
+
+                            this.chartGenerate();
+                        }
+                        else {
+                            this.$store.commit('setAlert', {type: 'warning', status: true, message: 'Не найдены данные по выбранным параметрам'})
+                        }
+
+                        clearInterval(this.interval);
+
+                        this.$store.commit('setPreloader', false);
+                        this.requestButtonDisabled = false;
+
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    });
+            },
+            //Если проходит валидацию, дисейблим кнопу и запускаем предзагрузчик
+            createValidator() {
+                if (this.filterForm.dateStart !== '' && this.filterForm.dateEnd !== '' && this.filterForm !== '') {
+                    this.requestButtonDisabled = true;
+                    this.$store.commit('setPreloader');
+                    this.createGraph();
+                }
+                else {
+                    this.$store.commit('setAlert', {type: 'error', status: true, message: 'Не заполнены обязательные поля'})
+                }
+            },
+            //Кидает запрос, там работает через очередь, вклчает интервал ожидания ответа
+            createGraph() {
+                axios.post('/analytics/create', {
+                    date_start: this.filterForm.dateStart + ' 00:00:00',
+                    date_end: this.filterForm.dateEnd + ' 23:59:59',
+                    rev: this.filterForm.rev,
+                })
+                    .then(response=> {
+
+                        if(response.data.status === 200) {
+                            this.fileId = response.data.fileId;
+                            this.interval = setInterval(() => {
+                                this.getData();
+                            }, 2000);
+                        }
+
+
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    });
+            },
+            chartGenerate() {
+                Chart.generate({
+                    data: {
+                        x: 'x',
+                        columns: this.chartData,
+                    },
+                    axis: {
+                        x: {
+                            type: 'timeseries',
+                            tick: {
+                                format: '%d-%m-%Y'
+                            }
+                        }
+                    }
+                });
+            }
+        },
+        computed: {
+
+        },
+        watch: {
+
+        },
+        mounted() {
+
+        },
+        components: {
+
+        },
+
+    }
+</script>
+
+<style scoped>
+
+</style>

@@ -71,3 +71,14 @@ Route::delete('/pa/events', 'EventController@deleteEvent');
 
 Route::middleware('auth')->post('/callback/vk-authorize', 'CallBackController@vkAuthorize');
 Route::middleware('auth')->post('/callback/vk-unauthorize', 'CallBackController@vkUnAthorize');
+
+
+
+/**
+ * Analytics methods
+ */
+
+Route::get('/analytics', 'AnalyticsController@index');
+Route::post('/analytics/get-chart-data', 'AnalyticsController@getDataToChartAnalytics');
+
+Route::post('/analytics/create', 'AnalyticsController@createQueueToAnalyticsData');

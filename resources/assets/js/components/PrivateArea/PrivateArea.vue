@@ -1,7 +1,6 @@
 <template>
     <v-app id="inspire">
         <v-toolbar dark color="primary">
-
             <!--<v-tooltip bottom>
                 <v-toolbar-side-icon slot="activator" @click="goToPanel()"></v-toolbar-side-icon>
                 <span>Выйти в панель</span>
@@ -80,17 +79,6 @@
                     </v-list-tile>
                 </v-list>
                 <v-list>
-                    <v-list-tile avatar  @click="goToPanel()">
-                        <v-list-tile-avatar>
-                            <v-icon>dashboard</v-icon>
-                        </v-list-tile-avatar>
-                        <v-list-tile-content>
-                            <v-list-tile-title>Перейти в панель</v-list-tile-title>
-                            <v-list-tile-sub-title>Перейти в панель управления</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
-                <v-list>
                     <v-list-tile avatar  @click="eventsControlApplication()">
                         <v-list-tile-avatar>
                             <v-icon>notifications</v-icon>
@@ -101,6 +89,28 @@
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
+                <v-list>
+                    <v-list-tile avatar  @click="analyticsApplication()">
+                        <v-list-tile-avatar>
+                            <v-icon>show_chart</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Аналитика</v-list-tile-title>
+                            <v-list-tile-sub-title>Графики</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+                <v-list>
+                    <v-list-tile avatar  @click="goToPanel()">
+                        <v-list-tile-avatar>
+                            <v-icon>dashboard</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Перейти в панель</v-list-tile-title>
+                            <v-list-tile-sub-title>Перейти в панель управления</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
             </v-card>
         </v-menu>
         <swipe ref="swipeComponents" :options="swipeOptions">
@@ -108,6 +118,7 @@
             <swipe-item><funds-control ref="funds"></funds-control></swipe-item>
             <swipe-item><category-control ref="categories"></category-control></swipe-item>
             <swipe-item><events-control ref="events"></events-control></swipe-item>
+            <swipe-item><analytics ref="analytics"></analytics></swipe-item>
         </swipe>
         <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
         <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
@@ -121,6 +132,7 @@
     import MoneyTransaction from "../MoneyTransaction/MoneyTransaction";
     import BarcodeScanner from "../BarcodeScanner/BarcodeScanner";
     import EventsControl from "../EventsControl/EventsControl";
+    import Analytics from "../analytics/analytics";
 
     export default {
         name: "private-area",
@@ -211,6 +223,11 @@
                 this.applicationMenu=false;
                 this.$refs.events.getEvents();
             },
+            analyticsApplication() {
+                this.menuTitle = 'Аналитика';
+                this.$refs.swipeComponents.slide(4);
+                this.applicationMenu=false;
+            },
             moneyTransactionControlControlApplication() {
                 this.applicationMenu=false;
                 this.moneyTransactionControl = true;
@@ -248,6 +265,7 @@
             });
         },
         components: {
+            Analytics,
             EventsControl,
             BarcodeScanner,
             MoneyTransaction,

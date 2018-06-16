@@ -20,6 +20,7 @@
     "vue": "^2.5.7"
   },
   "dependencies": {
+    "c3": "^0.4.23",
     "fs": "0.0.1-security",
     "hoek": "^5.0.3",
     "instascan": "^1.0.0",

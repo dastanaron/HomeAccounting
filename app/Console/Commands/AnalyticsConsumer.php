@@ -2,28 +2,24 @@
 
 namespace App\Console\Commands;
 
-use App\Bills;
-use App\Funds;
 use Illuminate\Console\Command;
+use App\RabbitMQ\Analytics\MessageConsumer;
 
-use App\RabbitMQ\Analytics\MessagePush;
-
-class test extends Command
+class AnalyticsConsumer extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'test:test';
+    protected $signature = 'analyticsconsumer:start';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Запускает консьюмер очереди аналитики';
 
     /**
      * Create a new command instance.
@@ -42,16 +38,8 @@ class test extends Command
      */
     public function handle()
     {
-        $rabbitMQ = MessagePush::init();
+        $consumer = MessageConsumer::init();
 
-        $messageBody = [
-            'method' => 'название метода',
-            'param1' => 'Первый параметр',
-            'param2' => 'Второй параметр',
-        ];
-
-        //$messageBody = 'quit';
-
-        $rabbitMQ->push($messageBody);
+        $consumer->run();
     }
 }
