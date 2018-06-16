@@ -40,6 +40,6 @@ class AnalyticsConsumer extends Command
     {
         $consumer = MessageConsumer::init();
 
-        dump($consumer->run());
+        $consumer->run();
     }
 }

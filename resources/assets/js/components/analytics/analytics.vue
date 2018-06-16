@@ -1,21 +1,200 @@
 <template>
     <div class="my-4">
-        <div id="chart"></div>
+
+        <v-card>
+            <v-card-title>
+                <h2>Фильтры</h2>
+                <v-container grid-list-md>
+                    <v-layout wrap>
+                        <v-flex xs12 sm4 md2>
+                            <v-select
+                                    :items="revList"
+                                    v-model="filterForm.rev"
+                                    item-text="name"
+                                    item-value="value"
+                                    label="Доход или расход"
+                                    clearable
+                                    autocomplete
+                            ></v-select>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-dialog
+                                    ref="dialog"
+                                    persistent
+                                    v-model="DatePickerFilterStart"
+                                    lazy
+                                    full-width
+                                    width="290px"
+                            >
+                                <v-text-field
+                                        slot="activator"
+                                        label="Дата от"
+                                        v-model="filterForm.dateStart"
+                                        prepend-icon="event"
+                                        readonly
+                                        clearable
+                                ></v-text-field>
+                                <v-date-picker type="date" locale="ru" v-model="filterForm.dateStart" scrollable>
+                                    <v-spacer></v-spacer>
+                                    <v-btn flat color="primary" @click="DatePickerFilterStart=false">OK</v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-dialog
+                                    ref="dialog"
+                                    persistent
+                                    v-model="DatePickerFilterEnd"
+                                    lazy
+                                    full-width
+                                    width="290px"
+                            >
+                                <v-text-field
+                                        slot="activator"
+                                        label="Дата до"
+                                        v-model="filterForm.dateEnd"
+                                        prepend-icon="event"
+                                        readonly
+                                        clearable
+                                ></v-text-field>
+                                <v-date-picker type="date" locale="ru" v-model="filterForm.dateEnd" scrollable>
+                                    <v-spacer></v-spacer>
+                                    <v-btn flat color="primary" @click="DatePickerFilterEnd=false">OK</v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-flex>
+                        <v-flex xs12 sm4 md2>
+                            <v-btn color="primary" @click="createValidator()" :disabled="requestButtonDisabled">Запросить</v-btn>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+            </v-card-title>
+        </v-card>
+        <v-card>
+            <div id="chart"></div>
+        </v-card>
+        <v-card>
+            <v-card-text>
+                Выберите даты и тип, после нажмите кнопку запросить. Система будет подготавливать данные. Как только они будут готовы,
+                система автоматически нарисует график. Для удобства можно щелкать по категориям, чтобы отфильтровать данные на графике.
+            </v-card-text>
+        </v-card>
+
     </div>
 </template>
 <script>
     import Chart from 'c3';
+    import axios from "axios";
 
     export default {
         name: "analytics",
 
         data: () => ({
+            fileId: '',
+
+            chartData: [],
+
+            DatePickerFilterStart: false,
+            DatePickerFilterEnd: false,
+
+            filterForm: {
+                rev: 2,
+                dateStart: '',
+                dateEnd: '',
+            },
+
+            revList: [
+                {
+                    value: 1,
+                    name: 'Доход',
+                },
+                {
+                    value: 2,
+                    name: 'Расход',
+                },
+            ],
+
+            interval: null,
+
+            requestButtonDisabled: false,
 
         }),
         methods: {
+            //ПОлучает готовый json для графика, выключает интервал, прелоадер и разблокирует кнопку
             getData() {
-                //Получаем данные с сервера
+                axios.post('/analytics/get-chart-data', {
+                    file_id: this.fileId,
+                })
+                    .then(response=> {
+
+                        if(response.data.status !== 400) {
+                            this.chartData = response.data;
+
+                            this.chartGenerate();
+                        }
+                        else {
+                            this.$store.commit('setAlert', {type: 'warning', status: true, message: 'Не найдены данные по выбранным параметрам'})
+                        }
+
+                        clearInterval(this.interval);
+
+                        this.$store.commit('setPreloader', false);
+                        this.requestButtonDisabled = false;
+
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    });
             },
+            //Если проходит валидацию, дисейблим кнопу и запускаем предзагрузчик
+            createValidator() {
+                if (this.filterForm.dateStart !== '' && this.filterForm.dateEnd !== '' && this.filterForm !== '') {
+                    this.requestButtonDisabled = true;
+                    this.$store.commit('setPreloader');
+                    this.createGraph();
+                }
+                else {
+                    this.$store.commit('setAlert', {type: 'error', status: true, message: 'Не заполнены обязательные поля'})
+                }
+            },
+            //Кидает запрос, там работает через очередь, вклчает интервал ожидания ответа
+            createGraph() {
+                axios.post('/analytics/create', {
+                    date_start: this.filterForm.dateStart + ' 00:00:00',
+                    date_end: this.filterForm.dateEnd + ' 23:59:59',
+                    rev: this.filterForm.rev,
+                })
+                    .then(response=> {
+
+                        if(response.data.status === 200) {
+                            this.fileId = response.data.fileId;
+                            this.interval = setInterval(() => {
+                                this.getData();
+                            }, 2000);
+                        }
+
+
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    });
+            },
+            chartGenerate() {
+                Chart.generate({
+                    data: {
+                        x: 'x',
+                        columns: this.chartData,
+                    },
+                    axis: {
+                        x: {
+                            type: 'timeseries',
+                            tick: {
+                                format: '%d-%m-%Y'
+                            }
+                        }
+                    }
+                });
+            }
         },
         computed: {
 
@@ -24,411 +203,7 @@
 
         },
         mounted() {
-            Chart.generate({
-                data: {
-                    x: 'x',
-                    columns: [
-                        [
-                            "x",
-                            "2018-04-01",
-                            "2018-04-02",
-                            "2018-04-03",
-                            "2018-04-04",
-                            "2018-04-05",
-                            "2018-04-06",
-                            "2018-04-08",
-                            "2018-04-09",
-                            "2018-04-10",
-                            "2018-04-11",
-                            "2018-04-12",
-                            "2018-04-13",
-                            "2018-04-14",
-                            "2018-04-15",
-                            "2018-04-16",
-                            "2018-04-17",
-                            "2018-04-18",
-                            "2018-04-19",
-                            "2018-04-21",
-                            "2018-04-23",
-                            "2018-04-25",
-                            "2018-04-26",
-                            "2018-04-27",
-                            "2018-04-28",
-                            "2018-04-29",
-                            "2018-04-30",
-                            "2018-04-24"
-                        ],
-                        [
-                            "Зарплата",
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ],
-                        [
-                            "Здоровье",
-                            0,
-                            0,
-                            0,
-                            0,
-                            5000,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            110,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ],
-                        [
-                            "Продукты питания",
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            3000,
-                            0,
-                            0,
-                            0,
-                            1023,
-                            3735,
-                            0,
-                            0,
-                            0,
-                            0,
-                            786,
-                            3262,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ],
-                        [
-                            "Транспорт",
-                            88,
-                            0,
-                            0,
-                            0,
-                            88,
-                            0,
-                            2397,
-                            1855,
-                            0,
-                            0,
-                            16757,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            288,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            3000,
-                            1032,
-                            1765
-                        ],
-                        [
-                            "Другие",
-                            10000,
-                            2000,
-                            1167,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            138,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            4000,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ],
-                        [
-                            "Развлечения",
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            700,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            1230,
-                            0
-                        ],
-                        [
-                            "Услуги быта и связи",
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            500,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            60,
-                            0,
-                            0,
-                            548,
-                            0,
-                            0,
-                            1050,
-                            0,
-                            0,
-                            0,
-                            0,
-                            1050,
-                            0
-                        ],
-                        [
-                            "Покупки для дома",
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            1220,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            146,
-                            0
-                        ],
-                        [
-                            "Столовые и кафе",
-                            0,
-                            0,
-                            315,
-                            422,
-                            0,
-                            358,
-                            99,
-                            318,
-                            318,
-                            388,
-                            0,
-                            200,
-                            0,
-                            99,
-                            318,
-                            488,
-                            336,
-                            388,
-                            0,
-                            436,
-                            358,
-                            290,
-                            290,
-                            1141,
-                            626,
-                            423,
-                            0
-                        ],
-                        [
-                            "Одежда",
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            1800,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ],
-                        [
-                            "Корректировка",
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            203,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ],
-                        [
-                            "Занял",
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            5000,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ]
-                    ]
-                },
-                axis: {
-                    x: {
-                        type: 'timeseries',
-                        tick: {
-                            format: '%d-%m-%Y'
-                        }
-                    }
-                }
-            });
+
         },
         components: {
 

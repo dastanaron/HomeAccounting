@@ -60,9 +60,9 @@ class ExpensesByCategory
      * @param $dateEnd
      * @return ExpensesByCategory
      */
-    public static function init($userId, $dateStart, $dateEnd)
+    public static function init($userId, $dateStart, $dateEnd, $fundsRev=2)
     {
-        return new self($userId, $dateStart, $dateEnd);
+        return new self($userId, $dateStart, $dateEnd, $fundsRev);
     }
 
     /**

@@ -7,6 +7,12 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 abstract class RabbitmqAbstractClass implements RabbitmqInterface
 {
 
+
+    /**
+     * @var bool
+     */
+    public static $debug = false;
+
     /**
      * @var array
      */
@@ -45,6 +51,8 @@ abstract class RabbitmqAbstractClass implements RabbitmqInterface
      */
     public function __construct()
     {
+
+        self::$debug = !empty(env('APP_DEBUG')) ? env('APP_DEBUG') : false;
 
         $this->config = $this->config();
 

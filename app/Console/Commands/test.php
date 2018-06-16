@@ -42,7 +42,6 @@ class test extends Command
      */
     public function handle()
     {
-        /*
         $rabbitMQ = MessagePush::init();
 
         $messageBody = [
@@ -54,10 +53,5 @@ class test extends Command
         //$messageBody = 'quit';
 
         $rabbitMQ->push($messageBody);
-        */
-
-        $chartData = \App\Components\DataCharts\ExpensesByCategory::init(1, '2018-04-01 00:00:00','2018-04-31 23:59:59');
-
-        dump($chartData->getJsonByChart());
     }
 }

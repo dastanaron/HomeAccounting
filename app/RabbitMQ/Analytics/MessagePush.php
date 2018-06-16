@@ -34,6 +34,7 @@ class MessagePush extends RabbitmqAbstractClass
 
     /**
      * @param $data
+     * @return bool
      */
     public function push($data)
     {
@@ -44,6 +45,8 @@ class MessagePush extends RabbitmqAbstractClass
         $this->channel->close();
 
         $this->connection->close();
+
+        return true;
     }
 
 }
