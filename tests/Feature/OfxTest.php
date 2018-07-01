@@ -13,9 +13,7 @@ use App\Modules\Import\Ofx\Tinkoff\TinkoffTransactionObject;
 class OfxTest extends TestCase
 {
     /**
-     * A basic test example.
-     *
-     * @return void
+     * Проверка, что объект принадлежит определенному классу
      */
     public function testOfxObject()
     {
@@ -26,6 +24,9 @@ class OfxTest extends TestCase
         $this->assertTrue($ofxIsOfxObject, 'Принадлежит классу ' . get_class($ofx));
     }
 
+    /**
+     * Вынести данный метод в тесты импорта Тинькоф, здесь ему не место
+     */
     public function testConvertParser()
     {
         OfxParser::setInputCharset('Windows-1251');
@@ -39,6 +40,9 @@ class OfxTest extends TestCase
 
     }
 
+    /**
+     * Проверка, что объект нужного класса
+     */
     public function testOfxXmlObject()
     {
         $ofx = OfxParser::getInstance()->openFile(__DIR__ . '/operations.ofx');
