@@ -24,7 +24,7 @@ export default {
             comment: '',
             sumRules: [
                 v => !!v || 'Сумма обязательна к заполнению',
-                v => /^\d+$/.test(v) || 'Сумма должна быть числом'
+                v => /^\d+[\,]?\d*$/.test(v) || 'Сумма должна быть числом вида (100 или 100,25)'
             ]
         },
         search: '',
@@ -120,7 +120,7 @@ export default {
             //construct form
             this.billFormData.id = object.id;
             this.billFormData.name = object.name;
-            this.billFormData.sum = object.sum;
+            this.billFormData.sum = object.sum.toString().replace(/\./gi, ',');
             this.billFormData.deadline = object.deadline;
             this.billFormData.comment = object.comment;
 
@@ -142,7 +142,8 @@ export default {
 
         },
         sumFormat(sum) {
-            return sum.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+            let number =  sum.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+            return number.replace(/\./, ',');
         },
         isMobile() {
             let mobile_getter = this.$store.getters.mobile;

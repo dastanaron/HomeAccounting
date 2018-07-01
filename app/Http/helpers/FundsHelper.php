@@ -12,6 +12,8 @@ use Auth;
 class FundsHelper
 {
 
+    use workingWithNumbers;
+
     /**
      * @var Request
      */
@@ -130,7 +132,7 @@ class FundsHelper
         $funds->bills_id = $this->bills_id;
         $funds->rev = $this->request->input('rev');
         $funds->category_id = $this->request->input('category_id');
-        $funds->sum = $this->request->input('sum');
+        $funds->sum = $this->sumToFloat($this->request->input('sum'));
         $funds->cause = $this->request->input('cause');
         $funds->date = $this->request->input('date');
 
@@ -167,7 +169,7 @@ class FundsHelper
 
         $funds->rev = $rev;
         $funds->category_id = $this->request->input('category_id');
-        $funds->sum = $this->request->input('sum');
+        $funds->sum = $this->sumToFloat($this->request->input('sum'));
         $funds->cause = $this->request->input('cause');
         $funds->date = $this->request->input('date');
 

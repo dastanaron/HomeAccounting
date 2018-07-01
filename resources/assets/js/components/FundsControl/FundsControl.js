@@ -58,7 +58,7 @@ export default {
             date: '',
             sumRules: [
                 v => !!v || 'Сумма обязательна к заполнению',
-                v => /^\d+$/.test(v) || 'Сумма должна быть целым числом'
+                v => /^\d+[\,]?\d*$/.test(v) || 'Сумма должна быть числом вида (100 или 100,25)'
             ],
             billsRules: [
                 v => !!v || 'Счет обязателен к заполнению',
@@ -260,7 +260,7 @@ export default {
             this.fundsFormData.cause = object.cause;
             this.fundsFormData.date = object.date;
             this.fundsFormData.rev = object.rev;
-            this.fundsFormData.sum = object.sum;
+            this.fundsFormData.sum = object.sum.toString().replace(/\./gi, ',');
 
             this.fundsFormType = 'update';
             this.fundsFormShow = true;
@@ -280,7 +280,8 @@ export default {
 
         },
         sumFormat(sum) {
-            return sum.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+            let number =  sum.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+            return number.replace(/\./, ',');
         },
         fundFilter() {
             console.log(this.fundsFilterForm);
