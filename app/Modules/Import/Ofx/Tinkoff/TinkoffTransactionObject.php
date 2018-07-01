@@ -11,6 +11,9 @@ class TinkoffTransactionObject
     const TYPE_DEBIT = 'DEBIT';
     const TYPE_CREDIT = 'CREDIT';
 
+    const TYPE_BASE_DEBIT = 2;
+    const TYPE_BASE_CREDIT = 1;
+
     /**
      * @var string
      */
@@ -22,7 +25,7 @@ class TinkoffTransactionObject
     public $date;
 
     /**
-     * @var string
+     * @var float
      */
     public $amount;
 
@@ -51,7 +54,7 @@ class TinkoffTransactionObject
     {
         $this->type = (string) $xmlObject->TRNTYPE;
         $this->date = $this->parseDate($xmlObject->DTPOSTED);
-        $this->amount = (string) $xmlObject->TRNAMT;
+        $this->amount = $this->parseAmount($xmlObject->TRNAMT);
         $this->fitId = (string) $xmlObject->FITID;
         $this->name = (string) $xmlObject->NAME;
         $this->category = (string) $xmlObject->MEMO;
@@ -81,5 +84,17 @@ class TinkoffTransactionObject
         return Carbon::parse($parsedTime);
     }
 
+    /**
+     * @param $amount
+     * @return float
+     */
+    protected function parseAmount($amount): float
+    {
+        $amount = str_replace('-', '', $amount);
+
+        $float = (float) $amount;
+
+        return round($float, 2);
+    }
 
 }

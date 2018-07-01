@@ -26,6 +26,11 @@ class TinkoffObject
     protected $transactionObjectsCollection = [];
 
     /**
+     * @var array
+     */
+    protected $dateRange = [];
+
+    /**
      * TinkoffObject constructor.
      * @param OfxObject $ofxObject
      */
@@ -63,6 +68,37 @@ class TinkoffObject
 
         }
 
+        $this->buildDateRange();
+
+        return $this;
+    }
+
+    /**
+     * Даты специально берутся с 0 по 23:59:59, потому как в ручном вводе, могут не совпадать по времени, но должны
+     * входить в диапазон дат.
+     * @return TinkoffObject
+     */
+    protected function buildDateRange(): TinkoffObject
+    {
+        $dates = [];
+
+        foreach ($this->transactionObjectsCollection as $transaction) {
+            /**
+             * @var TinkoffTransactionObject $transaction
+             */
+            $dates[] = $transaction->date->toDateString();
+        }
+
+        $dates = array_unique($dates);
+
+        sort($dates);
+
+        $dateStart = $dates[0] . ' 00:00:00';
+
+        $dateEnd = $dates[count($dates)-1] . ' 23:59:59';
+
+        $this->dateRange = [$dateStart, $dateEnd];
+
         return $this;
     }
 
@@ -72,6 +108,14 @@ class TinkoffObject
     public function getTransactions(): array
     {
         return $this->transactionObjectsCollection;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDateRange(): array
+    {
+        return $this->dateRange;
     }
 
     /**
