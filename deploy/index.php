@@ -4,7 +4,7 @@ require 'config.php';
 
 if(!empty($_POST)) {
     $deploy = DeployCreateCommand::init($_POST);
-    $deploy->gitCommand();
+    $deploy->buildCommands();
     $deploy->run();
     dump($deploy);
 }
@@ -23,13 +23,13 @@ if(!empty($_POST)) {
         <div class="checkbox-block">
             <label>
                 Выполнить composer install
-                <input type="checkbox" name="params[composer]" />
+                <input type="checkbox" name="commands[composer]" />
             </label>
         </div>
         <div class="checkbox-block">
             <label>
                 Выполнить migration
-                <input type="checkbox" name="params[migration]" />
+                <input type="checkbox" name="commands[migration]" />
             </label>
         </div>
         <div class="checkbox-block">
