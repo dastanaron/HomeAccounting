@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 
 class BillsHelper
 {
+
+    use workingWithNumbers;
+
     /**
      * @var Request
      */
@@ -43,7 +46,7 @@ class BillsHelper
 
         try {
             $bill->name = $this->request->input('name');
-            $bill->sum = $this->request->input('sum');
+            $bill->sum = $this->sumToFloat($this->request->input('sum'));
         }
         catch (\Exception $e) {
             return Response::json(['status' => 400, 'message' => 'bad request, name and sum must not be empty. Exception: ' . $e->getMessage() ])->setStatusCode(400);
@@ -65,7 +68,7 @@ class BillsHelper
         $billSource = Bills::whereId($this->request->input('bill_source'))->where('user_id', '=', $this->user_id)->first();
         $billDestination = Bills::whereId($this->request->input('bill_destination'))->where('user_id', '=', $this->user_id)->first();
 
-        $sum = (int) $this->request->input('sum');
+        $sum = $this->sumToFloat($this->request->input('sum'));
 
         if(empty($billSource) || empty($billDestination) || empty($sum)) {
             return false;
@@ -92,7 +95,7 @@ class BillsHelper
         }
 
         $bill->name = $this->request->input('name');
-        $bill->sum = $this->request->input('sum');
+        $bill->sum = $this->sumToFloat($this->request->input('sum'));
         $bill->deadline = $this->request->input('deadline');
         $bill->comment = $this->request->input('comment');
 

@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Bills;
-use App\Funds;
+use App\Modules\Import\Ofx\OfxParser;
+use App\Modules\Import\Ofx\Tinkoff\TinkoffObject;
+use App\Modules\Import\Ofx\Tinkoff\TinkoffTransactionObject;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
-
-use App\RabbitMQ\Analytics\MessagePush;
 
 class test extends Command
 {
@@ -42,16 +42,6 @@ class test extends Command
      */
     public function handle()
     {
-        $rabbitMQ = MessagePush::init();
 
-        $messageBody = [
-            'method' => 'название метода',
-            'param1' => 'Первый параметр',
-            'param2' => 'Второй параметр',
-        ];
-
-        //$messageBody = 'quit';
-
-        $rabbitMQ->push($messageBody);
     }
 }
