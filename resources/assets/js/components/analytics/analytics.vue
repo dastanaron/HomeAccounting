@@ -71,7 +71,11 @@
             </v-card-title>
         </v-card>
         <v-card>
-            <div id="chart"></div>
+            <chart-component
+                    ref="chartLineCategories"
+                    :data="chartLineCategoriesData"
+                    :visibility="visibilityCharts.chartLineCategories">
+            </chart-component>
         </v-card>
         <v-card>
             <v-card-text>
@@ -83,8 +87,8 @@
     </div>
 </template>
 <script>
-    import Chart from 'c3';
     import axios from "axios";
+    import ChartComponent from "./chart-component";
 
     export default {
         name: "analytics",
@@ -92,7 +96,11 @@
         data: () => ({
             fileId: '',
 
-            chartData: [],
+            visibilityCharts: {
+                chartLineCategories: true,
+            },
+
+            chartLineCategoriesData: [],
 
             DatePickerFilterStart: false,
             DatePickerFilterEnd: false,
@@ -120,7 +128,7 @@
 
         }),
         methods: {
-            //ПОлучает готовый json для графика, выключает интервал, прелоадер и разблокирует кнопку
+            //Получает готовый json для графика, выключает интервал, прелоадер и разблокирует кнопку
             getData() {
                 axios.post('/analytics/get-chart-data', {
                     file_id: this.fileId,
@@ -128,9 +136,7 @@
                     .then(response=> {
 
                         if(response.data.status !== 400) {
-                            this.chartData = response.data;
-
-                            this.chartGenerate();
+                            this.chartLineCategoriesData = response.data;
                         }
                         else {
                             this.$store.commit('setAlert', {type: 'warning', status: true, message: 'Не найдены данные по выбранным параметрам'})
@@ -179,22 +185,7 @@
                         console.error(error)
                     });
             },
-            chartGenerate() {
-                Chart.generate({
-                    data: {
-                        x: 'x',
-                        columns: this.chartData,
-                    },
-                    axis: {
-                        x: {
-                            type: 'timeseries',
-                            tick: {
-                                format: '%d-%m-%Y'
-                            }
-                        }
-                    }
-                });
-            }
+
         },
         computed: {
 
@@ -206,6 +197,7 @@
 
         },
         components: {
+            ChartComponent
 
         },
 
