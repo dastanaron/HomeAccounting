@@ -1,9 +1,27 @@
 version: '3'
 services:
+  #Очереди
+  rabbit:
+    image: rabbitmq:3.7-management
+    ports:
+    - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+  #mysql вторая папка для тестовой базы
+  mysql:
+    image: 'mysql:5.7'
+    restart: always
+    volumes:
+    - '~/mysql-test/:/var/lib/mysql/'
+    - './mysql/test-base/:/usr/local/test-base/'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: accounting
+      #command: mysql -u root -proot accounting < /usr/local/test-base/accounting.sql #просто чтобы записать команду для развертывания тестовой базы
   #nginx без изменений
   nginx:
     image: "nginx:latest"
-    restart: always
     volumes:
       - './nginx/conf.d/:/etc/nginx/conf.d/'
       - '../:/var/www/html/HomeAccountingLaravel'
@@ -21,26 +39,10 @@ services:
     - "9001:9000"
     volumes:
       - '../:/var/www/html/HomeAccountingLaravel'
+      - './fpm/supervisor/conf.d/:/var/www/html/HomeAccountingLaravel'
+#    command: /var/www/html/HomeAccountingLaravel/artisan analyticsconsumer:start
     links:
     - mysql
     - rabbit
     environment:
       USER: dastanaron
-  #mysql вторая папка для тестовой базы
-  mysql:
-    image: 'mysql:5.7'
-    restart: always
-    volumes:
-      - '~/mysql-test/:/var/lib/mysql/'
-      - './mysql/test-base/:/usr/local/test-base/'
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: accounting
-      #command: mysql -u root -proot accounting < /usr/local/test-base/accounting.sql #просто чтобы записать команду для развертывания тестовой базы
-
-  rabbit:
-    image: rabbitmq:3.7
-    command: rabbitmq:3-management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
