@@ -7,15 +7,14 @@
                 <v-container grid-list-md>
                     <v-layout wrap>
                         <v-flex xs12 sm4 md2>
-                            <v-select
+                            <v-autocomplete
                                     :items="revList"
                                     v-model="filterForm.rev"
                                     item-text="name"
                                     item-value="value"
                                     label="Доход или расход"
                                     clearable
-                                    autocomplete
-                            ></v-select>
+                            ></v-autocomplete>
                         </v-flex>
                         <v-flex xs12 sm4 md2>
                             <v-dialog

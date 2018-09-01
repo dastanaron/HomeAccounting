@@ -49,7 +49,7 @@
             }
         },
         mounted() {
-            console.log(this.id);
+
         },
         computed: {
             id() {

@@ -9,7 +9,7 @@
                     <v-container grid-list-md>
                         <v-layout wrap>
                             <v-flex xs12 sm6>
-                                <v-select
+                                <v-autocomplete
                                         :items="billsList"
                                         v-model="billSource"
                                         item-text="name"
@@ -18,10 +18,10 @@
                                         hint="Счет с которого переводим"
                                         clearable
                                         autocomplete
-                                ></v-select>
+                                ></v-autocomplete>
                             </v-flex>
                             <v-flex xs12 sm6>
-                                <v-select
+                                <v-autocomplete
                                         :items="billsList"
                                         v-model="billDestination"
                                         item-text="name"
@@ -30,7 +30,7 @@
                                         hint="Счет на который переводим"
                                         clearable
                                         autocomplete
-                                ></v-select>
+                                ></v-autocomplete>
                             </v-flex>
                             <v-flex xs12>
                                 <v-text-field
