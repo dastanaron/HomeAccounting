@@ -27,22 +27,20 @@ services:
       - '../:/var/www/html/HomeAccountingLaravel'
     ports:
     - "80:80"
-    links:
-    - fpm
-    - mysql
+    depends_on:
+      - fpm
+      - mysql
   #Настроенный fpm со всеми либами
   fpm:
     build:
       context: ./fpm
       dockerfile: Dockerfile
-    ports:
-    - "9001:9000"
     volumes:
       - '../:/var/www/html/HomeAccountingLaravel'
       - './fpm/supervisor/conf.d/:/var/www/html/HomeAccountingLaravel'
 #    command: /var/www/html/HomeAccountingLaravel/artisan analyticsconsumer:start
-    links:
-    - mysql
-    - rabbit
+    depends_on:
+      - mysql
+      - rabbit
     environment:
       USER: dastanaron
