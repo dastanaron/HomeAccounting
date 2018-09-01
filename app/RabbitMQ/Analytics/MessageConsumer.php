@@ -103,7 +103,7 @@ class MessageConsumer extends Consumer
             $this->recordToBase($controlSum, $unpackMessage['userId'], $dataToBase);
         }
         catch(\Exception $e) {
-            dd($e);
+            self::errorLog('Ошибка, не удалось выполнить запись в БД');
         }
 
     }
@@ -111,8 +111,6 @@ class MessageConsumer extends Consumer
     private function recordToBase($controlSum, $userId, $data)
     {
         $chartByControlSum = Charts::whereControlSum($controlSum)->first();
-
-        dump($chartByControlSum);
 
         $chartModel = !empty($chartByControlSum) ? $chartByControlSum : new Charts();
 
