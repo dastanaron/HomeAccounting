@@ -2,10 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Modules\Import\Ofx\OfxParser;
-use App\Modules\Import\Ofx\Tinkoff\TinkoffObject;
-use App\Modules\Import\Ofx\Tinkoff\TinkoffTransactionObject;
-use Carbon\Carbon;
+use App\Charts;
 use Illuminate\Console\Command;
 
 class test extends Command
@@ -42,6 +39,8 @@ class test extends Command
      */
     public function handle()
     {
-        echo json_encode(['message' => 'привет']);
+        $chartByControlSum = Charts::whereControlSum('80696c0ae61a7f5676acc3d35160f3f7')->first();
+
+        dump($chartByControlSum);
     }
 }

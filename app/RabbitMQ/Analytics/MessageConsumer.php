@@ -2,6 +2,7 @@
 
 namespace App\RabbitMQ\Analytics;
 
+use App\Charts;
 use App\RabbitMQ\Consumer;
 use App\RabbitMQ\DataConstants;
 use App\Components\DataCharts\ExpensesByCategory;
@@ -87,16 +88,41 @@ class MessageConsumer extends Consumer
                 $unpackMessage['rev']
             );
 
-            $hashFile = DataConstants::ANALYTICS_STORAGE_FOLDER . $unpackMessage['userId'] . '/' . md5(serialize($unpackMessage)) . '.json';
+            $controlSum = $unpackMessage['controlSum'];
 
-            $dataToFile = $chartData->getJsonByChart();
+            $dataToBase = $chartData->getJsonByChart();
+
         }
         catch (\Exception $e) {
             self::errorLog('Ошибка, не верные данные на входе очереди: ' . var_export($unpackMessage, true));
             return false;
         }
 
-        return Storage::disk()->put($hashFile, $dataToFile);
+
+        try {
+            $this->recordToBase($controlSum, $unpackMessage['userId'], $dataToBase);
+        }
+        catch(\Exception $e) {
+            dd($e);
+        }
 
     }
+
+    private function recordToBase($controlSum, $userId, $data)
+    {
+        $chartByControlSum = Charts::whereControlSum($controlSum)->first();
+
+        dump($chartByControlSum);
+
+        $chartModel = !empty($chartByControlSum) ? $chartByControlSum : new Charts();
+
+        $chartModel->type = 'line_categories';
+        $chartModel->setData($data);
+        $chartModel->user_id = $userId;
+        $chartModel->control_sum = $controlSum;
+
+        return $chartModel->save();
+
+    }
+
 }

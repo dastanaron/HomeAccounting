@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Charts;
 use App\RabbitMQ\DataConstants;
 use Illuminate\Http\Request;
 use App\RabbitMQ\Analytics\MessagePush;
@@ -35,7 +36,17 @@ class AnalyticsController extends Controller
         $data = $this->createChartDataValidator($request);
 
         if($data !== false) {
-            return ['status' => MessagePush::init()->push($data) ? 200 : 400, 'fileId' => md5(serialize($data))];
+
+            $chartByControlSum = Charts::whereControlSum($data['controlSum'])->first();
+
+            $status = true;
+
+            if(empty($chartByControlSum))
+            {
+                $status = MessagePush::init()->push($data);
+            }
+
+            return ['status' => $status ? 200 : 400, 'controlSum' => $data['controlSum']];
         }
         else {
             return ['status' => 400, 'message' => 'Не заполнены обязательные поля'];
@@ -56,13 +67,14 @@ class AnalyticsController extends Controller
 
             $userId = \Auth::user()->id;
 
-            $fileId = $request->input('file_id');
+            $controlSum = $request->input('control_sum');
 
-            $file = DataConstants::ANALYTICS_STORAGE_FOLDER . $userId . '/' . $fileId . '.json';
+            $data = Charts::where([
+                ['control_sum', '=', $controlSum],
+                ['user_id', '=', $userId]
+            ])->first();
 
-            $data = Storage::disk()->get($file);
-
-            return $data;
+            return !empty($data) ? $data->getData() : ['status' => 'try_again'];
         }
         catch(\Exception $e) {
 
@@ -77,11 +89,19 @@ class AnalyticsController extends Controller
         $userId = \Auth::user()->id;
 
         if(!empty($request->input('date_start')) && !empty($request->input('date_end')) && !empty($request->input('rev'))) {
+
+            $controlSum = md5(serialize([
+                $request->input('date_start'),
+                $request->input('date_end'),
+                $request->input('rev'),
+            ]));
+
             $data = [
                 'userId' => $userId,
                 'dateStart' => $request->input('date_start'),
                 'dateEnd' => $request->input('date_end'),
                 'rev' => $request->input('rev'),
+                'controlSum' => $controlSum,
             ];
             return $data;
         }

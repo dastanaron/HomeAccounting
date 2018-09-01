@@ -94,7 +94,7 @@
         name: "analytics",
 
         data: () => ({
-            fileId: '',
+            controlSum: '',
 
             visibilityCharts: {
                 chartLineCategories: true,
@@ -123,6 +123,8 @@
             ],
 
             interval: null,
+            intervalCounter: 10,
+            incrementIntervalCounter: 0,
 
             requestButtonDisabled: false,
 
@@ -130,16 +132,33 @@
         methods: {
             //Получает готовый json для графика, выключает интервал, прелоадер и разблокирует кнопку
             getData() {
+
                 axios.post('/analytics/get-chart-data', {
-                    file_id: this.fileId,
+                    control_sum: this.controlSum,
                 })
                     .then(response=> {
+
+                        this.incrementIntervalCounter++;
+
+                        if(this.incrementIntervalCounter > this.intervalCounter)
+                        {
+                            clearInterval(this.interval);
+
+                            this.$store.commit('setPreloader', false);
+                            this.requestButtonDisabled = false;
+                            this.$store.commit('setAlert', {type: 'warning', status: true, message: 'сервер не отвечает'})
+                        }
 
                         if(response.data.status !== 400) {
                             this.chartLineCategoriesData = response.data;
                         }
                         else {
                             this.$store.commit('setAlert', {type: 'warning', status: true, message: 'Не найдены данные по выбранным параметрам'})
+                        }
+
+                        if(response.data.status == 'try_again')
+                        {
+                            return ;
                         }
 
                         clearInterval(this.interval);
@@ -149,7 +168,7 @@
 
                     })
                     .catch(error => {
-                        console.error(error)
+                        clearInterval(this.interval);
                     });
             },
             //Если проходит валидацию, дисейблим кнопу и запускаем предзагрузчик
@@ -173,7 +192,7 @@
                     .then(response=> {
 
                         if(response.data.status === 200) {
-                            this.fileId = response.data.fileId;
+                            this.controlSum = response.data.controlSum;
                             this.interval = setInterval(() => {
                                 this.getData();
                             }, 2000);
@@ -198,7 +217,6 @@
         },
         components: {
             ChartComponent
-
         },
 
     }
