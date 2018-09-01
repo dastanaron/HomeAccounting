@@ -4,6 +4,10 @@ namespace App\RabbitMQ;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
+/**
+ * Class RabbitmqAbstractClass
+ * @package App\RabbitMQ
+ */
 abstract class RabbitmqAbstractClass implements RabbitmqInterface
 {
 
@@ -37,6 +41,21 @@ abstract class RabbitmqAbstractClass implements RabbitmqInterface
      * @var \PhpAmqpLib\Channel\AMQPChannel
      */
     public $channel;
+
+    /**
+     * @var string
+     */
+    public static $logPath;
+
+    /**
+     * @var string
+     */
+    public static $errorLog;
+
+    /**
+     * @var string
+     */
+    public static $queueLog;
 
     /**
      * @return \Illuminate\Config\Repository|mixed
@@ -113,5 +132,66 @@ abstract class RabbitmqAbstractClass implements RabbitmqInterface
             $this->config['password'],
             $this->config['vhost']
         );
+    }
+
+    /**
+     * Pack message to queue
+     * @param $data
+     * @return string
+     */
+    protected function pack($data)
+    {
+        return json_encode($data);
+    }
+
+    /**
+     * Unpack message to queue
+     * @param $data
+     * @return mixed
+     */
+    protected function unpack($data)
+    {
+        try {
+            return json_decode($data, true);
+        }
+        catch(\Exception $e) {
+            self::errorLog('Неверный параметр в очереди');
+            self::errorLog(var_export($e, true));
+        }
+
+    }
+
+    /**
+     * @param $message
+     */
+    public static function errorLog($message)
+    {
+        self::recordToLog(self::$errorLog, $message);
+    }
+
+    /**
+     * @param $message
+     */
+    public static function infoLog($message)
+    {
+        self::recordToLog(self::$queueLog, $message);
+    }
+
+    private static function recordToLog($log, $message)
+    {
+        file_put_contents($log, self::addDateToMessage($message), FILE_APPEND | LOCK_EX);
+
+        if(self::$debug === true) {
+            echo self::addDateToMessage($message);
+        }
+    }
+
+    /**
+     * @param $message
+     * @return string
+     */
+    public static function addDateToMessage($message)
+    {
+        return '|'.date('Y-m-d H:i:s').'| ' . $message . PHP_EOL;
     }
 }

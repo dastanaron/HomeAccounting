@@ -42,6 +42,6 @@ class test extends Command
      */
     public function handle()
     {
-
+        echo json_encode(['message' => 'привет']);
     }
 }

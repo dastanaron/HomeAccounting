@@ -2,19 +2,13 @@
 
 namespace App\RabbitMQ\Analytics;
 
+use App\RabbitMQ\Consumer;
 use App\RabbitMQ\DataConstants;
-use App\RabbitMQ\RabbitmqAbstractClass;
 use App\Components\DataCharts\ExpensesByCategory;
 use Storage;
 
-class MessageConsumer extends RabbitmqAbstractClass
+class MessageConsumer extends Consumer
 {
-
-    /**
-     * @var array
-     */
-    private $config;
-
     /**
      * @var string
      */
@@ -41,21 +35,6 @@ class MessageConsumer extends RabbitmqAbstractClass
     public $consumerTag = 'messageConsumer';
 
     /**
-     * @var string
-     */
-    public static $logPath;
-
-    /**
-     * @var string
-     */
-    public static $errorLog;
-
-    /**
-     * @var string
-     */
-    public static $queueLog;
-
-    /**
      * MessageConsumer constructor.
      */
     public function __construct()
@@ -73,31 +52,15 @@ class MessageConsumer extends RabbitmqAbstractClass
         self::$queueLog = self::$logPath . '/queue.log';
     }
 
-    /**
-     * run consumer
-     */
-    public function run()
+    public function processEnvelope(\PhpAmqpLib\Message\AMQPMessage $message)
     {
-        $this->channel->basic_consume($this->queue, $this->consumerTag, false, false, false, false, __CLASS__.'::unpackMessage');
-
-        while (count($this->channel->callbacks)) {
-            $this->channel->wait();
-        }
-    }
-
-
-    /**
-     * @param \PhpAmqpLib\Message\AMQPMessage $message
-     */
-    public static function unpackMessage(\PhpAmqpLib\Message\AMQPMessage $message)
-    {
-        $unpackMessage = unserialize($message->body);
+        $unpackMessage = $this->unpack($message->body);
 
         self::infoLog('Получено сообщение: ' . var_export($unpackMessage, true));
 
         //Метод обработчик данных
 
-        self::messageHandler($unpackMessage);
+        $this->messageHandler($unpackMessage);
 
         $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
 
@@ -113,19 +76,19 @@ class MessageConsumer extends RabbitmqAbstractClass
      * @param array $unpackMessage
      * @return bool
      */
-    public static function messageHandler(array $unpackMessage)
+    public function messageHandler(array $unpackMessage)
     {
 
-        $chartData = ExpensesByCategory::init(
-            $unpackMessage['userId'],
-            $unpackMessage['dateStart'],
-            $unpackMessage['dateEnd'],
-            $unpackMessage['rev']
-        );
-
-        $hashFile = DataConstants::ANALYTICS_STORAGE_FOLDER . $unpackMessage['userId'] . '/' . md5(serialize($unpackMessage)) . '.json';
-
         try {
+            $chartData = ExpensesByCategory::init(
+                $unpackMessage['userId'],
+                $unpackMessage['dateStart'],
+                $unpackMessage['dateEnd'],
+                $unpackMessage['rev']
+            );
+
+            $hashFile = DataConstants::ANALYTICS_STORAGE_FOLDER . $unpackMessage['userId'] . '/' . md5(serialize($unpackMessage)) . '.json';
+
             $dataToFile = $chartData->getJsonByChart();
         }
         catch (\Exception $e) {
@@ -135,47 +98,5 @@ class MessageConsumer extends RabbitmqAbstractClass
 
         return Storage::disk()->put($hashFile, $dataToFile);
 
-    }
-
-    /**
-     * @param $message
-     */
-    public static function errorLog($message)
-    {
-        self::recordToLog(self::$errorLog, $message);
-    }
-
-    /**
-     * @param $message
-     */
-    public static function infoLog($message)
-    {
-        self::recordToLog(self::$queueLog, $message);
-    }
-
-    private static function recordToLog($log, $message)
-    {
-        if(self::$debug === true) {
-            file_put_contents($log, self::addDateToMessage($message), FILE_APPEND | LOCK_EX);
-        }
-    }
-
-    /**
-     * @param $message
-     * @return string
-     */
-    public static function addDateToMessage($message)
-    {
-        return '|'.date('Y-m-d H:i:s').'| ' . $message . PHP_EOL;
-    }
-
-    /**
-     * @param \PhpAmqpLib\Channel\AMQPChannel $channel
-     * @param \PhpAmqpLib\Connection\AbstractConnection $connection
-     */
-    public static function shutdown(\PhpAmqpLib\Channel\AMQPChannel $channel, \PhpAmqpLib\Connection\AbstractConnection $connection )
-    {
-        $channel->close();
-        $connection->close();
     }
 }

@@ -7,10 +7,6 @@ use App\RabbitMQ\RabbitmqAbstractClass;
 
 class MessagePush extends RabbitmqAbstractClass
 {
-    /**
-     * @var array
-     */
-    private $config;
 
     /**
      * @var string
@@ -38,7 +34,7 @@ class MessagePush extends RabbitmqAbstractClass
      */
     public function push($data)
     {
-        $message = new AMQPMessage(serialize($data), array('content_type' => 'text/plain', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT));
+        $message = new AMQPMessage($this->pack($data), array('content_type' => 'text/plain', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT));
 
         $this->channel->basic_publish($message, $this->exchange);
 
