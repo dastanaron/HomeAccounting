@@ -108,7 +108,7 @@ export default {
                         this.getBills();
                     }
                     else {
-                        console.log(response);
+                        this.$store.commit('AlertError', 'произошла ошибка');
                     }
 
                 })

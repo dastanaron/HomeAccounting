@@ -18,7 +18,7 @@
                 <v-container grid-list-md>
                     <v-layout wrap>
                         <v-flex xs12 sm4 md2>
-                            <v-select
+                            <v-autocomplete
                                     :items="revList"
                                     v-model="fundsFilterForm.rev"
                                     item-text="name"
@@ -26,10 +26,10 @@
                                     label="Доход или расход"
                                     clearable
                                     autocomplete
-                            ></v-select>
+                            ></v-autocomplete>
                         </v-flex>
                         <v-flex xs12 sm4 md2>
-                            <v-select
+                            <v-autocomplete
                                     :items="billsList"
                                     v-model="fundsFilterForm.bills_id"
                                     item-text="name"
@@ -37,10 +37,10 @@
                                     label="Выберите счёт"
                                     clearable
                                     autocomplete
-                            ></v-select>
+                            ></v-autocomplete>
                         </v-flex>
                         <v-flex xs12 sm4 md2>
-                            <v-select
+                            <v-autocomplete
                                     :items="categoryList"
                                     v-model="fundsFilterForm.category_id"
                                     item-text="name"
@@ -48,7 +48,7 @@
                                     label="Категория"
                                     clearable
                                     autocomplete
-                            ></v-select>
+                            ></v-autocomplete>
                         </v-flex>
                         <v-flex xs12 sm4 md2>
                             <v-text-field v-model="fundsFilterForm.sum" clearable label="Сумма"></v-text-field>
@@ -220,7 +220,7 @@
                     <v-container grid-list-md>
                         <v-layout wrap>
                             <v-flex xs12 sm6 md4>
-                                <v-select
+                                <v-autocomplete
                                         :items="billsList"
                                         v-model="fundsFormData.bills_id"
                                         item-text="name"
@@ -230,10 +230,10 @@
                                         :disabled="billDisabled"
                                         autocomplete
                                         required
-                                ></v-select>
+                                ></v-autocomplete>
                             </v-flex>
                             <v-flex xs12 sm6 md4>
-                                <v-select
+                                <v-autocomplete
                                         :items="revList"
                                         v-model="fundsFormData.rev"
                                         item-text="name"
@@ -242,10 +242,10 @@
                                         :rules="fundsFormData.revRules"
                                         autocomplete
                                         required
-                                ></v-select>
+                                ></v-autocomplete>
                             </v-flex>
                             <v-flex xs12 sm6 md4>
-                                <v-select
+                                <v-autocomplete
                                         :items="categoryList"
                                         v-model="fundsFormData.category_id"
                                         item-text="name"
@@ -254,7 +254,7 @@
                                         :rules="fundsFormData.categoryRules"
                                         autocomplete
                                         required
-                                ></v-select>
+                                ></v-autocomplete>
                             </v-flex>
                             <v-flex xs12 sm6 md4>
                                 <v-text-field v-model="fundsFormData.sum" :rules="fundsFormData.sumRules" label="Сумма" required></v-text-field>

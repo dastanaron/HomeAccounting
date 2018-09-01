@@ -7,15 +7,14 @@
                 <v-container grid-list-md>
                     <v-layout wrap>
                         <v-flex xs12 sm4 md2>
-                            <v-select
+                            <v-autocomplete
                                     :items="revList"
                                     v-model="filterForm.rev"
                                     item-text="name"
                                     item-value="value"
                                     label="Доход или расход"
                                     clearable
-                                    autocomplete
-                            ></v-select>
+                            ></v-autocomplete>
                         </v-flex>
                         <v-flex xs12 sm4 md2>
                             <v-dialog
@@ -71,7 +70,11 @@
             </v-card-title>
         </v-card>
         <v-card>
-            <div id="chart"></div>
+            <chart-component
+                    ref="chartLineCategories"
+                    :data="chartLineCategoriesData"
+                    :visibility="visibilityCharts.chartLineCategories">
+            </chart-component>
         </v-card>
         <v-card>
             <v-card-text>
@@ -83,16 +86,20 @@
     </div>
 </template>
 <script>
-    import Chart from 'c3';
     import axios from "axios";
+    import ChartComponent from "./chart-component";
 
     export default {
         name: "analytics",
 
         data: () => ({
-            fileId: '',
+            controlSum: '',
 
-            chartData: [],
+            visibilityCharts: {
+                chartLineCategories: true,
+            },
+
+            chartLineCategoriesData: [],
 
             DatePickerFilterStart: false,
             DatePickerFilterEnd: false,
@@ -115,25 +122,42 @@
             ],
 
             interval: null,
+            intervalCounter: 10,
+            incrementIntervalCounter: 0,
 
             requestButtonDisabled: false,
 
         }),
         methods: {
-            //ПОлучает готовый json для графика, выключает интервал, прелоадер и разблокирует кнопку
+            //Получает готовый json для графика, выключает интервал, прелоадер и разблокирует кнопку
             getData() {
+
                 axios.post('/analytics/get-chart-data', {
-                    file_id: this.fileId,
+                    control_sum: this.controlSum,
                 })
                     .then(response=> {
 
-                        if(response.data.status !== 400) {
-                            this.chartData = response.data;
+                        this.incrementIntervalCounter++;
 
-                            this.chartGenerate();
+                        if(this.incrementIntervalCounter > this.intervalCounter)
+                        {
+                            clearInterval(this.interval);
+
+                            this.$store.commit('setPreloader', false);
+                            this.requestButtonDisabled = false;
+                            this.$store.commit('setAlert', {type: 'warning', status: true, message: 'сервер не отвечает'})
+                        }
+
+                        if(response.data.status !== 400) {
+                            this.chartLineCategoriesData = response.data;
                         }
                         else {
                             this.$store.commit('setAlert', {type: 'warning', status: true, message: 'Не найдены данные по выбранным параметрам'})
+                        }
+
+                        if(response.data.status == 'try_again')
+                        {
+                            return ;
                         }
 
                         clearInterval(this.interval);
@@ -143,7 +167,7 @@
 
                     })
                     .catch(error => {
-                        console.error(error)
+                        clearInterval(this.interval);
                     });
             },
             //Если проходит валидацию, дисейблим кнопу и запускаем предзагрузчик
@@ -167,7 +191,7 @@
                     .then(response=> {
 
                         if(response.data.status === 200) {
-                            this.fileId = response.data.fileId;
+                            this.controlSum = response.data.controlSum;
                             this.interval = setInterval(() => {
                                 this.getData();
                             }, 2000);
@@ -179,22 +203,7 @@
                         console.error(error)
                     });
             },
-            chartGenerate() {
-                Chart.generate({
-                    data: {
-                        x: 'x',
-                        columns: this.chartData,
-                    },
-                    axis: {
-                        x: {
-                            type: 'timeseries',
-                            tick: {
-                                format: '%d-%m-%Y'
-                            }
-                        }
-                    }
-                });
-            }
+
         },
         computed: {
 
@@ -206,7 +215,7 @@
 
         },
         components: {
-
+            ChartComponent
         },
 
     }

@@ -185,6 +185,9 @@
                         this.menuTitle = 'Напоминания';
                         this.$refs.events.getEvents();
                         break;
+                    case 4:
+                        this.menuTitle = "Аналитика";
+                        break;
 
                 }
             },

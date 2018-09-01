@@ -103,7 +103,7 @@ export default {
                         this.$store.commit('setPreloader', false);
                     }
                     else {
-                        console.log(response);
+                        this.$store.commit('AlertError', 'Ошибка получения данных с сервера');
                     }
 
                 })
