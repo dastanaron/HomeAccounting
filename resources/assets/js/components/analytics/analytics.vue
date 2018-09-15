@@ -145,7 +145,9 @@
 
                             this.$store.commit('setPreloader', false);
                             this.requestButtonDisabled = false;
-                            this.$store.commit('setAlert', {type: 'warning', status: true, message: 'сервер не отвечает'})
+                            this.$store.commit('setAlert', {type: 'warning', status: true, message: 'сервер не отвечает'});
+                            this.interval = null;
+                            return null;
                         }
 
                         if(response.data.status !== 400) {
@@ -157,7 +159,7 @@
 
                         if(response.data.status == 'try_again')
                         {
-                            return ;
+                            return null;
                         }
 
                         clearInterval(this.interval);
