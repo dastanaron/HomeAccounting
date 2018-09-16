@@ -94,6 +94,7 @@ class AnalyticsController extends Controller
                 $request->input('date_start'),
                 $request->input('date_end'),
                 $request->input('rev'),
+                $request->input('chart_type'),
             ]));
 
             $data = [
@@ -101,6 +102,7 @@ class AnalyticsController extends Controller
                 'dateStart' => $request->input('date_start'),
                 'dateEnd' => $request->input('date_end'),
                 'rev' => $request->input('rev'),
+                'chartType' => $request->input('chart_type'),
                 'controlSum' => $controlSum,
             ];
             return $data;

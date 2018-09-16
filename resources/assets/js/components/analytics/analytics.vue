@@ -62,6 +62,16 @@
                                 </v-date-picker>
                             </v-dialog>
                         </v-flex>
+                        <v-flex xs12 sm4 md3>
+                            <v-autocomplete
+                                    :items="chartTypes"
+                                    v-model="filterForm.chartType"
+                                    item-text="name"
+                                    item-value="value"
+                                    label="Тип графика"
+                                    clearable
+                            ></v-autocomplete>
+                        </v-flex>
                         <v-flex xs12 sm4 md2>
                             <v-btn color="primary" @click="createValidator()" :disabled="requestButtonDisabled">Запросить</v-btn>
                         </v-flex>
@@ -108,6 +118,7 @@
                 rev: 2,
                 dateStart: '',
                 dateEnd: '',
+                chartType: 'dayJump',
             },
 
             revList: [
@@ -118,6 +129,17 @@
                 {
                     value: 2,
                     name: 'Расход',
+                },
+            ],
+
+            chartTypes: [
+                {
+                    value: 'dayJump',
+                    name: 'Скачки категорий за день',
+                },
+                {
+                    value: 'categoryMonth',
+                    name: 'Гистограма расходов по категории',
                 },
             ],
 
@@ -189,6 +211,7 @@
                     date_start: this.filterForm.dateStart + ' 00:00:00',
                     date_end: this.filterForm.dateEnd + ' 23:59:59',
                     rev: this.filterForm.rev,
+                    chart_type: this.filterForm.chartType,
                 })
                     .then(response=> {
 
