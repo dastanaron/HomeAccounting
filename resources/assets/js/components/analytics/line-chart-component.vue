@@ -11,10 +11,9 @@
      * Как сейчас вроде все работает нормально
      */
     export default {
-        name: "chart-component",
+        name: "line-chart-component",
         props: {
             data: {
-                type: Array,
                 default: {},
             },
             visibility: {
@@ -52,9 +51,7 @@
 
         },
         computed: {
-            id() {
-                return 'test';
-            },
+
         },
         watch: {
             data() {

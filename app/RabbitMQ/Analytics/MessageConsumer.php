@@ -3,6 +3,8 @@
 namespace App\RabbitMQ\Analytics;
 
 use App\Charts;
+use App\Components\DataCharts\ChartData;
+use App\Components\DataCharts\ExpensesByMonthCategory;
 use App\RabbitMQ\Consumer;
 use App\RabbitMQ\DataConstants;
 use App\Components\DataCharts\ExpensesByCategory;
@@ -63,12 +65,12 @@ class MessageConsumer extends Consumer
 
         $this->messageHandler($unpackMessage);
 
-        $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
+        $message->get('channel')->basic_ack($message->delivery_info['delivery_tag']);
 
         if ($unpackMessage === 'quit') {
 
             self::infoLog('Закрытие соединения очереди');
-            $message->delivery_info['channel']->basic_cancel($message->delivery_info['consumer_tag']);
+            $message->get('channel')->basic_cancel($message->delivery_info['consumer_tag']);
 
         }
     }
@@ -81,12 +83,7 @@ class MessageConsumer extends Consumer
     {
 
         try {
-            $chartData = ExpensesByCategory::init(
-                $unpackMessage['userId'],
-                $unpackMessage['dateStart'],
-                $unpackMessage['dateEnd'],
-                $unpackMessage['rev']
-            );
+            $chartData = $this->dataForChartType($unpackMessage);
 
             $controlSum = $unpackMessage['controlSum'];
 
@@ -106,6 +103,39 @@ class MessageConsumer extends Consumer
             self::errorLog('Ошибка, не удалось выполнить запись в БД');
         }
 
+    }
+
+    /**
+     * @param array $unpackMessage
+     * @return ChartData|null
+     */
+    private function dataForChartType(array $unpackMessage)
+    {
+        switch ($unpackMessage['chartType'])
+        {
+            case 'dayJump':
+                $chartData = ExpensesByCategory::init(
+                    $unpackMessage['userId'],
+                    $unpackMessage['dateStart'],
+                    $unpackMessage['dateEnd']
+                );
+                return $chartData;
+            case 'categoryMonth':
+                $chartData = ExpensesByMonthCategory::init(
+                    $unpackMessage['userId'],
+                    $unpackMessage['dateStart'],
+                    $unpackMessage['dateEnd']
+                );
+                return $chartData;
+
+            default:
+                $chartData = ExpensesByCategory::init(
+                    $unpackMessage['userId'],
+                    $unpackMessage['dateStart'],
+                    $unpackMessage['dateEnd']
+                );
+                return $chartData;
+        }
     }
 
     private function recordToBase($controlSum, $userId, $data)

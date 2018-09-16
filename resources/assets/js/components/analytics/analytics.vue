@@ -62,6 +62,16 @@
                                 </v-date-picker>
                             </v-dialog>
                         </v-flex>
+                        <v-flex xs12 sm4 md3>
+                            <v-autocomplete
+                                    :items="chartTypes"
+                                    v-model="filterForm.chartType"
+                                    item-text="name"
+                                    item-value="value"
+                                    label="Тип графика"
+                                    clearable
+                            ></v-autocomplete>
+                        </v-flex>
                         <v-flex xs12 sm4 md2>
                             <v-btn color="primary" @click="createValidator()" :disabled="requestButtonDisabled">Запросить</v-btn>
                         </v-flex>
@@ -70,11 +80,16 @@
             </v-card-title>
         </v-card>
         <v-card>
-            <chart-component
+            <line-chart-component
                     ref="chartLineCategories"
                     :data="chartLineCategoriesData"
                     :visibility="visibilityCharts.chartLineCategories">
-            </chart-component>
+            </line-chart-component>
+            <pie-chart-component
+                ref="pieChartCategories"
+                :data="chartPieCategoriesData"
+                :visibility="visibilityCharts.chartPieCategories">
+            </pie-chart-component>
         </v-card>
         <v-card>
             <v-card-text>
@@ -87,7 +102,8 @@
 </template>
 <script>
     import axios from "axios";
-    import ChartComponent from "./chart-component";
+    import LineChartComponent from "./line-chart-component";
+    import PieChartComponent from "./pie-chart-component";
 
     export default {
         name: "analytics",
@@ -96,10 +112,14 @@
             controlSum: '',
 
             visibilityCharts: {
-                chartLineCategories: true,
+                chartLineCategories: false,
+                chartPieCategories: true,
             },
 
+            dataWithServer: [],
+
             chartLineCategoriesData: [],
+            chartPieCategoriesData: [],
 
             DatePickerFilterStart: false,
             DatePickerFilterEnd: false,
@@ -108,6 +128,7 @@
                 rev: 2,
                 dateStart: '',
                 dateEnd: '',
+                chartType: 'categoryMonth',
             },
 
             revList: [
@@ -118,6 +139,17 @@
                 {
                     value: 2,
                     name: 'Расход',
+                },
+            ],
+
+            chartTypes: [
+                {
+                    value: 'dayJump',
+                    name: 'Скачки категорий за день',
+                },
+                {
+                    value: 'categoryMonth',
+                    name: 'Гистограма расходов по категории',
                 },
             ],
 
@@ -151,7 +183,7 @@
                         }
 
                         if(response.data.status !== 400) {
-                            this.chartLineCategoriesData = response.data;
+                            this.dataWithServer = response.data;
                         }
                         else {
                             this.$store.commit('setAlert', {type: 'warning', status: true, message: 'Не найдены данные по выбранным параметрам'})
@@ -189,6 +221,7 @@
                     date_start: this.filterForm.dateStart + ' 00:00:00',
                     date_end: this.filterForm.dateEnd + ' 23:59:59',
                     rev: this.filterForm.rev,
+                    chart_type: this.filterForm.chartType,
                 })
                     .then(response=> {
 
@@ -211,13 +244,28 @@
 
         },
         watch: {
+            dataWithServer() {
+                switch (this.filterForm.chartType) {
+                    case 'dayJump':
+                        this.chartLineCategoriesData = this.dataWithServer;
+                        this.visibilityCharts.chartPieCategories = false;
+                        this.visibilityCharts.chartLineCategories = true;
+                        break;
+                    case 'categoryMonth':
+                        this.chartPieCategoriesData = this.dataWithServer;
+                        this.visibilityCharts.chartPieCategories = true;
+                        this.visibilityCharts.chartLineCategories = false;
+                        break;
 
+                }
+            }
         },
         mounted() {
 
         },
         components: {
-            ChartComponent
+            PieChartComponent,
+            LineChartComponent,
         },
 
     }
