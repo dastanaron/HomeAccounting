@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
-    <link href="{{ asset('css/pa.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/pa.css?v=0.9.2') }}" rel="stylesheet">
 
     <!-- Icons !-->
     <link rel="apple-touch-icon" sizes="57x57" href="/image/icons/apple-icon-57x57.png">
@@ -41,6 +41,6 @@
         @yield('content')
     </div>
     <!-- Scripts -->
-    <script src="{{ asset('js/pa.js?v=0.9.1') }}" defer></script>
+    <script src="{{ asset('js/pa.js?v=0.9.2') }}" defer></script>
 </body>
 </html>
