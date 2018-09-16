@@ -1,15 +1,12 @@
 <template>
-    <div class="pie-chart" v-show="visibility"></div>
+    <div class="chart-block">
+        <div class="bar-chart" v-show="visibility"></div>
+        <div class="pie-chart" v-show="visibility"></div>
+    </div>
 </template>
 
 <script>
     import Chart from 'c3';
-
-    /**
-     * todo: придумать генерацию уникальных классов для вывода графика
-     * или на крайний случай передавать какой-то уникальный идентификатор с родителя
-     * Как сейчас вроде все работает нормально
-     */
     export default {
         name: "pie-chart-component",
         props: {
@@ -26,6 +23,7 @@
         }),
         methods: {
             chartGenerate() {
+
                 Chart.generate({
                     bindto: '.pie-chart',
                     data: {
@@ -37,15 +35,29 @@
                         onmouseout: function (d, i) { console.log("onmouseout", d, i); }*/
                     }
                 });
+
+                Chart.generate({
+                    bindto: '.bar-chart',
+                    data: {
+                        columns: this.data,
+                        type: 'bar'
+                    },
+                    bar: {
+                        width: {
+                            ratio: 1 // this makes bar width 50% of length between ticks
+                        }
+                        // or
+                        //width: 100 // this makes bar width 100px
+                    }
+                });
+
             }
         },
         mounted() {
 
         },
         computed: {
-            id() {
-                return 'test';
-            },
+
         },
         watch: {
             data() {

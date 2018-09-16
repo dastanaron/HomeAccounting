@@ -29,7 +29,7 @@ class ExpensesByMonthCategory extends AbstractChartData
             {
                 $data[$categoryId] = [
                     'name' => $categoryName,
-                    'sum' => $sum,
+                    'sum' => round($sum, 2),
                 ];
             }
 
