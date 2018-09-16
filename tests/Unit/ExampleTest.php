@@ -14,6 +14,7 @@ class ExampleTest extends TestCase
      */
     public function testBasicTest()
     {
+        echo PHP_EOL."base test, control work to unit tests".PHP_EOL;
         $this->assertTrue(true);
     }
 }

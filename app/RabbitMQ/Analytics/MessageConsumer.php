@@ -4,6 +4,7 @@ namespace App\RabbitMQ\Analytics;
 
 use App\Charts;
 use App\Components\DataCharts\ChartData;
+use App\Components\DataCharts\ExpensesByMonthCategory;
 use App\RabbitMQ\Consumer;
 use App\RabbitMQ\DataConstants;
 use App\Components\DataCharts\ExpensesByCategory;
@@ -120,7 +121,12 @@ class MessageConsumer extends Consumer
                 );
                 return $chartData;
             case 'categoryMonth':
-                return null;
+                $chartData = ExpensesByMonthCategory::init(
+                    $unpackMessage['userId'],
+                    $unpackMessage['dateStart'],
+                    $unpackMessage['dateEnd']
+                );
+                return $chartData;
 
             default:
                 $chartData = ExpensesByCategory::init(

@@ -9,12 +9,48 @@ class ExpensesByMonthCategory extends AbstractChartData
 
     public function getData()
     {
-        // TODO: Implement getData() method.
+        $dataGroupedCategory = $this->queryFunds()->get()->groupBy('category_id')->toArray();
+
+        $data = array();
+
+        foreach ($dataGroupedCategory as $categoryId => $dataByCategory)
+        {
+
+            $sum = 0;
+
+            foreach ($dataByCategory as $item)
+            {
+                $categoryName = $item['category_name'];
+
+                $sum += $item['sum'];
+            }
+
+            if(!empty($sum) && !empty($categoryName))
+            {
+                $data[$categoryId] = [
+                    'name' => $categoryName,
+                    'sum' => $sum,
+                ];
+            }
+
+            unset($sum);
+            unset($categoryName);
+
+        }
+
+        return $data;
     }
 
     public function getJsonByChart()
     {
-        // TODO: Implement getJsonByChart() method.
+        $chartData = array();
+
+        foreach($this->getData() as $categoryId => $data)
+        {
+            $chartData[] = [$data['name'], $data['sum']];
+        }
+
+        return json_encode($chartData);
     }
 
 
