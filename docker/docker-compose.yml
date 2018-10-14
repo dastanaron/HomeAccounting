@@ -42,9 +42,8 @@ services:
       context: ./fpm
       dockerfile: Dockerfile
     volumes:
-      - '../:/var/www/html/HomeAccountingLaravel'
+      - '/var/www/html/HomeAccountingLaravel/:/var/www/html/HomeAccountingLaravel/'
       - './fpm/supervisor/conf.d/:/var/www/html/HomeAccountingLaravel'
-#    command: /var/www/html/HomeAccountingLaravel/artisan analyticsconsumer:start
     depends_on:
       - mysql
       - rabbit
