@@ -72,9 +72,15 @@
                                 </div>
                             @endif
                         </div>
+                    <h2>PUSH-уведомления</h2>
+                    <div id="push-on" class="btn btn-primary">Включить уведомления</div>
+                    <div id="push-off" class="btn btn-primary">Отключить уведомления</div>
+                    <div id="info-push"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script src="{{ asset('serviceworker/firebase.js') }}" defer></script>
+<script src="{{ asset('js/push.js') }}" defer></script>
 @endsection
