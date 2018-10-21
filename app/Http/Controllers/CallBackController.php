@@ -91,7 +91,7 @@ class CallBackController extends Controller
             ->where('user_id', '=', $user->id)
             ->delete();
 
-        return ['status' => 'ok', 'message' => 'Deleted data social_network is '.$socialNetworkDeleted];
+        return ['status' => 'ok', 'message' => 'Deleted data social_network is '.$socialNetworkDelete];
     }
 
 }
