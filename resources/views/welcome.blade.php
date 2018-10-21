@@ -78,17 +78,10 @@
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Документация</a>
-                    <a href="https://laracasts.com">Ларакасты</a>
-                    <a href="https://laravel-news.com">Новости</a>
-                    <a href="https://forge.laravel.com">Кузница</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
+                Система учета расхода средств. В скором времени, данная страница будет более информативна,
+                появятся все стандартные вкладки типа О проекте, Инструкции и т.п.
+                Сейчас данный сервис находится в разработке и тестировании, отсюда и название домена и кое-где
+                не информативный функционал.
             </div>
         </div>
     </body>
