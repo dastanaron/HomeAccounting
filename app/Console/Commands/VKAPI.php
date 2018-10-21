@@ -104,7 +104,7 @@ class VKAPI extends Command
 
     protected function buildMessage(Events $event)
     {
-        if($event->type_event === 1) {
+        if($event->type_event === 2) {
             $message = $event->head.PHP_EOL;
             $message .= $event->message;
 
