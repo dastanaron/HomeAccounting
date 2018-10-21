@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\SocialNetwork;
 use Illuminate\Console\Command;
 use App\Events;
-use App\User;
+use GuzzleHttp\Client;
 
 class WebPushNotification extends Command
 {
@@ -70,7 +71,29 @@ class WebPushNotification extends Command
              * @var Events $event;
              */
             $userId = $event->user->id;
-            dd($event);
+
+            $this->logMessage('Получаем токены для отправки');
+
+            $socialNetwork = SocialNetwork::where('social_network', '=', 'web-push')
+                ->where('user_id', '=', $userId);
+
+            //Может быть привязано несколько устройств, поэтому пушим во все
+            foreach ($socialNetwork->get() as $item) {
+                /**
+                 * @var SocialNetwork $item
+                 */
+                $pushToken = $item->social_id;
+
+                $this->logMessage('Отправляем push уведомление пользователю id=' . $userId);
+                $sent = $this->sendMessage($pushToken, $event->head, $event->message);
+                $this->logMessage('Отправка завершилась ответом [' . $sent . ']');
+            }
+
+            //Не важно отправлено или нет,
+            // запись в базе делаем с отметкой завершено,
+            // чтобы не завалить бесконечным циклом в случае ошибки отправки
+            $event->completed = 1;
+            $event->save();
 
         }
 
@@ -78,9 +101,39 @@ class WebPushNotification extends Command
 
     }
 
-    private function sendMessage()
+    private function sendMessage($toPushToken, $title, $body, $icon=null, $link=null)
     {
 
+        $message = [
+            'data' => [
+                "title" => $title,
+                "body" => $body,
+                "icon" => $icon,
+                "click_action" => $link
+            ],
+            'to' => $toPushToken
+        ];
+
+        $client = new Client();
+        $res = $client
+            ->request('POST', 'https://fcm.googleapis.com/fcm/send', [
+                'headers' => [
+                    'Authorization' => 'key=' . $this->serverKey,
+                    'Content-Type' => 'application/json'
+                ],
+                'body' => json_encode($message),
+            ])
+            ->getBody()
+            ->getContents();
+
+        $answer = (bool) json_decode($res)->success;
+
+        if(!$answer)
+        {
+            $this->fileLog($res);
+        }
+
+        return $answer;
     }
 
     protected function logMessage($message)
@@ -88,5 +141,10 @@ class WebPushNotification extends Command
         $date = date('Y-m-d H:i:s');
 
         $this->line($date.' | '.$message);
+    }
+
+    private function fileLog($data)
+    {
+        \Log::info('Отправка уведомления не завершена', var_export($data, true));
     }
 }
