@@ -101,8 +101,10 @@ class WebPushNotification extends Command
 
     }
 
-    private function sendMessage($toPushToken, $title, $body, $icon=null, $link=null)
+    private function sendMessage($toPushToken, $title, $body, $icon='/favicon.png', $link=null)
     {
+
+        $icon = env('APP_URL') . $icon;
 
         $message = [
             'data' => [
