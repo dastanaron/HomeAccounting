@@ -80,10 +80,18 @@ class CallBackController extends Controller
     /**
      * Web-push token delete
      * @param Request $request
+     * @return array
+     * @throws \Exception
      */
     public function pushOff(Request $request)
     {
-        //todo: доделать удаление
+        $user = \Auth::user();
+
+        $socialNetworkDelete = SocialNetwork::where('social_network', '=', 'web-push')
+            ->where('user_id', '=', $user->id)
+            ->delete();
+
+        return ['status' => 'ok', 'message' => 'Deleted data social_network is '.$socialNetworkDeleted];
     }
 
 }

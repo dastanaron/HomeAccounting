@@ -54,6 +54,8 @@ if (
             .catch(function(error) {
                 showError('Error retrieving Instance ID token', error);
             });
+        //delete on server base
+        deleteTokenToServer();
     });
 
     // handle catch the notification on current page
@@ -155,6 +157,12 @@ function sendTokenToServer(currentToken) {
     } else {
         console.log('Token already sent to server so won\'t send it again unless it changes');
     }
+}
+
+function deleteTokenToServer()
+{
+    $.post('/callback/push-off/', {_token: csrf_token});
+    setTokenSentToServer(false);
 }
 
 function isTokenSentToServer(currentToken) {
