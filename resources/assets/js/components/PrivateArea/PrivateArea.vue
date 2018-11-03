@@ -239,14 +239,6 @@
             goToPanel() {
               window.location.href = '/home';
             },
-            queueBroker() {
-                let storage = new Storage(true);
-                let broker = new Broker(storage);
-
-                console.log(broker.test(this));
-
-            },
-
         },
         computed: {
             ListenPreloader() {
@@ -274,8 +266,6 @@
                 this.billsControlApplication();
                 this.$refs.bills.getBills();
             });
-
-            this.queueBroker();
         },
         components: {
             Analytics,
