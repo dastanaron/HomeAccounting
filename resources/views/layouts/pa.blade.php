@@ -41,6 +41,6 @@
         @yield('content')
     </div>
     <!-- Scripts -->
-    <script src="{{ asset('js/pa.js?v=0.9.2') }}" defer></script>
+    <script src="{{ asset('js/pa.js?v=0.9.3') }}" defer></script>
 </body>
 </html>
