@@ -133,6 +133,7 @@
     import BarcodeScanner from "../BarcodeScanner/BarcodeScanner";
     import EventsControl from "../EventsControl/EventsControl";
     import Analytics from "../analytics/analytics";
+    import {Storage, Broker} from '../../classes/QueueBroker/index';
 
     export default {
         name: "private-area",
@@ -238,7 +239,6 @@
             goToPanel() {
               window.location.href = '/home';
             },
-
         },
         computed: {
             ListenPreloader() {

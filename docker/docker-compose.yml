@@ -27,6 +27,7 @@ services:
   #nginx без изменений
   nginx:
     image: "nginx:latest"
+    restart: always
     volumes:
       - './nginx/conf.d/:/etc/nginx/conf.d/'
       - '../:/var/www/html/HomeAccountingLaravel'

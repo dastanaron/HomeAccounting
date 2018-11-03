@@ -179,6 +179,7 @@
                             this.requestButtonDisabled = false;
                             this.$store.commit('setAlert', {type: 'warning', status: true, message: 'сервер не отвечает'});
                             this.interval = null;
+                            this.incrementIntervalCounter = 0;
                             return null;
                         }
 
@@ -198,10 +199,14 @@
 
                         this.$store.commit('setPreloader', false);
                         this.requestButtonDisabled = false;
+                        this.interval = null;
+                        this.incrementIntervalCounter = 0;
 
                     })
                     .catch(error => {
                         clearInterval(this.interval);
+                        this.interval = null;
+                        this.incrementIntervalCounter = 0;
                     });
             },
             //Если проходит валидацию, дисейблим кнопу и запускаем предзагрузчик

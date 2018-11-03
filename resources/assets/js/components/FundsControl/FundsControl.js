@@ -1,5 +1,6 @@
 
 import template from './template.html';
+import {Storage, Broker} from "../../classes/QueueBroker/index";
 
 export default {
     name: "funds-control",
@@ -228,7 +229,18 @@ export default {
 
                 })
                 .catch(error => {
-                    this.$store.commit('AlertError', error.message);
+                    this.$store.commit('setAlert',
+                        {
+                            type: 'warning',
+                            status: true,
+                            message: 'Ошибка соединения с сервером. Однако, ваши данные не будут уреряны и будут записаны, после восстановления соединения'
+                        }
+                        );
+                    this.fundsFormShow = false;
+                    this.$store.commit('setPreloader', false);
+                    this.sendBroker(method, url, this.fundsFormData);
+
+                    console.error(error);
                 });
         },
         newFund() {
@@ -332,6 +344,23 @@ export default {
         mobileFilterDefaultDisable() {
             this.filters = !this.isMobile();
         },
+        sendBroker(method, url, data) {
+            let storage = new Storage(true);
+            let broker = new Broker(storage, 'fundsControl');
+            broker.saveToStorage(method, url, data);
+        },
+        brokerSendRun()
+        {
+            let storage = new Storage(true);
+            let broker = new Broker(storage, 'fundsControl');
+
+            if(broker.queueCount() > 0)
+            {
+                broker.run();
+                this.$store.commit('setAlert', {type: 'info', status: true, message: 'Есть сообщения не отправленные на сервер из-за ошибок соединения, проверьте, что все данные успешно сохранены сейчас'});
+            }
+
+        }
     },
     computed: {
         paginateValue() {
@@ -360,9 +389,10 @@ export default {
         },
     },
     mounted() {
-        this.getFunds();
+        this.brokerSendRun();
         this.getBills();
         this.getCategories();
-        this.mobileFilterDefaultDisable()
+        this.getFunds();
+        this.mobileFilterDefaultDisable();
     },
 }
