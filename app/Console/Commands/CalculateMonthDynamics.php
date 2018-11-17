@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\CashDynamicsAccumulate;
 use App\Funds;
+use App\User;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Illuminate\Console\Command;
@@ -36,12 +38,24 @@ class CalculateMonthDynamics extends Command
         parent::__construct();
     }
 
-
+    /**
+     * Handle
+     */
     public function handle()
     {
 
-        $this->userId = 1;
+        foreach($this->getUsersIds() as $userId) {
+            $this->userId = $userId;
+            $this->processEnvelope();
+        }
 
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function processEnvelope()
+    {
         $firstDate = new Carbon($this->getFirstDate());
         $lastDate = new Carbon($this->getLatestDate());
 
@@ -51,17 +65,39 @@ class CalculateMonthDynamics extends Command
 
         $array = [];
 
-        for($start = 0; $start<$monthDiff; $start++)
-        {
+        for($start = 0; $start<$monthDiff; $start++) {
             $month = $startDate->addMonth(1);
 
             $array[$month->format('Y-m')] = $this->getDiffByMonth($month);
         }
 
-        dump($lastDate, $array);
+        //clear table by user_id
+        CashDynamicsAccumulate::where('user_id', '=', $this->userId)->delete();
 
 
+        foreach($array as $month => $value) {
+            $newCashDinamicElement = new CashDynamicsAccumulate();
+            $newCashDinamicElement->user_id = $this->userId;
+            $newCashDinamicElement->month = $month;
+            $newCashDinamicElement->sum = $value;
+            $newCashDinamicElement->save();
+        }
+    }
 
+    /**
+     * @return array
+     */
+    private function getUsersIds()
+    {
+        $users = User::select('id')->get();
+
+        $array = [];
+
+        foreach ($users as $user) {
+            $array[] = $user->id;
+        }
+
+        return $array;
     }
 
     /**
@@ -77,7 +113,6 @@ class CalculateMonthDynamics extends Command
         $endDateInMonth = $date->format('Y-m-'.$date->daysInMonth);
 
         $funds = Funds::whereBetween('date', [$firstDateInMonth, $endDateInMonth]);
-
 
         $incomeSum = 0;
 
@@ -115,7 +150,7 @@ class CalculateMonthDynamics extends Command
 
         $result = $query->first();
 
-        return $result->date;
+        return !is_null($result) ? $result->date : null;
     }
 
     /**
@@ -128,6 +163,6 @@ class CalculateMonthDynamics extends Command
 
         $result = $query->first();
 
-        return $result->date;
+        return !is_null($result) ? $result->date : null;
     }
 }
