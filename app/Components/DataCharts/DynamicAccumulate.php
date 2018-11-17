@@ -23,7 +23,7 @@ class DynamicAccumulate extends AbstractChartData
 
         $yArray = [];
 
-        $stringX = 'x, ';
+        $stringX = '';
         $stringY = 'sum, ';
 
         foreach($data as $items) {
