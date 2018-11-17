@@ -1,0 +1,6 @@
+<?php
+
+return [
+    'serverKey' => env('WEBPUSH_SERVER_KEY', 'AAAA53cyf58:APA91bG6GuARsj0SEJ_vSO1xCFLlK6YFh8i6Z8_mzSBDFS6zqcL9MyVIPHFVChARIYNhoNMt3rmt20XSSmkk6DNfzWElWiKeEqQ_aBwZp2AWXZuWCmTawQg2C3j2a5Z4dAYIQindoY7e'),
+    'senderId' => env('WEBPUSH_SENDER_ID', '994137243551'),
+];

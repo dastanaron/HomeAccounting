@@ -72,7 +72,11 @@ Route::delete('/pa/events', 'EventController@deleteEvent');
 Route::middleware('auth')->post('/callback/vk-authorize', 'CallBackController@vkAuthorize');
 Route::middleware('auth')->post('/callback/vk-unauthorize', 'CallBackController@vkUnAthorize');
 
-
+/**
+ * web-push register
+ */
+Route::post('/callback/push-on', 'CallBackController@pushOn');
+Route::post('/callback/push-off', 'CallBackController@pushOff');
 
 /**
  * Analytics methods
