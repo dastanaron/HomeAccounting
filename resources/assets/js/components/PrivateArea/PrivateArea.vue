@@ -8,6 +8,12 @@
             <v-toolbar-title class="white--text">{{ menuTitle }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
+                <v-btn icon @click="openDynamicAccumulate()" slot="activator">
+                    <v-icon>show_chart</v-icon>
+                </v-btn>
+                <span>Динамика накоплений</span>
+            </v-tooltip>
+            <v-tooltip bottom>
                 <v-btn icon @click="applicationMenu=true" slot="activator">
                     <v-icon>apps</v-icon>
                 </v-btn>
@@ -113,6 +119,25 @@
                 </v-list>
             </v-card>
         </v-menu>
+        <v-dialog v-model="dynamicAccumulateChart" scrollable max-width="80%">
+            <v-card>
+                <v-card-title>
+                    График динамики накоплений
+                    <v-spacer></v-spacer>
+                    <v-btn icon color="primary" flat @click="dynamicAccumulateChart = false">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                </v-card-title>
+                <v-divider></v-divider>
+                <v-card-text>
+                    <dynamic-accumulate-chart-component ref="dynamicAccumulateChart"></dynamic-accumulate-chart-component>
+                </v-card-text>
+                <v-card-actions>
+                    <!-- Сюда можно еще кнопок напихать !-->
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
         <swipe ref="swipeComponents" :options="swipeOptions">
             <swipe-item><bills-control ref="bills"></bills-control></swipe-item>
             <swipe-item><funds-control ref="funds"></funds-control></swipe-item>
@@ -134,6 +159,7 @@
     import EventsControl from "../EventsControl/EventsControl";
     import Analytics from "../analytics/analytics";
     import {Storage, Broker} from '../../classes/QueueBroker/index';
+    import DynamicAccumulateChartComponent from "../analytics/dynamic-accumulate-chart-component";
 
     export default {
         name: "private-area",
@@ -162,8 +188,13 @@
 
             reloadBills: false,
 
+            dynamicAccumulateChart: false,
+
         }),
         methods: {
+            openDynamicAccumulate() {
+                this.dynamicAccumulateChart = true;
+            },
             reload() {
                 window.location.reload()
             },
@@ -268,6 +299,7 @@
             });
         },
         components: {
+            DynamicAccumulateChartComponent,
             Analytics,
             EventsControl,
             BarcodeScanner,
