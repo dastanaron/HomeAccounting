@@ -6,9 +6,16 @@ use App\CashDynamicsAccumulate;
 use App\Funds;
 use App\User;
 use Carbon\Carbon;
-use Carbon\CarbonInterval;
 use Illuminate\Console\Command;
 
+/**
+ * Тестовый функционал сбора данных.
+ * Нужно будет переделать, но пока пусть так поработает.
+ * Подход не очень хороший, но все-таки рабочий
+ *
+ * Class CalculateMonthDynamics
+ * @package App\Console\Commands
+ */
 class CalculateMonthDynamics extends Command
 {
 

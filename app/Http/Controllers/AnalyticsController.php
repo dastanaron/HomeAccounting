@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Charts;
-use App\RabbitMQ\DataConstants;
+use App\Components\DataCharts\DynamicAccumulate;
 use Illuminate\Http\Request;
 use App\RabbitMQ\Analytics\MessagePush;
-use Storage;
 
 class AnalyticsController extends Controller
 {
@@ -84,6 +83,22 @@ class AnalyticsController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function getAccumulateDynamic(Request $request)
+    {
+        $userId = \Auth::user()->id;
+        $dynamicAccumulate = new DynamicAccumulate($userId, $request->input('date_start'), $request->input('date_end'));
+
+        return !empty($dynamicAccumulate->getData()) ? $dynamicAccumulate->getJsonByChart() : ['status' => 400, 'message' => 'selection is empty'];
+    }
+
+    /**
+     * @param Request $request
+     * @return array|bool
+     */
     private function createChartDataValidator(Request $request)
     {
         $userId = \Auth::user()->id;
