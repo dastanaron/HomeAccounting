@@ -132,7 +132,7 @@ class WebPushNotification extends Command
 
         if(!$answer)
         {
-            $this->fileLog($res);
+            $this->fileLog(json_decode($res, true));
         }
 
         return $answer;
