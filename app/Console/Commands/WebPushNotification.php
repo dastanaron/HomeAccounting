@@ -147,6 +147,6 @@ class WebPushNotification extends Command
 
     private function fileLog($data)
     {
-        \Log::info('Отправка уведомления не завершена', var_export($data, true));
+        \Log::info('Отправка уведомления не завершена', $data);
     }
 }
