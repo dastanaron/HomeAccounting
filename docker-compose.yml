@@ -5,7 +5,7 @@ services:
   rabbit:
     image: rabbitmq:3.7-management
     ports:
-    - "15672:15672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -16,12 +16,12 @@ services:
     restart: always
     volumes:
     - '~/mysql-test/:/var/lib/mysql/'
-    - './mysql/test-base/:/usr/local/test-base/'
+    - '/home/dastanaron/dumps:/usr/local/test-base/'
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: accounting
     ports:
-    - "3306:3306" #Для клиентов
+    - "3306:3306"
     #command: mysql -u root -proot accounting < /usr/local/test-base/accounting.sql #просто чтобы записать команду для развертывания тестовой базы
 
   #nginx без изменений
@@ -29,8 +29,8 @@ services:
     image: "nginx:latest"
     restart: always
     volumes:
-      - './nginx/conf.d/:/etc/nginx/conf.d/'
-      - '../:/var/www/html/HomeAccountingLaravel'
+      - './docker/nginx/conf.d/:/etc/nginx/conf.d/'
+      - '/home/dastanaron/projects/HomeAccountingLaravel/:/var/www/html/HomeAccountingLaravel'
     ports:
     - "80:80"
     - "443:443"
@@ -41,11 +41,11 @@ services:
   #Настроенный fpm со всеми либами
   fpm:
     build:
-      context: ./fpm
+      context: docker/fpm
       dockerfile: Dockerfile
     volumes:
-      - '/var/www/html/HomeAccountingLaravel/:/var/www/html/HomeAccountingLaravel/'
-      - './fpm/supervisor/conf.d/:/var/www/html/HomeAccountingLaravel'
+      - '/home/dastanaron/projects/HomeAccountingLaravel/:/var/www/html/HomeAccountingLaravel/'
+      - './docker/fpm/supervisor/conf.d/:/var/www/html/HomeAccountingLaravel'
     depends_on:
       - mysql
       - rabbit

@@ -22,6 +22,8 @@ RUN apt-get update && apt-get install -y \
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+RUN useradd -ms /bin/bash dastanaron
+
 COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/
 
 #RUN apt install supervisor
