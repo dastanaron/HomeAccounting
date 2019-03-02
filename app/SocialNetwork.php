@@ -18,14 +18,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $photo;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property int $id
- * @property int $user_id
- * @property string $social_network
- * @property string $social_id
- * @property string|null $comment
- * @property string|null $first_name
- * @property string|null $last_name
- * @property string|null $photo
  * @property-read \App\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereCreatedAt($value)

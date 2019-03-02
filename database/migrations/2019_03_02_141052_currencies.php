@@ -28,10 +28,9 @@ class Currencies extends Migration
         });
 
         Schema::table('bills', function (Blueprint $table) {
-            $table->integer('currency')->nullable()->after('sum');
+            $table->integer('currency')->default(643)->nullable()->after('sum');
+            $table->index('currency');
 
-            $table->foreign('currency')
-                ->references('num_code')->on($this->tableName)->onDelete('cascade');
         });
     }
 
@@ -42,13 +41,11 @@ class Currencies extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists($this->tableName);
 
-        Schema::table('bills', function (Blueprint $table) {;
-
+        Schema::table('bills', function (Blueprint $table) {
             $table->dropColumn('currency');
-
-            $table->dropForeign('bills_currency_foreign');
         });
+
+        Schema::dropIfExists($this->tableName);
     }
 }
