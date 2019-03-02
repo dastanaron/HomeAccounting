@@ -24,9 +24,7 @@ Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(VSwipe);
 
-//import PrivateArea from './components/PrivateArea/PrivateArea.js';
-
-Vue.component('private-area', require('./components/PrivateArea/PrivateArea.vue'));
+import privateArea from './components/PrivateArea/PrivateArea.vue';
 
 /**
  * Mobile detected
@@ -88,5 +86,13 @@ const store = new Vuex.Store({
 
 const app = new Vue({
     el: '#privateArea',
+    template: '<private-area></private-area>',
+    components: {privateArea},
     store
 });
+
+import Currency from './classes/DB/models/Currency';
+
+let test = new Currency();
+
+window.test = test;
