@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Components\Currency\Services\CBRFDaily;
 use Illuminate\Console\Command;
 
-class test extends Command
+class ParseCurrency extends Command
 {
 
     /**
@@ -13,7 +13,7 @@ class test extends Command
      *
      * @var string
      */
-    protected $signature = 'test:test';
+    protected $signature = 'currency:parse';
 
     /**
      * The console command description.
@@ -39,6 +39,11 @@ class test extends Command
      */
     public function handle()
     {
-        echo 'test';
+        $currency = new CBRFDaily('');
+
+        $currencyList = $currency->getCurrenciesList();
+
+        dd($currencyList);
+
     }
 }
