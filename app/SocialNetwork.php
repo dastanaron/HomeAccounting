@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class SocialNetwork
- * @package App
  *
+ * @package App
  * @property integer $id;
  * @property integer $user_id;
  * @property string $social_network;
@@ -18,6 +18,26 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $photo;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property int $id
+ * @property int $user_id
+ * @property string $social_network
+ * @property string $social_id
+ * @property string|null $comment
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $photo
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork wherePhoto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereSocialId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereSocialNetwork($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialNetwork whereUserId($value)
+ * @mixin \Eloquent
  */
 class SocialNetwork extends Model
 {

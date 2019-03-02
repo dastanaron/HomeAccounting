@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $user_id
  * @property string $name
  * @property int $sum
+ * @property int|null $currency
  * @property string|null $deadline
  * @property string|null $comment
  * @property \Carbon\Carbon|null $created_at
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bills whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bills whereUserId($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Bills whereCurrency($value)
  */
 class Bills extends Model
 {
