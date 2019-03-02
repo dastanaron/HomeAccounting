@@ -16,15 +16,22 @@ class Currencies extends Migration
     public function up()
     {
         Schema::create($this->tableName, function (Blueprint $table) {
-            $table->string('external_id', 55);
-            $table->integer('num_code');
-            $table->string('char_code', 20);
+            $table->string('external_id', 55)->unique();
+            $table->integer('num_code')->unique();
+            $table->string('char_code', 20)->unique();
             $table->integer('nominal')->nullable();
             $table->string('name', 255)->nullable();
             $table->float('value', 10, 4);
 
-            $table->foreign('user_id')
-                ->references('id')->on('users')->onDelete('cascade');
+            $table->primary('num_code');
+
+        });
+
+        Schema::table('bills', function (Blueprint $table) {
+            $table->integer('currency')->nullable()->after('sum');
+
+            $table->foreign('currency')
+                ->references('num_code')->on($this->tableName)->onDelete('cascade');
         });
     }
 
@@ -35,15 +42,13 @@ class Currencies extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists($this->tableName);
+
+        Schema::table('bills', function (Blueprint $table) {;
+
+            $table->dropColumn('currency');
+
+            $table->dropForeign('bills_currency_foreign');
+        });
     }
 }
-/*
- *    +CBRFID: "R01820"
-    +numCode: 392
-    +charCode: "JPY"
-    +nominal: 100
-    +name: "Японских иен"
-    +value: 58.8128
-
- */
