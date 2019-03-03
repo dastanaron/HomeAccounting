@@ -90,9 +90,3 @@ const app = new Vue({
     components: {privateArea},
     store
 });
-
-import Currency from './classes/DB/models/Currency';
-
-let test = new Currency();
-
-window.test = test;

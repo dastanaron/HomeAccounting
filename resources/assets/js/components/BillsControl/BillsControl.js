@@ -1,5 +1,6 @@
 
 import template from './template.html';
+import Currency from '../../classes/DB/models/Currency';
 
 export default {
     name: "bills-control",
@@ -27,6 +28,9 @@ export default {
                 v => /^\d+[\,]?\d*$/.test(v) || 'Сумма должна быть числом вида (100 или 100,25)'
             ]
         },
+
+        currency: [],
+
         search: '',
         loadingDataTable: false,
         pagination: {'sortBy': 'sum', 'descending': true, 'rowsPerPage': -1},
@@ -63,6 +67,15 @@ export default {
                     this.$store.commit('AlertError', error.message);
                 });
 
+        },
+        getCurrency() {
+            let currency = new Currency();
+
+            currency.getCurrencyFromTable().then((result) => {
+                for (let key in result) {
+                    this.currency[key] = result[key];
+                }
+            });
         },
         createBillsForm() {
             this.billsFormShow = true;
@@ -174,6 +187,7 @@ export default {
     },
     mounted() {
         this.getBills();
+        this.getCurrency();
     }
 
 }

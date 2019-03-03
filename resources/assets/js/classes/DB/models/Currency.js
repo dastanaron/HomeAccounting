@@ -6,13 +6,7 @@ export default class Currency {
     constructor ()
     {
 
-        this.dataProvider = {
-            num_code: {type: Number},
-            char_code: {type: String},
-            nominal: {type: Number},
-            name: {type: String},
-            value: {type: Number}
-        };
+        this.dataProvider = {};
 
         this.tableName = 'currency';
 
@@ -43,7 +37,51 @@ export default class Currency {
             }
         ];
 
-        this.db.createTable(this.tableName, columns)
+        this.db.createTable(this.tableName, columns);
+    }
+
+    fillTable()
+    {
+
+        const columns = ['num_code', 'char_code', 'nominal', 'name', 'value'];
+
+        this.dataProvider = '';
+
+        this.getCurrenciesFromServer();
+
+        let interval = setInterval(() => {
+
+            if(this.dataProvider !== '') {
+
+                clearInterval(interval);
+
+                for (let key in this.dataProvider) {
+                    let values = [
+                        this.dataProvider[key].num_code,
+                        this.dataProvider[key].char_code,
+                        this.dataProvider[key].nominal,
+                        this.dataProvider[key].name,
+                        this.dataProvider[key].value
+                    ];
+
+                    this.db.insertRecordToTable(this.tableName, columns, values);
+                }
+            }
+
+        }, 2000);
+    }
+
+    getCurrencyFromTable()
+    {
+        return new Promise((resolve, reject) => {
+            this.db.db.transaction((tx) => {
+                tx.executeSql("SELECT * FROM " + this.tableName, [], (trans, result) => {
+                    resolve(result.rows);
+                }, (error) => {
+                    reject(error);
+                })
+            });
+        });
     }
 
     getCurrenciesFromServer()
@@ -57,3 +95,20 @@ export default class Currency {
             });
     }
 }
+
+/*
+return new Promise((resolve, reject) => {
+
+  this.db.transaction((tx) => {
+
+    tx.executeSql(
+      sql,
+      params,
+      (tx, res) => resolve({tx, res}),
+      (tx, err) => reject({tx, err}),
+    );
+
+  });
+
+});
+ */

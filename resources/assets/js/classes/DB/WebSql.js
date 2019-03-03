@@ -49,15 +49,6 @@ class WebSql {
 
         this.db.transaction((tx) => {
             tx.executeSql("CREATE TABLE " + tableName + columnsToRequest, [], null, null)
-        })
-
-        this.db.transaction((tx) => {
-            tx.executeSql("SELECT COUNT(*) FROM " + tableName, [], function(result){
-                console.log(result);
-            }, (tx, error) => {
-                console.log(tx);
-                console.log(error);
-            });
         });
     }
 
@@ -84,38 +75,14 @@ class WebSql {
             }
         }
 
-        let query = 'INSERT INTO '+tableName+' ('+columns.join(', ')+') values('+valuesString+')';
+        let query = 'REPLACE INTO '+tableName+' ('+columns.join(', ')+') values('+valuesString+')';
 
         this.db.transaction((tx) => {
             tx.executeSql(query, values, null, null);
+        }, (error) => {
+            console.error(error);
         });
     }
 }
-
-/*
-column = [
-{
-name: 'id',
-type: 'INTEGER'
-unique: true
-},
-{
-name: 'test',
-type: 'TEXT'
-}
-];
- */
-
-/*
-NULL. The value is a NULL value.
-
-INTEGER. The value is a signed integer, stored in 1, 2, 3, 4, 6, or 8 bytes depending on the magnitude of the value.
-
-REAL. The value is a floating point value, stored as an 8-byte IEEE floating point number.
-
-TEXT. The value is a text string, stored using the database encoding (UTF-8, UTF-16BE or UTF-16LE).
-
-BLOB. The value is a blob of data, stored exactly as it was input.
- */
 
 module.exports = WebSql;
