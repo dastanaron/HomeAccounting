@@ -84,6 +84,21 @@ export default class Currency {
         });
     }
 
+    getCurrencyInfoByCurrencyCode(currencyCode)
+    {
+        let query = "SELECT * FROM " + this.tableName + " WHERE num_code=?";
+
+        return new Promise((resolve, reject) => {
+            this.db.db.transaction((tx) => {
+                tx.executeSql(query, [currencyCode], (trans, result) => {
+                    resolve(result.rows[0]);
+                }, (error) => {
+                    reject(error);
+                })
+            });
+        });
+    }
+
     getCurrenciesFromServer()
     {
         axios.get('/pa/get-currencies')

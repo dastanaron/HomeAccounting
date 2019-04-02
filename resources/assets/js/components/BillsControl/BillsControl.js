@@ -1,6 +1,10 @@
 
 import template from './template.html';
 import Currency from '../../classes/DB/models/Currency';
+import BillsCurrencyName from './subComponents/BillsCurrencyName';
+import BillsPriceOutput from "./subComponents/BillsPriceOutput";
+import { find } from 'lodash';
+
 
 export default {
     name: "bills-control",
@@ -22,6 +26,7 @@ export default {
             name: '',
             sum: '',
             deadline: '',
+            currency: '',
             comment: '',
             sumRules: [
                 v => !!v || 'Сумма обязательна к заполнению',
@@ -29,7 +34,12 @@ export default {
             ]
         },
 
-        currency: [],
+        currenciesList: [
+            {
+                name: "Российский рубль",
+                num_code: 643,
+            }
+        ],
 
         search: '',
         loadingDataTable: false,
@@ -43,6 +53,7 @@ export default {
             },
             { text: 'Название', value: 'name', align: 'right' },
             { text: 'Сумма', value: 'sum', align: 'right' },
+            { text: 'Валюта', value: 'currency', align: 'right'},
             { text: 'Окончание программы', value: 'deadline', align: 'right' },
             { text: 'Комментарий', value: 'comment', align: 'right' },
             { text: 'Управление', value: '', align: 'right'},
@@ -72,8 +83,9 @@ export default {
             let currency = new Currency();
 
             currency.getCurrencyFromTable().then((result) => {
+                this.currenciesList = [];
                 for (let key in result) {
-                    this.currency[key] = result[key];
+                    this.currenciesList[key] = result[key];
                 }
             });
         },
@@ -112,6 +124,7 @@ export default {
                         name: this.billFormData.name,
                         sum: this.billFormData.sum,
                         deadline: this.billFormData.deadline,
+                        currency: this.billFormData.currency,
                         comment: this.billFormData.comment,
                     }
             })
@@ -135,6 +148,7 @@ export default {
             this.billFormData.name = object.name;
             this.billFormData.sum = object.sum.toString().replace(/\./gi, ',');
             this.billFormData.deadline = object.deadline;
+            this.billFormData.currency = object.currency;
             this.billFormData.comment = object.comment;
 
             this.billFormType = 'update';
@@ -188,6 +202,10 @@ export default {
     mounted() {
         this.getBills();
         this.getCurrency();
-    }
+    },
+    components: {
+        BillsCurrencyName,
+        BillsPriceOutput
+    },
 
 }

@@ -97,6 +97,7 @@ class BillsHelper
         $bill->name = $this->request->input('name');
         $bill->sum = $this->sumToFloat($this->request->input('sum'));
         $bill->deadline = $this->request->input('deadline');
+        $bill->currency = $this->request->input('currency');
         $bill->comment = $this->request->input('comment');
 
         return $bill->save();

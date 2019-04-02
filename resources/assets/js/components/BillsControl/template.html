@@ -23,7 +23,15 @@
                 <tr>
                     <td>{{ props.item.id }}</td>
                     <td class="text-xs-right">{{ props.item.name}}</td>
-                    <td class="text-xs-right">{{ sumFormat(props.item.sum) }}</td>
+                    <td class="text-xs-right">
+                        <bills-price-output
+                            :sum="props.item.sum"
+                            :currencyCode="props.item.currency"
+                        ></bills-price-output>
+                    </td>
+                    <td class="text-xs-right">
+                        <bills-currency-name :currencyCode="props.item.currency"></bills-currency-name>
+                    </td>
                     <td class="text-xs-right">{{ props.item.deadline }}</td>
                     <td class="text-xs-right">{{ props.item.comment }}</td>
                     <td class="text-xs-right control">
@@ -121,15 +129,15 @@
                                 </v-dialog>
                             </v-flex>
                             <v-flex xs12>
-                                <!--<v-autocomplete
-                                        :items="revList"
-                                        v-model="fundsFilterForm.rev"
+                                <v-autocomplete
+                                        :items="currenciesList"
+                                        v-model="billFormData.currency"
                                         item-text="name"
-                                        item-value="value"
-                                        label="Валюта счета"
+                                        item-value="num_code"
+                                        label="Выберите счёт"
                                         clearable
                                         autocomplete
-                                ></v-autocomplete>!-->
+                                ></v-autocomplete>
                             </v-flex>
                             <v-flex xs12>
                                 <v-text-field v-model="billFormData.comment" label="Коммментарий"></v-text-field>
