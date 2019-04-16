@@ -84,7 +84,11 @@ export default {
             let currency = new Currency();
 
             currency.getCurrencies().then( (result) => {
-                this.currenciesList = result;
+                this.currenciesList =[];
+
+                for(let key in result) {
+                    this.currenciesList[key] = result[key];
+                }
             });
         },
         createBillsForm() {
