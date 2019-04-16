@@ -60,7 +60,8 @@ export default {
         ],
         dataTables: [
 
-        ]
+        ],
+        calcTotalSum: 0,
     }),
     methods: {
         getBills() {
@@ -182,22 +183,46 @@ export default {
             }
             return mobile;
         },
+        calculateTotalSum() {
+            this.calcTotalSum = 0;
+
+            let otherCurrency = [];
+
+            for(let key in this.dataTables) {
+                if(this.dataTables[key]['currency'] === 643) {
+                    this.calcTotalSum += this.dataTables[key]['sum'];
+                }
+                else {
+                    otherCurrency.push(this.dataTables[key]);
+                }
+            }
+
+            if(otherCurrency.length > 0) {
+                let currency = new Currency();
+
+                for (let key in otherCurrency) {
+                    let currencyInfo = currency.getCurrencyInfoByCurrencyCode(otherCurrency[key]['currency']);
+                    currencyInfo.then((result) => {
+                        let sum = result.value / result.nominal * otherCurrency[key]['sum'];
+                        let rounded = Math.ceil((sum)*100)/100;
+                        this.calcTotalSum += rounded;
+                    });
+                }
+            }
+        }
     },
     computed: {
         totalValue() {
-            let total = 0;
-
-            for(let key in this.dataTables) {
-                total += this.dataTables[key]['sum'];
-            }
-
-            return this.sumFormat(total);
+            return this.sumFormat(this.calcTotalSum);
         },
     },
     watch: {
         showBillsTable: function (val) {
             this.getBills();
         },
+        dataTables: function(val) {
+            this.calculateTotalSum();
+        }
     },
     mounted() {
         this.getBills();
