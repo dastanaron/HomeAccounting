@@ -1,7 +1,5 @@
 @extends('layouts.pa')
 
 @section('content')
-    <div id="privateArea">
-        <private-area></private-area>
-    </div>
+    <div id="privateArea"></div>
 @endsection

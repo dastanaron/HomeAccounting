@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Events whereTypeEvent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Events whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Events whereUserId($value)
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Events where($column, $operator, $value)
  * @mixin \Eloquent
  */

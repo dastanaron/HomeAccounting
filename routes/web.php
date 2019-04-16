@@ -28,6 +28,12 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/pa', 'PrivateAreaController@index')->name('privateArea');
 
 /**
+ * Currencies routes
+ */
+Route::get('/pa/get-currencies', 'CurrencyController@getCurrencies');
+Route::get('/pa/get-currency', 'CurrencyController@getCurrency');
+
+/**
  * Bills methods
  */
 Route::get('/pa/bills-list', 'BillsController@getBills');

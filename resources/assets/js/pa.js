@@ -24,9 +24,7 @@ Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(VSwipe);
 
-//import PrivateArea from './components/PrivateArea/PrivateArea.js';
-
-Vue.component('private-area', require('./components/PrivateArea/PrivateArea.vue'));
+import privateArea from './components/PrivateArea/PrivateArea.vue';
 
 /**
  * Mobile detected
@@ -48,6 +46,7 @@ const store = new Vuex.Store({
             type: 'success',
             message: '',
         },
+        defaultCurrency: 643,
     },
     mutations: {
         setPreloader(state, status=true) {
@@ -72,6 +71,9 @@ const store = new Vuex.Store({
             state.alertControl.show = true;
             state.alertControl.message = 'Ошибка передачи транзакции, попробуйте перезапустить страницу. Ответ сервера: '+error;
         },
+        setDefaultCurrency(state, currencyCode) {
+            state.defaultCurrency = currencyCode;
+        }
     },
     getters: {
         getPreloader: state=> {
@@ -82,11 +84,16 @@ const store = new Vuex.Store({
         },
         mobile: state => {
             return state.mobile;
+        },
+        getDefaultCurrency: state => {
+            return state.defaultCurrency;
         }
     },
 });
 
 const app = new Vue({
     el: '#privateArea',
+    template: '<private-area></private-area>',
+    components: {privateArea},
     store
 });

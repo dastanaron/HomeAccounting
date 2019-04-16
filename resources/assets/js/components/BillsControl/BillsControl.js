@@ -1,5 +1,10 @@
 
 import template from './template.html';
+import Currency from '../../classes/DB/models/Currency';
+import BillsCurrencyName from './subComponents/BillsCurrencyName';
+import BillsPriceOutput from "./subComponents/BillsPriceOutput";
+import { find } from 'lodash';
+
 
 export default {
     name: "bills-control",
@@ -21,12 +26,21 @@ export default {
             name: '',
             sum: '',
             deadline: '',
+            currency: '',
             comment: '',
             sumRules: [
                 v => !!v || 'Сумма обязательна к заполнению',
                 v => /^\d+[\,]?\d*$/.test(v) || 'Сумма должна быть числом вида (100 или 100,25)'
             ]
         },
+
+        currenciesList: [
+            {
+                name: "Российский рубль",
+                num_code: 643,
+            }
+        ],
+
         search: '',
         loadingDataTable: false,
         pagination: {'sortBy': 'sum', 'descending': true, 'rowsPerPage': -1},
@@ -39,13 +53,15 @@ export default {
             },
             { text: 'Название', value: 'name', align: 'right' },
             { text: 'Сумма', value: 'sum', align: 'right' },
+            { text: 'Валюта', value: 'currency', align: 'right'},
             { text: 'Окончание программы', value: 'deadline', align: 'right' },
             { text: 'Комментарий', value: 'comment', align: 'right' },
             { text: 'Управление', value: '', align: 'right'},
         ],
         dataTables: [
 
-        ]
+        ],
+        calcTotalSum: 0,
     }),
     methods: {
         getBills() {
@@ -63,6 +79,13 @@ export default {
                     this.$store.commit('AlertError', error.message);
                 });
 
+        },
+        getCurrency() {
+            let currency = new Currency();
+
+            currency.getCurrencies().then( (result) => {
+                this.currenciesList = result;
+            });
         },
         createBillsForm() {
             this.billsFormShow = true;
@@ -99,6 +122,7 @@ export default {
                         name: this.billFormData.name,
                         sum: this.billFormData.sum,
                         deadline: this.billFormData.deadline,
+                        currency: this.billFormData.currency,
                         comment: this.billFormData.comment,
                     }
             })
@@ -122,6 +146,7 @@ export default {
             this.billFormData.name = object.name;
             this.billFormData.sum = object.sum.toString().replace(/\./gi, ',');
             this.billFormData.deadline = object.deadline;
+            this.billFormData.currency = object.currency;
             this.billFormData.comment = object.comment;
 
             this.billFormType = 'update';
@@ -155,25 +180,56 @@ export default {
             }
             return mobile;
         },
+        calculateTotalSum() {
+            this.calcTotalSum = 0;
+
+            let otherCurrency = [];
+
+            const defaultCurrency = this.$store.getters.getDefaultCurrency;
+
+            for(let key in this.dataTables) {
+                if(this.dataTables[key]['currency'] === defaultCurrency) {
+                    this.calcTotalSum += this.dataTables[key]['sum'];
+                }
+                else {
+                    otherCurrency.push(this.dataTables[key]);
+                }
+            }
+
+            if(otherCurrency.length > 0) {
+                let currency = new Currency();
+
+                for (let key in otherCurrency) {
+                    let currencyInfo = currency.getCurrency(otherCurrency[key]['currency']);
+                    currencyInfo.then((result) => {
+                        let sum = result.value / result.nominal * otherCurrency[key]['sum'];
+                        let rounded = Math.ceil((sum)*100)/100;
+                        this.calcTotalSum += rounded;
+                    });
+                }
+            }
+        },
     },
     computed: {
         totalValue() {
-            let total = 0;
-
-            for(let key in this.dataTables) {
-                total += this.dataTables[key]['sum'];
-            }
-
-            return this.sumFormat(total);
+            return this.sumFormat(this.calcTotalSum);
         },
     },
     watch: {
         showBillsTable: function (val) {
             this.getBills();
         },
+        dataTables: function(val) {
+            this.calculateTotalSum();
+        }
     },
-    mounted() {
+    created() {
         this.getBills();
-    }
+        this.getCurrency();
+    },
+    components: {
+        BillsCurrencyName,
+        BillsPriceOutput
+    },
 
 }

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Charts;
+use App\Components\Currency\Services\CBRFDaily;
 use Illuminate\Console\Command;
 
 class test extends Command
@@ -39,8 +39,6 @@ class test extends Command
      */
     public function handle()
     {
-        $chartByControlSum = Charts::whereControlSum('80696c0ae61a7f5676acc3d35160f3f7')->first();
-
-        dump($chartByControlSum);
+        echo 'test';
     }
 }

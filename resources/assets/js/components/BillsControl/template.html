@@ -14,7 +14,6 @@
                 v-bind:pagination.sync="pagination"
                 hide-actions
                 class="elevation-1"
-                :search="search"
                 item-key="uuid"
                 v-if="!isMobile()"
         >
@@ -23,7 +22,15 @@
                 <tr>
                     <td>{{ props.item.id }}</td>
                     <td class="text-xs-right">{{ props.item.name}}</td>
-                    <td class="text-xs-right">{{ sumFormat(props.item.sum) }}</td>
+                    <td class="text-xs-right">
+                        <bills-price-output
+                            :currency-code="props.item.currency"
+                            :sum="props.item.sum"
+                        ></bills-price-output>
+                    </td>
+                    <td class="text-xs-right">
+                        <bills-currency-name :currency-code="props.item.currency"></bills-currency-name>
+                    </td>
                     <td class="text-xs-right">{{ props.item.deadline }}</td>
                     <td class="text-xs-right">{{ props.item.comment }}</td>
                     <td class="text-xs-right control">
@@ -58,7 +65,10 @@
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                     <v-list-tile-title>{{ item.name }}</v-list-tile-title>
-                    <v-list-tile-sub-title><b>{{ sumFormat(item.sum) }}</b></v-list-tile-sub-title>
+                    <v-list-tile-sub-title><b><bills-price-output
+                            :currency-code="item.currency"
+                            :sum="item.sum"
+                    ></bills-price-output></b> <bills-currency-name :currency-code="item.currency"></bills-currency-name></v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
                     <v-btn flat icon color="primary" @click="billEditForm(item)">
@@ -119,6 +129,17 @@
                                         <v-btn flat color="primary" @click="DeadLinePicker=false">OK</v-btn>
                                     </v-date-picker>
                                 </v-dialog>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-autocomplete
+                                        :items="currenciesList"
+                                        v-model="billFormData.currency"
+                                        item-text="name"
+                                        item-value="num_code"
+                                        label="Выберите валюту"
+                                        clearable
+                                        autocomplete
+                                ></v-autocomplete>
                             </v-flex>
                             <v-flex xs12>
                                 <v-text-field v-model="billFormData.comment" label="Коммментарий"></v-text-field>

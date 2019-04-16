@@ -11,13 +11,6 @@ let mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/assets/js/pa.js', 'public/js')
-    .sass('resources/assets/sass/pa.scss', 'public/css');
-
-/*mix.js('resources/assets/js/app.js', 'public/js')
-    .sass('resources/assets/sass/app.scss', 'public/css');*/
-
-
 mix.webpackConfig({
     resolve: {
 
@@ -26,3 +19,6 @@ mix.webpackConfig({
         fs: 'empty',
     }
 });
+
+mix.js('resources/assets/js/pa.js', 'public/js')
+    .sass('resources/assets/sass/pa.scss', 'public/css').version();
