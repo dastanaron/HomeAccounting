@@ -23,11 +23,11 @@
         methods: {
             getCurrencyName() {
                 let currency = new Currency();
-                let currencyInfo = currency.getCurrencyInfoByCurrencyCode(this.currencyCode);
+                let currencyInfo = currency.getCurrency(this.currencyCode);
 
                 currencyInfo.then((result) => {
                     this.currencyName = result.char_code;
-                });
+                })
 
             },
         },

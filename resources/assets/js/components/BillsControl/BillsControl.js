@@ -83,11 +83,8 @@ export default {
         getCurrency() {
             let currency = new Currency();
 
-            currency.getCurrencyFromTable().then((result) => {
-                this.currenciesList = [];
-                for (let key in result) {
-                    this.currenciesList[key] = result[key];
-                }
+            currency.getCurrencies().then( (result) => {
+                this.currenciesList = result;
             });
         },
         createBillsForm() {
@@ -188,8 +185,10 @@ export default {
 
             let otherCurrency = [];
 
+            const defaultCurrency = this.$store.getters.getDefaultCurrency;
+
             for(let key in this.dataTables) {
-                if(this.dataTables[key]['currency'] === 643) {
+                if(this.dataTables[key]['currency'] === defaultCurrency) {
                     this.calcTotalSum += this.dataTables[key]['sum'];
                 }
                 else {
@@ -201,7 +200,7 @@ export default {
                 let currency = new Currency();
 
                 for (let key in otherCurrency) {
-                    let currencyInfo = currency.getCurrencyInfoByCurrencyCode(otherCurrency[key]['currency']);
+                    let currencyInfo = currency.getCurrency(otherCurrency[key]['currency']);
                     currencyInfo.then((result) => {
                         let sum = result.value / result.nominal * otherCurrency[key]['sum'];
                         let rounded = Math.ceil((sum)*100)/100;
@@ -209,7 +208,7 @@ export default {
                     });
                 }
             }
-        }
+        },
     },
     computed: {
         totalValue() {
@@ -224,7 +223,7 @@ export default {
             this.calculateTotalSum();
         }
     },
-    mounted() {
+    created() {
         this.getBills();
         this.getCurrency();
     },

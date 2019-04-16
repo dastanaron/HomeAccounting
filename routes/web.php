@@ -31,7 +31,7 @@ Route::get('/pa', 'PrivateAreaController@index')->name('privateArea');
  * Currencies routes
  */
 Route::get('/pa/get-currencies', 'CurrencyController@getCurrencies');
-Route::post('/pa/get-currency', 'CurrencyController@getCurrency');
+Route::get('/pa/get-currency', 'CurrencyController@getCurrency');
 
 /**
  * Bills methods

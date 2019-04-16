@@ -30,7 +30,7 @@
         methods: {
             getCurrencyInfo() {
                 let currency = new Currency();
-                let currencyInfo = currency.getCurrencyInfoByCurrencyCode(this.currencyCode);
+                let currencyInfo = currency.getCurrency(this.currencyCode);
 
                 currencyInfo.then((result) => {
                     this.currencyInfo = result;
@@ -44,7 +44,10 @@
         },
         computed: {
             convertedValue() {
-                if(this.currencyInfo !== '' && this.currencyCode !== 643) {
+
+                const defaultCurrency = this.$store.getters.getDefaultCurrency;
+
+                if(this.currencyInfo !== '' && this.currencyCode !== defaultCurrency) {
                     let sum = this.currencyInfo.value / this.currencyInfo.nominal * this.sum;
                     let rounded = Math.ceil((sum)*100)/100;
                     return this.sumFormat(rounded)
@@ -62,7 +65,7 @@
                 this.getCurrencyInfo();
             }
         },
-        created() {
+        mounted() {
             this.getCurrencyInfo();
         }
     }

@@ -119,7 +119,7 @@
                 </v-list>
             </v-card>
         </v-menu>
-        <v-dialog v-model="dynamicAccumulateChart" scrollable max-width="80%">
+        <!--<v-dialog v-model="dynamicAccumulateChart" scrollable max-width="80%">
             <v-card>
                 <v-card-title>
                     График динамики накоплений
@@ -133,10 +133,10 @@
                     <dynamic-accumulate-chart-component ref="dynamicAccumulateChart"></dynamic-accumulate-chart-component>
                 </v-card-text>
                 <v-card-actions>
-                    <!-- Сюда можно еще кнопок напихать !-->
+
                 </v-card-actions>
             </v-card>
-        </v-dialog>
+        </v-dialog>!-->
 
         <swipe ref="swipeComponents" :options="swipeOptions">
             <swipe-item><bills-control ref="bills"></bills-control></swipe-item>
@@ -160,6 +160,7 @@
     import Analytics from "../analytics/analytics";
     import {Storage, Broker} from '../../classes/QueueBroker/index';
     import DynamicAccumulateChartComponent from "../analytics/dynamic-accumulate-chart-component";
+    import Currency from "../../classes/DB/models/Currency";
 
     export default {
         name: "private-area",
@@ -297,6 +298,25 @@
                 this.billsControlApplication();
                 this.$refs.bills.getBills();
             });
+
+            const StorageObject = new Storage();
+
+            const currentDateStamp = new Date().getTime();
+
+            const tommorowDateStamp = currentDateStamp + (86400*1000);
+
+            let currencyGetStamp = parseInt(StorageObject.get('currentCurrency'));
+
+            if (StorageObject.get('currentCurrency') === null || currencyGetStamp >= tommorowDateStamp) {
+
+                StorageObject.add('currentCurrency', currentDateStamp);
+
+                const CurrencyModel = new Currency();
+
+                CurrencyModel.fillTable();
+            }
+
+
         },
         components: {
             DynamicAccumulateChartComponent,

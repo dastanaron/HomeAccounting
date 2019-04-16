@@ -20,12 +20,23 @@ class CurrencyController extends Controller
      */
     public function getCurrencies(Request $request)
     {
-        $currencyModel = Currency::get();
+
+        $cacheKey = md5('allCurrency');
+
+        $currencyModel = \Cache::get($cacheKey);
+
+        $fromCache = true;
+
+        if($currencyModel === null) {
+            $currencyModel = Currency::get();
+            \Cache::add($cacheKey, $currencyModel, 10);
+            $fromCache = false;
+        }
 
         $currencyArray = $currencyModel->toArray();
 
         if(!empty($currencyArray)) {
-            return Response::json(['status' => 200, 'data' => $currencyArray])->setStatusCode(200);
+            return Response::json(['status' => 200, 'data' => $currencyArray, 'fromCache' => $fromCache])->setStatusCode(200);
         }
         else {
             return Response::json(['status' => 500, 'message' => 'Error, currencies can not be found'])->setStatusCode(500);
@@ -41,10 +52,20 @@ class CurrencyController extends Controller
     {
         $currencyCode = (int) $request->input('currencyCode');
 
-        $currencyEntity = Currency::whereNumCode($currencyCode)->first();
+        $cacheKey = md5($currencyCode);
+
+        $currencyEntity = \Cache::get($cacheKey);
+
+        $fromCache = true;
+
+        if($currencyEntity === null) {
+            $currencyEntity = Currency::whereNumCode($currencyCode)->first();
+            \Cache::add($cacheKey, $currencyEntity, 10);
+            $fromCache = false;
+        }
 
         if(!empty($currencyEntity)) {
-            return Response::json(['status' => 200, 'data' => $currencyEntity])->setStatusCode(200);
+            return Response::json(['status' => 200, 'data' => $currencyEntity, 'fromCache' => $fromCache])->setStatusCode(200);
         }
         else {
             return Response::json(['status' => 400, 'message' => 'Error, currency can not be found'])->setStatusCode(400);

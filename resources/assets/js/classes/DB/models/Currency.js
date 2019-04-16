@@ -71,7 +71,7 @@ export default class Currency {
         }, 2000);
     }
 
-    getCurrencyFromTable()
+    getCurrencies()
     {
         return new Promise((resolve, reject) => {
             this.db.db.transaction((tx) => {
@@ -84,7 +84,7 @@ export default class Currency {
         });
     }
 
-    getCurrencyInfoByCurrencyCode(currencyCode)
+    getCurrency(currencyCode)
     {
         let query = "SELECT * FROM " + this.tableName + " WHERE num_code=?";
 
@@ -110,20 +110,3 @@ export default class Currency {
             });
     }
 }
-
-/*
-return new Promise((resolve, reject) => {
-
-  this.db.transaction((tx) => {
-
-    tx.executeSql(
-      sql,
-      params,
-      (tx, res) => resolve({tx, res}),
-      (tx, err) => reject({tx, err}),
-    );
-
-  });
-
-});
- */

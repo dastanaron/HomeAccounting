@@ -46,6 +46,7 @@ const store = new Vuex.Store({
             type: 'success',
             message: '',
         },
+        defaultCurrency: 643,
     },
     mutations: {
         setPreloader(state, status=true) {
@@ -70,6 +71,9 @@ const store = new Vuex.Store({
             state.alertControl.show = true;
             state.alertControl.message = 'Ошибка передачи транзакции, попробуйте перезапустить страницу. Ответ сервера: '+error;
         },
+        setDefaultCurrency(state, currencyCode) {
+            state.defaultCurrency = currencyCode;
+        }
     },
     getters: {
         getPreloader: state=> {
@@ -80,6 +84,9 @@ const store = new Vuex.Store({
         },
         mobile: state => {
             return state.mobile;
+        },
+        getDefaultCurrency: state => {
+            return state.defaultCurrency;
         }
     },
 });
