@@ -10,14 +10,6 @@ use App\RabbitMQ\Analytics\MessagePush;
 class AnalyticsController extends Controller
 {
     /**
-     * PrivateAreaController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
      * @return array
      */
     public function index()

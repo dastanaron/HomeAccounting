@@ -22,3 +22,5 @@ mix.webpackConfig({
 
 mix.js('resources/assets/js/pa.js', 'public/js')
     .sass('resources/assets/sass/pa.scss', 'public/css').version();
+
+mix.js('resources/assets/js/organizer.js', 'public/js').version();

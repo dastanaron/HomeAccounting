@@ -9,12 +9,6 @@ use Illuminate\Support\Facades\Response;
 
 class BillsController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function getBills()
     {
         $userId = \Auth::user()->id;

@@ -8,12 +8,6 @@ use Illuminate\Support\Facades\Response;
 
 class CategoriesController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function getCategories(Request $request)
     {
         return (new CategoriesHelper($request))->getCategories();

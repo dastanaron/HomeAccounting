@@ -9,12 +9,6 @@ use Illuminate\Support\Facades\Response;
 
 class EventController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function getEvents(Request $request)
     {
         $user_id = \Auth::user()->id;
