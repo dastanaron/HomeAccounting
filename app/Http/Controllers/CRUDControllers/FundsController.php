@@ -1,42 +1,54 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\CRUDControllers;
 
-use App\Http\helpers\FundsHelper;
+use App\Http;
+use App\Components\PA\CRUD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
-class FundsController extends Controller
+/**
+ * Class FundsController
+ * @package App\Http\Controllers\CRUDControllers
+ */
+class FundsController extends Http\Controllers\Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function getFunds(Request $request)
     {
-        $fundsHelper = new FundsHelper($request);
-        return $fundsHelper->getFunds();
+        $fundsCRUD = new CRUD\Funds($request);
+        return Response::json($fundsCRUD->getList())->setStatusCode(200);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function createFund(Request $request)
     {
-        $fundsHelper = new FundsHelper($request);
+        $fundsCRUD = new CRUD\Funds($request);
 
-        if($fundsHelper->createFunds() === true) {
+        if($fundsCRUD->create() === true) {
             return Response::json(['status' => 200, 'message' => 'Fund created success'])->setStatusCode(200);
         }
         else {
             return Response::json(['status' => 400, 'message' => 'Fund is not created'])->setStatusCode(400);
         }
-
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function setFund(Request $request)
     {
-        $fundsHelper = new FundsHelper($request);
+        $fundsCRUD = new CRUD\Funds($request);
 
-        if($fundsHelper->setFunds() === true) {
+        if($fundsCRUD->update() === true) {
             return Response::json(['status' => 200, 'message' => 'Fund is updated'])->setStatusCode(200);
         }
         else {
@@ -44,11 +56,16 @@ class FundsController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function deleteFund(Request $request)
     {
-        $fundsHelper = new FundsHelper($request);
+        $fundsCRUD = new CRUD\Funds($request);
 
-        if($fundsHelper->deleteFunds() === true) {
+        if($fundsCRUD->delete() === true) {
             return Response::json(['status' => 200, 'message' => 'Fund is deleted'])->setStatusCode(200);
         }
         else {

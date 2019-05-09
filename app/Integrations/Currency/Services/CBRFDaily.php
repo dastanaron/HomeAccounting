@@ -2,15 +2,13 @@
 
 declare(strict_types = 1);
 
-namespace App\Components\Currency\Services;
+namespace App\Integrations\Currency\Services;
 
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Class CBRF
  * Центральный банк РФ, API
- * @package App\Components\Currency\Services
  */
 class CBRFDaily
 {

@@ -1,32 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\CRUDControllers;
 
-use App\Http\helpers\EventHelper;
+use App\Http;
+use App\Components\PA\CRUD;
 use Illuminate\Http\Request;
-use App\Events;
 use Illuminate\Support\Facades\Response;
 
-class EventController extends Controller
+class EventController extends Http\Controllers\Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function getEvents(Request $request)
     {
-        $user_id = \Auth::user()->id;
-        return Events::whereUserId($user_id)->get();
+        $eventCRUD = new CRUD\Events($request);
+        return Response::json($eventCRUD->getList())->setStatusCode(200);
     }
-
 
     public function createEvent(Request $request)
     {
-        $eventHelper = new EventHelper($request);
+        $eventCRUD = new CRUD\Events($request);
 
-        if($eventHelper->createEvent() === true) {
+        if($eventCRUD->create() === true) {
             return Response::json(['status' => 200, 'message' => 'Event created success'])->setStatusCode(200);
         }
         else {
@@ -36,9 +29,9 @@ class EventController extends Controller
 
     public function setEvent(Request $request)
     {
-        $eventHelper = new EventHelper($request);
+        $eventCRUD = new CRUD\Events($request);
 
-        if($eventHelper->setEvent() === true) {
+        if($eventCRUD->update() === true) {
             return Response::json(['status' => 200, 'message' => 'Event is updated'])->setStatusCode(200);
         }
         else {
@@ -48,9 +41,9 @@ class EventController extends Controller
 
     public function deleteEvent(Request $request)
     {
-        $eventHelper = new EventHelper($request);
+        $eventCRUD = new CRUD\Events($request);
 
-        if($eventHelper->deleteEvent() === true) {
+        if($eventCRUD->delete() === true) {
             return Response::json(['status' => 200, 'message' => 'Event is deleted'])->setStatusCode(200);
         }
         else {

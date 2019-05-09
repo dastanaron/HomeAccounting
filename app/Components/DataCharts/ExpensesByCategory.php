@@ -2,8 +2,8 @@
 
 namespace App\Components\DataCharts;
 
-use \App\Funds;
-use \App\revCategories;
+use \App\Models;
+use App\Library\Utilities;
 
 /**
  *
@@ -21,11 +21,11 @@ class ExpensesByCategory extends AbstractChartData
 {
 
     /**
-     * @return Funds|\Illuminate\Database\Query\Builder
+     * @return \Illuminate\Database\Query\Builder
      */
     public function queryFunds()
     {
-       return Funds::select('funds.user_id', 'funds.sum', 'funds.date', 'funds.cause', 'rev_categories.id as category_id', 'rev_categories.name as category_name')
+       return Models\Funds::select('funds.user_id', 'funds.sum', 'funds.date', 'funds.cause', 'rev_categories.id as category_id', 'rev_categories.name as category_name')
             ->leftJoin('rev_categories', 'funds.category_id', 'rev_categories.id')
             ->where('funds.user_id', '=', $this->userId)
             ->where('funds.rev', '=', $this->fundsRev)
@@ -33,15 +33,15 @@ class ExpensesByCategory extends AbstractChartData
     }
 
     /**
-     * @return revCategories
+     * @return Models\revCategories
      */
     public function queryCategories()
     {
-        return revCategories::select('id', 'user_id', 'name')->where('user_id', '=', $this->userId);
+        return Models\revCategories::select('id', 'user_id', 'name')->where('user_id', '=', $this->userId);
     }
 
     /**
-     * @return Funds[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection
+     * @return array
      */
     public function getGroupedByDate()
     {
@@ -69,6 +69,7 @@ class ExpensesByCategory extends AbstractChartData
 
     /**
      * @return array
+     * @throws \Exception
      */
     public function categorySum()
     {
@@ -91,24 +92,21 @@ class ExpensesByCategory extends AbstractChartData
                     $newArray[$formattedDate][$categoryID]['sum'] += $item['sum'];
 
                 }
-
             }
-
         }
 
         return $newArray;
-
     }
 
     /**
      * @param $date
      * @param string $format
      * @return string
+     * @throws \Exception
      */
-    public function dateFormat($date, $format="Y-m-d") {
-
+    public function dateFormat($date, $format="Y-m-d")
+    {
         return (new \DateTime($date))->format($format);
-
     }
 
     /**
@@ -168,16 +166,13 @@ class ExpensesByCategory extends AbstractChartData
 
         $categoryData = $this->buildRowsToChart();
 
-        //$array = array_merge($array, $x,  $categoryData);
-
         $array[] = $x;
 
         foreach ($categoryData as $item) {
             $array[] = $item;
         }
 
-        return json_encode($array);
-
+        return Utilities\Json::encode($array);
     }
 
     /**
@@ -246,7 +241,6 @@ class ExpensesByCategory extends AbstractChartData
 
         }
 
-
         $formattedArray = array();
 
         foreach($newArray as $items) {
@@ -264,12 +258,8 @@ class ExpensesByCategory extends AbstractChartData
 
             }
             $formattedArray[] = $tmpArray;
-
         }
 
         return $formattedArray;
-
     }
-
-
 }

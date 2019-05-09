@@ -1,30 +1,38 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\CRUDControllers;
 
-use App\Bills;
-use App\Http\helpers\BillsHelper;
+use App\Http;
+use App\Components\PA\CRUD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
-class BillsController extends Controller
+/**
+ * Class BillsController
+ * @package App\Http\Controllers\CRUDControllers
+ */
+class BillsController extends Http\Controllers\Controller
 {
-
-    public function __construct()
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getBills(Request $request)
     {
-        $this->middleware('auth');
+        $billsCRUD = new CRUD\Bills($request);
+
+        return Response::json($billsCRUD->getList())->setStatusCode(200);
     }
 
-    public function getBills()
-    {
-        $userId = \Auth::user()->id;
-        return Bills::whereUserId( $userId )->get();
-    }
-
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function createBill(Request $request)
     {
-        $billsHelper = new BillsHelper($request);
-        if($billsHelper->createBill() === true) {
+        $billsCRUD = new CRUD\Bills($request);
+
+        if($billsCRUD->create() === true) {
             return Response::json(['status' => 200, 'message' => 'Bill created success'])->setStatusCode(200);
         }
         else {
@@ -32,10 +40,15 @@ class BillsController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function setBill(Request $request)
     {
-        $billsHelper = new BillsHelper($request);
-        if($billsHelper->setBill() === true) {
+        $billsCRUD = new CRUD\Bills($request);
+
+        if($billsCRUD->update() === true) {
             return Response::json(['status' => 200, 'message' => 'Bill saved'])->setStatusCode(200);
         }
         else {
@@ -43,11 +56,16 @@ class BillsController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function deleteBill(Request $request)
     {
-        $billsHelper = new BillsHelper($request);
+        $billsCRUD = new CRUD\Bills($request);
 
-        if($billsHelper->deleteBill() === true) {
+        if($billsCRUD->delete() === true) {
             return Response::json(['status' => 200, 'message' => 'Bill is deleted'])->setStatusCode(200);
         }
         else {
@@ -55,17 +73,19 @@ class BillsController extends Controller
         }
     }
 
-
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function MoneyTransaction(Request $request)
     {
-        $billsHelper = new BillsHelper($request);
+        $billsCRUD = new CRUD\Bills($request);
 
-        if($billsHelper->MoneyTransaction() === true) {
+        if($billsCRUD->MoneyTransaction() === true) {
             return Response::json(['status' => 200, 'message' => 'Transaction is corrected'])->setStatusCode(200);
         }
         else {
             return Response::json(['status' => 400, 'message' => 'Transaction is invalid'])->setStatusCode(400);
         }
     }
-
 }

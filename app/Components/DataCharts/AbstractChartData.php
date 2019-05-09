@@ -3,6 +3,8 @@
 namespace App\Components\DataCharts;
 
 
+use App\Library\Utilities;
+
 abstract class AbstractChartData implements ChartData
 {
 
@@ -59,12 +61,12 @@ abstract class AbstractChartData implements ChartData
 
     /**
      * @return string
+     * @throws Utilities\Exceptions\EncodingException
      */
     public function getJson()
     {
-        return json_encode($this->getData());
+        return Utilities\Json::encode($this->getData());
     }
-
 
     /**
      * @return string

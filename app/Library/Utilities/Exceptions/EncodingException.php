@@ -1,16 +1,13 @@
 <?php
 
+
 namespace App\Library\Utilities\Exceptions;
 
 use Throwable;
 
-/**
- * Class DecodingException
- * @package App\Library\Utilities\Exceptions
- */
-class DecodingException extends UtilitiesAbstractException
+class EncodingException extends UtilitiesAbstractException
 {
-    const DEFAULT_ERROR_MESSAGE = 'cannot decode string';
+    const DEFAULT_ERROR_MESSAGE = 'cannot encode string';
 
     /**
      * DecodingException constructor.

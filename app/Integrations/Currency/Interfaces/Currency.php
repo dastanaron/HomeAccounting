@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Currency\Interfaces;
+namespace App\Integrations\Currency\Interfaces;
 
 
 interface Currency

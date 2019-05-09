@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Charts;
+use App\Models;
 use App\Components\DataCharts\DynamicAccumulate;
 use Illuminate\Http\Request;
 use App\RabbitMQ\Analytics\MessagePush;
@@ -36,7 +36,7 @@ class AnalyticsController extends Controller
 
         if($data !== false) {
 
-            $chartByControlSum = Charts::whereControlSum($data['controlSum'])->first();
+            $chartByControlSum = Models\Charts::whereControlSum($data['controlSum'])->first();
 
             $status = true;
 
@@ -61,14 +61,12 @@ class AnalyticsController extends Controller
      */
     public function getDataToChartAnalytics(Request $request)
     {
-
         try {
-
             $userId = \Auth::user()->id;
 
             $controlSum = $request->input('control_sum');
 
-            $data = Charts::where([
+            $data = Models\Charts::where([
                 ['control_sum', '=', $controlSum],
                 ['user_id', '=', $userId]
             ])->first();

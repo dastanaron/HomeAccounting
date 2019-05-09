@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Components\Currency\Services;
+namespace App\Integrations\Currency\Services;
 
+use App\Library\Exceptions;
 
 class CurrencyDataProvider
 {
@@ -38,7 +39,7 @@ class CurrencyDataProvider
     /**
      * @param \SimpleXMLElement $element
      * @return CurrencyDataProvider
-     *
+     * @throws Exceptions\BaseException
      * @throws \ReflectionException
      */
     public function buildProviderByXml(\SimpleXMLElement $element) : CurrencyDataProvider
@@ -56,7 +57,7 @@ class CurrencyDataProvider
         }
         else
         {
-            throw new \Exception('parse XmlElement CBRF error');
+            throw new Exceptions\BaseException('parse XmlElement CBRF error');
         }
 
     }

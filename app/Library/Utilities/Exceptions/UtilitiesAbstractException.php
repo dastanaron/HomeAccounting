@@ -4,7 +4,9 @@
 namespace App\Library\Utilities\Exceptions;
 
 
-abstract class UtilitiesAbstractException extends \Exception
+use App\Library\Exceptions;
+
+abstract class UtilitiesAbstractException extends Exceptions\BaseException
 {
 
 }

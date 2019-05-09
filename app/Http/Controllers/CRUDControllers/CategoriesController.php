@@ -1,29 +1,37 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\CRUDControllers;
 
+use App\Http;
+use App\Components\PA\CRUD;
 use Illuminate\Http\Request;
-use App\Http\helpers\CategoriesHelper;
 use Illuminate\Support\Facades\Response;
 
-class CategoriesController extends Controller
+/**
+ * Class CategoriesController
+ * @package App\Http\Controllers\CRUDControllers
+ */
+class CategoriesController extends Http\Controllers\Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getCategories(Request $request)
     {
-        return (new CategoriesHelper($request))->getCategories();
+        $categoriesCRUD = new CRUD\Categories($request);
+        return Response::json($categoriesCRUD->getList())->setStatusCode(200);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function createCategory(Request $request)
     {
-        $categoryHelper = new CategoriesHelper($request);
+        $categoriesCRUD = new CRUD\Categories($request);
 
-        if($categoryHelper->createCategory() === true) {
+        if($categoriesCRUD->create() === true) {
             return Response::json(['status' => 200, 'message' => 'Category created success'])->setStatusCode(200);
         }
         else {
@@ -31,11 +39,15 @@ class CategoriesController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function setCategory(Request $request)
     {
-        $categoryHelper = new CategoriesHelper($request);
+        $categoriesCRUD = new CRUD\Categories($request);
 
-        if($categoryHelper->setCategory() === true) {
+        if($categoriesCRUD->update() === true) {
             return Response::json(['status' => 200, 'message' => 'Category is updated'])->setStatusCode(200);
         }
         else {
@@ -43,11 +55,16 @@ class CategoriesController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function deleteCategory(Request $request)
     {
-        $categoryHelper = new CategoriesHelper($request);
+        $categoriesCRUD = new CRUD\Categories($request);
 
-        if($categoryHelper->deleteCategory() === true) {
+        if($categoriesCRUD->delete() === true) {
             return Response::json(['status' => 200, 'message' => 'Category is deleted'])->setStatusCode(200);
         }
         else {
