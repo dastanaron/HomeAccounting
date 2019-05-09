@@ -2,13 +2,11 @@
 
 namespace App\RabbitMQ\Analytics;
 
-use App\Charts;
+use App\Models;
 use App\Components\DataCharts\ChartData;
 use App\Components\DataCharts\ExpensesByMonthCategory;
 use App\RabbitMQ\Consumer;
-use App\RabbitMQ\DataConstants;
 use App\Components\DataCharts\ExpensesByCategory;
-use Storage;
 
 class MessageConsumer extends Consumer
 {
@@ -140,9 +138,9 @@ class MessageConsumer extends Consumer
 
     private function recordToBase($controlSum, $userId, $data)
     {
-        $chartByControlSum = Charts::whereControlSum($controlSum)->first();
+        $chartByControlSum = Models\Charts::whereControlSum($controlSum)->first();
 
-        $chartModel = !empty($chartByControlSum) ? $chartByControlSum : new Charts();
+        $chartModel = !empty($chartByControlSum) ? $chartByControlSum : new Models\Charts();
 
         $chartModel->type = 'line_categories';
         $chartModel->setData($data);

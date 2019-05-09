@@ -2,7 +2,8 @@
 
 namespace App\Components\DataCharts;
 
-use App\Funds;
+use App\Models;
+use App\Library\Utilities;
 
 class ExpensesByMonthCategory extends AbstractChartData
 {
@@ -41,6 +42,10 @@ class ExpensesByMonthCategory extends AbstractChartData
         return $data;
     }
 
+    /**
+     * @return string
+     * @throws Utilities\Exceptions\EncodingException
+     */
     public function getJsonByChart()
     {
         $chartData = array();
@@ -50,16 +55,16 @@ class ExpensesByMonthCategory extends AbstractChartData
             $chartData[] = [$data['name'], $data['sum']];
         }
 
-        return json_encode($chartData);
+        return Utilities\Json::encode($chartData);
     }
 
 
     /**
-     * @return Funds|\Illuminate\Database\Query\Builder
+     * @return \Illuminate\Database\Query\Builder
      */
     public function queryFunds()
     {
-        return Funds::select('funds.user_id', 'funds.sum', 'funds.date', 'funds.cause', 'rev_categories.id as category_id', 'rev_categories.name as category_name')
+        return Models\Funds::select('funds.user_id', 'funds.sum', 'funds.date', 'funds.cause', 'rev_categories.id as category_id', 'rev_categories.name as category_name')
             ->leftJoin('rev_categories', 'funds.category_id', 'rev_categories.id')
             ->where('funds.user_id', '=', $this->userId)
             ->where('funds.rev', '=', $this->fundsRev)

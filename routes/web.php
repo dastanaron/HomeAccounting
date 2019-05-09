@@ -36,47 +36,49 @@ Route::get('/pa/get-currency', 'CurrencyController@getCurrency');
 /**
  * Bills methods
  */
-Route::get('/pa/bills-list', 'BillsController@getBills');
+Route::middleware(['auth'])->namespace('CRUDControllers')->group(function () {
+    Route::get('/pa/bills-list', 'BillsController@getBills');
 
-Route::post('/pa/bills', 'BillsController@createBill');
-Route::put('/pa/bills', 'BillsController@setBill');
-Route::delete('/pa/bills', 'BillsController@deleteBill');
+    Route::post('/pa/bills', 'BillsController@createBill');
+    Route::put('/pa/bills', 'BillsController@setBill');
+    Route::delete('/pa/bills', 'BillsController@deleteBill');
 
-Route::post('/pa/bills/transfer', 'BillsController@MoneyTransaction');
+    Route::post('/pa/bills/transfer', 'BillsController@MoneyTransaction');
+});
 
 /**
  * Funds methods
  */
-Route::get('/pa/funds-list', 'FundsController@getFunds');
+Route::middleware(['auth'])->namespace('CRUDControllers')->group(function () {
+    Route::get('/pa/funds-list', 'FundsController@getFunds');
 
-Route::post('/pa/funds', 'FundsController@createFund');
-Route::put('/pa/funds', 'FundsController@setFund');
-Route::delete('/pa/funds', 'FundsController@deleteFund');
+    Route::post('/pa/funds', 'FundsController@createFund');
+    Route::put('/pa/funds', 'FundsController@setFund');
+    Route::delete('/pa/funds', 'FundsController@deleteFund');
+});
+
 
 /**
  * Categories methods
  */
-Route::get('/pa/categories-list', 'CategoriesController@getCategories');
+Route::middleware(['auth'])->namespace('CRUDControllers')->group(function () {
+    Route::get('/pa/categories-list', 'CategoriesController@getCategories');
 
-Route::post('/pa/categories', 'CategoriesController@createCategory');
-Route::put('/pa/categories', 'CategoriesController@setCategory');
-Route::delete('/pa/categories', 'CategoriesController@deleteCategory');
+    Route::post('/pa/categories', 'CategoriesController@createCategory');
+    Route::put('/pa/categories', 'CategoriesController@setCategory');
+    Route::delete('/pa/categories', 'CategoriesController@deleteCategory');
+});
 
 /**
  * Event methods
  */
-Route::get('/pa/event-list', 'EventController@getEvents');
+Route::middleware(['auth'])->namespace('CRUDControllers')->group(function () {
+    Route::get('/pa/event-list', 'EventController@getEvents');
 
-Route::post('/pa/events', 'EventController@createEvent');
-Route::put('/pa/events', 'EventController@setEvent');
-Route::delete('/pa/events', 'EventController@deleteEvent');
-
-/**
- * VK authorize
- */
-
-Route::middleware('auth')->post('/callback/vk-authorize', 'CallBackController@vkAuthorize');
-Route::middleware('auth')->post('/callback/vk-unauthorize', 'CallBackController@vkUnAthorize');
+    Route::post('/pa/events', 'EventController@createEvent');
+    Route::put('/pa/events', 'EventController@setEvent');
+    Route::delete('/pa/events', 'EventController@deleteEvent');
+});
 
 /**
  * web-push register

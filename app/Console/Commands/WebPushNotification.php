@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\SocialNetwork;
+use App\Models;
+use App\Library\Utilities;
 use Illuminate\Console\Command;
-use App\Events;
 use GuzzleHttp\Client;
 
 class WebPushNotification extends Command
@@ -53,7 +53,7 @@ class WebPushNotification extends Command
     {
         $this->logMessage('==========Обработка событий===========');
 
-        $events = Events::where('date_notif', '<=', date('Y-m-d H:i:s'))
+        $events = Models\Events::where('date_notif', '<=', date('Y-m-d H:i:s'))
             ->whereCompleted(0)
             ->where('type_event', '=', '1')
             ->get();
@@ -68,19 +68,19 @@ class WebPushNotification extends Command
 
         foreach ($events as $event) {
             /**
-             * @var Events $event;
+             * @var Models\Events $event;
              */
             $userId = $event->user->id;
 
             $this->logMessage('Получаем токены для отправки');
 
-            $socialNetwork = SocialNetwork::where('social_network', '=', 'web-push')
+            $socialNetwork = Models\SocialNetwork::where('social_network', '=', 'web-push')
                 ->where('user_id', '=', $userId);
 
             //Может быть привязано несколько устройств, поэтому пушим во все
             foreach ($socialNetwork->get() as $item) {
                 /**
-                 * @var SocialNetwork $item
+                 * @var Models\SocialNetwork $item
                  */
                 $pushToken = $item->social_id;
 
@@ -101,6 +101,17 @@ class WebPushNotification extends Command
 
     }
 
+    /**
+     * @param $toPushToken
+     * @param $title
+     * @param $body
+     * @param string $icon
+     * @param null $link
+     * @return bool
+     * @throws Utilities\Exceptions\DecodingException
+     * @throws Utilities\Exceptions\EncodingException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     private function sendMessage($toPushToken, $title, $body, $icon='/favicon.png', $link=null)
     {
 
@@ -123,16 +134,16 @@ class WebPushNotification extends Command
                     'Authorization' => 'key=' . $this->serverKey,
                     'Content-Type' => 'application/json'
                 ],
-                'body' => json_encode($message),
+                'body' => Utilities\Json::encode($message),
             ])
             ->getBody()
             ->getContents();
 
-        $answer = (bool) json_decode($res)->success;
+        $answer = (bool) Utilities\Json::decode($res, false)->success;
 
         if(!$answer)
         {
-            $this->fileLog(json_decode($res, true));
+            $this->fileLog(Utilities\Json::decode($res, true));
         }
 
         return $answer;

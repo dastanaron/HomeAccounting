@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\CashDynamicsAccumulate;
-use App\Funds;
-use App\User;
+use App\Models;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -79,11 +77,11 @@ class CalculateMonthDynamics extends Command
         }
 
         //clear table by user_id
-        CashDynamicsAccumulate::where('user_id', '=', $this->userId)->delete();
+        Models\CashDynamicsAccumulate::where('user_id', '=', $this->userId)->delete();
 
 
         foreach($array as $month => $value) {
-            $newCashDinamicElement = new CashDynamicsAccumulate();
+            $newCashDinamicElement = new Models\CashDynamicsAccumulate();
             $newCashDinamicElement->user_id = $this->userId;
             $newCashDinamicElement->month = $month;
             $newCashDinamicElement->sum = $value;
@@ -96,7 +94,7 @@ class CalculateMonthDynamics extends Command
      */
     private function getUsersIds()
     {
-        $users = User::select('id')->get();
+        $users = Models\User::select('id')->get();
 
         $array = [];
 
@@ -119,31 +117,25 @@ class CalculateMonthDynamics extends Command
 
         $endDateInMonth = $date->format('Y-m-'.$date->daysInMonth);
 
-        $funds = Funds::whereBetween('date', [$firstDateInMonth, $endDateInMonth]);
+        $funds = Models\Funds::whereBetween('date', [$firstDateInMonth, $endDateInMonth]);
 
         $incomeSum = 0;
 
         $expenseSum = 0;
 
-        foreach($funds->get() as $item)
-        {
-            if($item->rev == 1)
-            {
+        foreach($funds->get() as $item) {
+            if($item->rev == 1) {
                 $incomeSum += $item->sum;
             }
-            elseif($item->rev == 2)
-            {
+            elseif($item->rev == 2) {
                 $expenseSum += $item->sum;
             }
-            else
-            {
+            else {
                 throw new \Exception('Ошибка, не расход и не доход' . var_export($item->toArray(), true));
             }
-
         }
 
         return $incomeSum - $expenseSum;
-
     }
 
 
@@ -153,7 +145,7 @@ class CalculateMonthDynamics extends Command
      */
     private function getFirstDate()
     {
-        $query = Funds::whereUserId($this->userId)->orderBy('date', 'asc');
+        $query = Models\Funds::whereUserId($this->userId)->orderBy('date', 'asc');
 
         $result = $query->first();
 
@@ -166,7 +158,7 @@ class CalculateMonthDynamics extends Command
      */
     private function getLatestDate()
     {
-        $query = Funds::whereUserId($this->userId)->orderBy('date', 'desc');
+        $query = Models\Funds::whereUserId($this->userId)->orderBy('date', 'desc');
 
         $result = $query->first();
 

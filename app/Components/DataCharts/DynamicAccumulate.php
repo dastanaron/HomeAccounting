@@ -2,8 +2,8 @@
 
 namespace App\Components\DataCharts;
 
-
-use App\CashDynamicsAccumulate;
+use App\Library\Utilities;
+use App\Models\CashDynamicsAccumulate;
 
 class DynamicAccumulate extends AbstractChartData
 {
@@ -42,7 +42,7 @@ class DynamicAccumulate extends AbstractChartData
         $array[] = $x;
         $array[] = $y;
 
-        return json_encode($array);
+        return Utilities\Json::encode($array);
 
     }
 

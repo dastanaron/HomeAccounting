@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Components\Currency\Services\CBRFDaily;
+use App\Models\Bills;
 use Illuminate\Console\Command;
 
 class test extends Command
@@ -23,22 +23,15 @@ class test extends Command
     protected $description = 'Command description';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        echo 'test';
+        $models = Bills::whereUserId(1)->get();
+
+        var_dump($models);
+
     }
 }

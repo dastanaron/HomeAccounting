@@ -2,8 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Components\Currency\Services\CBRFDaily;
-use App\Currency;
+use App\Integrations\Currency\Services\CBRFDaily;
+use App\Library\Exceptions;
+use App\Models;
 use Illuminate\Console\Command;
 
 class ParseCurrency extends Command
@@ -34,7 +35,7 @@ class ParseCurrency extends Command
     }
 
     /**
-     * @throws \Exception
+     * @throws Exceptions\CommandException
      */
     public function handle()
     {
@@ -44,7 +45,7 @@ class ParseCurrency extends Command
 
         if(empty($currencyList))
         {
-            throw new \Exception('currency list is empty');
+            throw new Exceptions\CommandException('currency list is empty');
         }
 
         \DB::beginTransaction();
@@ -54,7 +55,7 @@ class ParseCurrency extends Command
 
 
             foreach ($currencyList as $currencyInfo) {
-                $currencyEntity = new Currency();
+                $currencyEntity = new Models\Currency();
 
                 $currencyEntity->num_code = $currencyInfo->numCode;
                 $currencyEntity->external_id = $currencyInfo->CBRFID;
@@ -67,8 +68,8 @@ class ParseCurrency extends Command
 
             }
 
-            //Костыль для рубля, так как его нет в курсах, вот так вот
-            $currencyEntity = new Currency();
+            //Hack: Костыль для рубля, так как его нет в курсах, вот так вот
+            $currencyEntity = new Models\Currency();
 
             $currencyEntity->num_code = 643;
             $currencyEntity->external_id = 'R00643';
@@ -81,11 +82,9 @@ class ParseCurrency extends Command
         }
         catch (\Exception $e) {
             \DB::rollBack();
-            throw $e;
+            throw new Exceptions\CommandException($e->getMessage());
         }
 
         \DB::commit();
-
-
     }
 }
