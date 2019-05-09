@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Currency;
+use App\Models;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
@@ -28,7 +28,7 @@ class CurrencyController extends Controller
         $fromCache = true;
 
         if($currencyModel === null) {
-            $currencyModel = Currency::get();
+            $currencyModel = Models\Currency::get();
             \Cache::add($cacheKey, $currencyModel, 10);
             $fromCache = false;
         }
@@ -59,7 +59,7 @@ class CurrencyController extends Controller
         $fromCache = true;
 
         if($currencyEntity === null) {
-            $currencyEntity = Currency::whereNumCode($currencyCode)->first();
+            $currencyEntity = Models\Currency::whereNumCode($currencyCode)->first();
             \Cache::add($cacheKey, $currencyEntity, 10);
             $fromCache = false;
         }
