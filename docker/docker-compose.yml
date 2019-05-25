@@ -52,8 +52,11 @@ services:
       dockerfile: Dockerfile
       args:
         USER: ${FPM_USER}
+        XDEBUG_ENABLED: ${XDEBUG_ENABLED}
     volumes:
       - ./..:/var/www/html/HomeAccountingLaravel/
+    expose:
+      - 9000
     depends_on:
       - mysql
       - rabbit

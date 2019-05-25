@@ -4,7 +4,7 @@ cd ./docker
 
 export $(cat ./.env | xargs)
 
-PROJECT_NAME=home_accounting
+PROJECT_NAME=accounting
 COMPOSE_FILE="-f docker-compose.yml"
 
 docker-compose -p ${PROJECT_NAME} ${COMPOSE_FILE} down
