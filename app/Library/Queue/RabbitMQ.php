@@ -4,12 +4,10 @@
 namespace App\Library\Queue;
 
 
-use App\Library\Queue\Interfaces\ConsumerInterface;
-use App\Library\Queue\Interfaces\MessageInterface;
-use App\Library\Queue\Interfaces\PushPullerInterface;
+use App\Library\Queue\Interfaces;
 use PhpAmqpLib;
 
-class RabbitMQ implements ConsumerInterface, PushPullerInterface
+class RabbitMQ implements Interfaces\ConsumerInterface, Interfaces\PushPullerInterface
 {
     /**
      * @var RabbitMQ\Wrapper
