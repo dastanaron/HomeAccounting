@@ -10,8 +10,6 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
  */
 abstract class RabbitmqAbstractClass implements RabbitmqInterface
 {
-
-
     /**
      * @var bool
      */
