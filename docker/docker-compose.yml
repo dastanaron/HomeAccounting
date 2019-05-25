@@ -1,53 +1,59 @@
 version: '3'
 services:
-
   #Очереди
   rabbit:
     image: rabbitmq:3.7-management
     ports:
       - "15672:15672"
+    env_file: .env
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
 
   #mysql вторая папка для тестовой базы
   mysql:
     image: 'mysql:5.7'
     restart: always
-    volumes:
-    - '~/mysql-test/:/var/lib/mysql/'
-    - '/home/dastanaron/dumps:/usr/local/test-base/'
+    env_file: .env
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: accounting
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+    - ${MYSQL_PATH}:/var/lib/mysql/
+    - ${MYSQL_DUMP_FILES}:/usr/local/test-base/
     ports:
     - "3306:3306"
     #command: mysql -u root -proot accounting < /usr/local/test-base/accounting.sql #просто чтобы записать команду для развертывания тестовой базы
 
   #nginx без изменений
   nginx:
-    image: "nginx:latest"
     restart: always
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+      args:
+        USER: ${NGINX_USER}
+        DOMAIN: ${NGINX_DOMAIN}
     volumes:
-      - './docker/nginx/conf.d/:/etc/nginx/conf.d/'
-      - '/home/dastanaron/projects/HomeAccountingLaravel/:/var/www/html/HomeAccountingLaravel'
+      - ./..:/var/www/html/HomeAccountingLaravel
     ports:
     - "80:80"
     - "443:443"
+    env_file: .env
     depends_on:
       - fpm
       - mysql
 
   #Настроенный fpm со всеми либами
   fpm:
+    env_file: .env
     build:
-      context: docker/fpm
+      context: fpm
       dockerfile: Dockerfile
+      args:
+        USER: ${FPM_USER}
     volumes:
-      - '/home/dastanaron/projects/HomeAccountingLaravel/:/var/www/html/HomeAccountingLaravel/'
-      - './docker/fpm/supervisor/conf.d/:/var/www/html/HomeAccountingLaravel'
+      - ./..:/var/www/html/HomeAccountingLaravel/
     depends_on:
       - mysql
       - rabbit
-    environment:
-      USER: dastanaron
