@@ -3,6 +3,8 @@ FROM php:7.1-fpm
 # Необязательная строка с указанием автора образа
 MAINTAINER dastanaron <flow199@yandex.ru>
 
+ARG USER
+
 # RUN выполняет идущую за ней команду в контексте нашего образа.
 # В данном случае мы установим некоторые зависимости и модули PHP.
 # Для установки модулей используем команду docker-php-ext-install.
@@ -22,9 +24,11 @@ RUN apt-get update && apt-get install -y \
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN useradd -ms /bin/bash dastanaron
+RUN useradd -ms /bin/bash ${USER}
 
 COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/
+
+RUN sed -i -e "s/{USER}/${USER}/g" /usr/local/etc/php-fpm.d/www.conf
 
 #RUN apt install supervisor
 

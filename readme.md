@@ -44,11 +44,23 @@ npm install
 ```
 Прописываем хосты на своем сервере или docker, и система готова к работе
 
+Docker
+-------
+
 Возможен разворот проекта через докер. Нужно установить [docker](https://www.docker.com/)
-и [docker-compose](https://docs.docker.com/compose/), перейти в дирректорию `docker` и выполнить
+и [docker-compose](https://docs.docker.com/compose/).
+
+В дирректории docker есть файл example.env, необходимо выполнить (из папки проекта)
+```bash
+cp docker/example.env docker/.env
+```
+Затем открыть env файл и ввести там свои настройки для пароля BD,
+для того, от какого пользователя будут работать сервисы fpm и nginx.
+ 
+После так же из дирректории проекта выполнить:
 
 ```bash
-docker-compose up -d
+./docker/bin/start
 ```
 Контейнеры будут собраны и запущены. Все настройки можно посмотреть в конфигах docker-compose, в том числе
 по тому какой домен присвоен машине и т.п. Если вам нужна тестовая база для экспериментов, напишите мне
@@ -57,11 +69,16 @@ docker-compose up -d
 Настройка обработки событий
 ============================
 
-Пока у нас события только для VK бота, подвязываем системный крон, чтобы сохранить мультипоточность:
+Пока используется системный крон, вскоре будет один общий laravel'овский для всех необходимых.
 
 Пример:
 
 ```
-*/1 * * * * /usr/bin/php /path_to/project_dir/artisan vkapi:notifications >> /path_to/logfile/filename.log
+*/1 * * * * /usr/bin/php /path-to-project/artisan webPush:notifications >> /path-to-log/logname.log
+
+15 02 * * * /usr/bin/php /path-to-project/artisan calculate:monthDynamics >> /path-to-log/logname.log
+
+10 18 * * * /usr/bin/php /path-to-project/artisan currency:parse >> /path-to-log/logname.log
+
 ```
 
