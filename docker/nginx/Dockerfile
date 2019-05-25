@@ -25,12 +25,8 @@ RUN mkdir -p -v /usr/local/test-base/
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
-
-RUN cat /etc/nginx/conf.d/accounting.conf
-
 EXPOSE 80
 
 STOPSIGNAL SIGTERM
 
 CMD ["nginx", "-g", "daemon off;"]
-# CMD ['nginx-debug', '-g', 'daemon off;']
