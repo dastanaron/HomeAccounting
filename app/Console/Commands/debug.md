@@ -1,0 +1,1 @@
+PHP_IDE_CONFIG=serverName=accounting XDEBUG_CONFIG="idekey=accounting" ./artisan [command]

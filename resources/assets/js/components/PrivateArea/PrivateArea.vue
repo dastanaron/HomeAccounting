@@ -119,7 +119,7 @@
                 </v-list>
             </v-card>
         </v-menu>
-        <!--<v-dialog v-model="dynamicAccumulateChart" scrollable max-width="80%">
+        <v-dialog v-model="dynamicAccumulateChart" scrollable max-width="80%">
             <v-card>
                 <v-card-title>
                     График динамики накоплений
@@ -136,7 +136,7 @@
 
                 </v-card-actions>
             </v-card>
-        </v-dialog>!-->
+        </v-dialog>
 
         <swipe ref="swipeComponents" :options="swipeOptions">
             <swipe-item><bills-control ref="bills"></bills-control></swipe-item>

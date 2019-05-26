@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models;
 use Carbon\Carbon;
-use Illuminate\Console\Command;
+use Illuminate\Console;
 
 /**
  * Тестовый функционал сбора данных.
@@ -14,7 +14,7 @@ use Illuminate\Console\Command;
  * Class CalculateMonthDynamics
  * @package App\Console\Commands
  */
-class CalculateMonthDynamics extends Command
+class CalculateMonthDynamics extends Console\Command
 {
 
     private $userId = 0;
@@ -64,7 +64,7 @@ class CalculateMonthDynamics extends Command
         $firstDate = new Carbon($this->getFirstDate());
         $lastDate = new Carbon($this->getLatestDate());
 
-        $monthDiff = $firstDate->diff($lastDate)->m;
+        $monthDiff = $this->getMonthDiff($firstDate, $lastDate);
 
         $startDate = new Carbon($firstDate->format('Y-m-01'));
 
@@ -87,6 +87,23 @@ class CalculateMonthDynamics extends Command
             $newCashDinamicElement->sum = $value;
             $newCashDinamicElement->save();
         }
+    }
+
+    private function getMonthDiff(Carbon $dateFirst, Carbon $dateSecond)
+    {
+        $diff = $dateFirst->diff($dateSecond, true);
+
+        $monthDiff = 0;
+
+        if($diff->y !== 0) {
+            $monthDiff = $diff->y * 12;
+        }
+
+        if($diff->m !== 0) {
+            $monthDiff += $diff->m;
+        }
+
+        return $monthDiff;
     }
 
     /**
