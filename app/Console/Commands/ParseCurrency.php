@@ -10,12 +10,14 @@ use Illuminate\Console\Command;
 class ParseCurrency extends Command
 {
 
+    use Traits\ConsoleOutputLog;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'currency:parse';
+    protected $signature = 'currency:parse {--debug}';
 
     /**
      * The console command description.
@@ -39,9 +41,13 @@ class ParseCurrency extends Command
      */
     public function handle()
     {
+        $this->debugMode =  (bool) $this->option('debug');
+
         $currency = new CBRFDaily();
 
         $currencyList = $currency->getCurrenciesList();
+
+        $this->logMessage('Получено ' . count($currencyList) . ' валют');
 
         if(empty($currencyList))
         {
@@ -82,9 +88,10 @@ class ParseCurrency extends Command
         }
         catch (\Exception $e) {
             \DB::rollBack();
+            $this->logMessage('Ошибка парсинга');
             throw new Exceptions\CommandException($e->getMessage());
         }
-
+        $this->logMessage('Парсинг завершен');
         \DB::commit();
     }
 }
