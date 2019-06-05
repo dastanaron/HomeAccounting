@@ -1,0 +1,23 @@
+{
+  "update_id":521982041,
+  "message":{
+    "message_id":394,
+    "from":{
+      "id":279795272,
+      "is_bot":false,
+      "first_name":"\u270e",
+      "last_name":"Dastanaron",
+      "username":"dastanaron",
+      "language_code":"ru"
+    },
+    "chat":{
+      "id":279795272,
+      "first_name":"\u270e",
+      "last_name":"Dastanaron",
+      "username":"dastanaron",
+      "type":"private"
+    },
+    "date":1559762656,
+    "text":"\u0422\u0435\u0441\u0442"
+  }
+}

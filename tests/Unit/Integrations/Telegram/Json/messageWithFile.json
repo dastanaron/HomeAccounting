@@ -1,0 +1,28 @@
+{
+  "update_id": 521982047,
+  "message": {
+    "message_id": 400,
+    "from": {
+      "id": 279795272,
+      "is_bot": false,
+      "first_name": "✎",
+      "last_name": "Dastanaron",
+      "username": "dastanaron",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 279795272,
+      "first_name": "✎",
+      "last_name": "Dastanaron",
+      "username": "dastanaron",
+      "type": "private"
+    },
+    "date": 1559762778,
+    "document": {
+      "file_name": "05.06.19 22.26.11_receipt_share.json",
+      "mime_type": "application/octet-stream",
+      "file_id": "BQADAgADSQQAAoqPwEsEwufRjeOMbQI",
+      "file_size": 484
+    }
+  }
+}

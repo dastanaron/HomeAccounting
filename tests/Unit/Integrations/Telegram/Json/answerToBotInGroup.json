@@ -1,0 +1,39 @@
+{
+  "update_id": 521982048,
+  "message": {
+    "message_id": 401,
+    "from": {
+      "id": 279795272,
+      "is_bot": false,
+      "first_name": "✎",
+      "last_name": "Dastanaron",
+      "username": "dastanaron",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": -263169758,
+      "title": "homeAccounting",
+      "type": "group",
+      "all_members_are_administrators": true
+    },
+    "date": 1559763974,
+    "reply_to_message": {
+      "message_id": 387,
+      "from": {
+        "id": 588507479,
+        "is_bot": true,
+        "first_name": "homeAccountingBot",
+        "username": "fundsSystemNotifBot"
+      },
+      "chat": {
+        "id": -263169758,
+        "title": "homeAccounting",
+        "type": "group",
+        "all_members_are_administrators": true
+      },
+      "date": 1559751072,
+      "text": "Буду ждать!"
+    },
+    "text": "Привет"
+  }
+}
