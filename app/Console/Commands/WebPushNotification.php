@@ -9,12 +9,15 @@ use GuzzleHttp\Client;
 
 class WebPushNotification extends Command
 {
+
+    use Traits\ConsoleOutputLog;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'webPush:notifications';
+    protected $signature = 'webPush:notifications {--debug}';
 
     /**
      * The console command description.
@@ -51,6 +54,8 @@ class WebPushNotification extends Command
      */
     public function handle()
     {
+        $this->debugMode = (bool) $this->option('debug');
+
         $this->logMessage('==========Обработка событий===========');
 
         $events = Models\Events::where('date_notif', '<=', date('Y-m-d H:i:s'))
@@ -147,13 +152,6 @@ class WebPushNotification extends Command
         }
 
         return $answer;
-    }
-
-    protected function logMessage($message)
-    {
-        $date = date('Y-m-d H:i:s');
-
-        $this->line($date.' | '.$message);
     }
 
     private function fileLog($data)

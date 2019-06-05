@@ -39,7 +39,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+        $this->mapCallbackRoutes();
     }
 
     /**
@@ -69,5 +69,13 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    protected function mapCallbackRoutes()
+    {
+        Route::prefix('callback')
+            //->middleware('callback') TODO: implement it later
+            ->namespace($this->namespace)
+            ->group(base_path('routes/callback.php'));
     }
 }
