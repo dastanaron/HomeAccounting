@@ -106,6 +106,17 @@
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
+                <!--<v-list>
+                    <v-list-tile avatar  @click="barcodeControl()">
+                        <v-list-tile-avatar>
+                            <img class="qr-code-icon" src="/image/icons/qrcode.png" />
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Сканировать QR-код</v-list-tile-title>
+                            <v-list-tile-sub-title>Сканировать код для занесения чека(test)</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>-->
                 <v-list>
                     <v-list-tile avatar  @click="goToPanel()">
                         <v-list-tile-avatar>
@@ -144,9 +155,10 @@
             <swipe-item><category-control ref="categories"></category-control></swipe-item>
             <swipe-item><events-control ref="events"></events-control></swipe-item>
             <swipe-item><analytics ref="analytics"></analytics></swipe-item>
+            <!--<swipe-item><barcode-scanner :showBarcodeScanner="barcodeScannerControl" ref="barcode"></barcode-scanner></swipe-item>-->
         </swipe>
         <money-transaction :showMoneyTransactionComponent="moneyTransactionControl"></money-transaction>
-        <barcode-scanner :showBarcodeScanner="barcodeScannerControl"></barcode-scanner>
+
 
     </v-app>
 </template>
@@ -242,17 +254,6 @@
                 this.applicationMenu=false;
                 this.$refs.categories.getCategories();
             },
-            barcodeControl() {
-                this.menuTitle = 'Сканировать чек';
-                this.billsControl = false;
-                this.applicationMenu=false;
-                this.fundsControl = false;
-                this.moneyTransactionControl = false;
-                this.barcodeScannerControl = false;
-                this.categoryControl = false;
-                this.eventsControl = false;
-                this.barcodeScannerControl = true;
-            },
             eventsControlApplication() {
                 this.menuTitle = 'Напоминания';
                 this.$refs.swipeComponents.slide(3);
@@ -263,6 +264,12 @@
                 this.menuTitle = 'Аналитика';
                 this.$refs.swipeComponents.slide(4);
                 this.applicationMenu=false;
+            },
+            barcodeControl() {
+                this.menuTitle = 'Сканировать чек';
+                this.$refs.swipeComponents.slide(5);
+                this.applicationMenu = false;
+                this.barcodeScannerControl = true;
             },
             moneyTransactionControlControlApplication() {
                 this.applicationMenu=false;
