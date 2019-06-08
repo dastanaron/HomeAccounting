@@ -126,7 +126,7 @@ class ConsumerParameters implements Library\Queue\Interfaces\ConsumerParametersI
     /**
      * @return int
      */
-    public function getTicket(): int
+    public function getTicket(): ?int
     {
         return $this->ticket;
     }

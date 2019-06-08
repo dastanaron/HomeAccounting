@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\RabbitMQ\Analytics\MessageConsumer;
+use App\Modules\Analytics;
 
 class AnalyticsConsumer extends Command
 {
@@ -38,8 +38,7 @@ class AnalyticsConsumer extends Command
      */
     public function handle()
     {
-        $consumer = MessageConsumer::init();
-
+        $consumer = new Analytics\Consumer();
         $consumer->run();
     }
 }

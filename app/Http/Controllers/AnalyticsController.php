@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Library\Queue\RabbitMQ;
 use App\Models;
 use App\Components\DataCharts\DynamicAccumulate;
+use App\Modules\Analytics\QueueEntity;
 use Illuminate\Http\Request;
-use App\RabbitMQ\Analytics\MessagePush;
+use App\Library\Queue;
 
 class AnalyticsController extends Controller
 {
@@ -31,21 +33,15 @@ class AnalyticsController extends Controller
      */
     public function createQueueToAnalyticsData(Request $request)
     {
-
         $data = $this->createChartDataValidator($request);
 
         if($data !== false) {
 
-            $chartByControlSum = Models\Charts::whereControlSum($data['controlSum'])->first();
+            $rabbit = QueueEntity::getInstance()->getRabbit();
+            $message = new Queue\RabbitMQ\Message($data);
+            $rabbit->push($message);
 
-            $status = true;
-
-            if(empty($chartByControlSum))
-            {
-                $status = MessagePush::init()->push($data);
-            }
-
-            return ['status' => $status ? 200 : 400, 'controlSum' => $data['controlSum']];
+            return ['status' => 200, 'controlSum' => $data['controlSum']];
         }
         else {
             return ['status' => 400, 'message' => 'Не заполнены обязательные поля'];
@@ -66,12 +62,12 @@ class AnalyticsController extends Controller
 
             $controlSum = $request->input('control_sum');
 
-            $data = Models\Charts::where([
+            $model = Models\Charts::where([
                 ['control_sum', '=', $controlSum],
                 ['user_id', '=', $userId]
             ])->first();
 
-            return !empty($data) ? $data->getData() : ['status' => 'try_again'];
+            return !empty($model) ? $model->getData() : ['status' => 'try_again'];
         }
         catch(\Exception $e) {
 

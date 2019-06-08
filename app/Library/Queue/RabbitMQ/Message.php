@@ -58,6 +58,14 @@ class Message implements Queue\Interfaces\MessageInterface
     }
 
     /**
+     * @return mixed|PhpAmqpLib\Channel\AMQPChannel
+     */
+    public function getChannel()
+    {
+        return $this->amqpMessage->get('channel');
+    }
+
+    /**
      * @param string|array
      */
     public function setBody($body)

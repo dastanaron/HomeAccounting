@@ -1,75 +1,29 @@
 <?php
 
-namespace App\RabbitMQ\Analytics;
 
+namespace App\Modules\Analytics;
+
+
+use App\Library\Queue;
+use App\Modules;
 use App\Models;
-use App\Components\DataCharts\ChartData;
-use App\Components\DataCharts\ExpensesByMonthCategory;
-use App\RabbitMQ\Consumer;
-use App\Components\DataCharts\ExpensesByCategory;
+use App\Components\DataCharts;
 
-class MessageConsumer extends Consumer
+class Consumer extends Modules\Consumers\AbstractRabbitMQConsumer
 {
     /**
-     * @var string
+     * @param Queue\RabbitMQ\Message $message
      */
-    protected $queue = 'analyticsQueue';
-
-    /**
-     * @var string
-     */
-    protected $exchange = 'analyticsChange';
-
-    /**
-     * @var \PhpAmqpLib\Connection\AMQPStreamConnection
-     */
-    public $connection;
-
-    /**
-     * @var \PhpAmqpLib\Channel\AMQPChannel
-     */
-    public $channel;
-
-    /**
-     * @var string
-     */
-    public $consumerTag = 'messageConsumer';
-
-    /**
-     * MessageConsumer constructor.
-     */
-    public function __construct()
+    public function processEnvelope(Queue\RabbitMQ\Message $message)
     {
-        parent::__construct();
-
-        self::$logPath = realpath('./storage/logs/');
-
-        if(!file_exists(self::$logPath . '/rabbitmq')) {
-            mkdir(self::$logPath . '/rabbitmq', 0777, true);
-        }
-
-        self::$logPath = realpath('./storage/logs/rabbitmq');
-        self::$errorLog = self::$logPath . '/error.log';
-        self::$queueLog = self::$logPath . '/queue.log';
-    }
-
-    public function processEnvelope(\PhpAmqpLib\Message\AMQPMessage $message)
-    {
-        $unpackMessage = $this->unpack($message->body);
-
-        self::infoLog('Получено сообщение: ' . var_export($unpackMessage, true));
-
-        //Метод обработчик данных
+        $unpackMessage = $message->getBody();
 
         $this->messageHandler($unpackMessage);
 
-        $message->get('channel')->basic_ack($message->delivery_info['delivery_tag']);
+        $message->getChannel()->basic_ack($message->getDeliveryTag());
 
         if ($unpackMessage === 'quit') {
-
-            self::infoLog('Закрытие соединения очереди');
-            $message->get('channel')->basic_cancel($message->delivery_info['consumer_tag']);
-
+            $message->getChannel()->basic_cancel($message->getDeliveryTag());
         }
     }
 
@@ -104,22 +58,38 @@ class MessageConsumer extends Consumer
     }
 
     /**
+     * @return Queue\RabbitMQ
+     */
+    protected function buildRabbitMQObject()
+    {
+        return QueueEntity::getInstance()->getRabbit();
+    }
+
+    /**
+     * @return Queue\RabbitMQ\ConsumerParameters
+     */
+    protected function buildConsumerParameters()
+    {
+        return QueueEntity::getInstance()->getConsumerParameters();
+    }
+
+    /**
      * @param array $unpackMessage
-     * @return ChartData|null
+     * @return DataCharts\AbstractChartData
      */
     private function dataForChartType(array $unpackMessage)
     {
         switch ($unpackMessage['chartType'])
         {
             case 'dayJump':
-                $chartData = ExpensesByCategory::init(
+                $chartData = DataCharts\ExpensesByCategory::init(
                     $unpackMessage['userId'],
                     $unpackMessage['dateStart'],
                     $unpackMessage['dateEnd']
                 );
                 return $chartData;
             case 'categoryMonth':
-                $chartData = ExpensesByMonthCategory::init(
+                $chartData = DataCharts\ExpensesByMonthCategory::init(
                     $unpackMessage['userId'],
                     $unpackMessage['dateStart'],
                     $unpackMessage['dateEnd']
@@ -127,7 +97,7 @@ class MessageConsumer extends Consumer
                 return $chartData;
 
             default:
-                $chartData = ExpensesByCategory::init(
+                $chartData = DataCharts\ExpensesByCategory::init(
                     $unpackMessage['userId'],
                     $unpackMessage['dateStart'],
                     $unpackMessage['dateEnd']
@@ -150,5 +120,4 @@ class MessageConsumer extends Consumer
         return $chartModel->save();
 
     }
-
 }
