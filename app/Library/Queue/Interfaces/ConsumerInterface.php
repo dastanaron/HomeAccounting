@@ -9,5 +9,5 @@ namespace App\Library\Queue\Interfaces;
  */
 interface ConsumerInterface
 {
-    public function consume();
+    public function consume(callable $callback, ConsumerParametersInterface $consumer);
 }

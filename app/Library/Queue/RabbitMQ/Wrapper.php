@@ -95,7 +95,7 @@ class Wrapper extends Library\Singleton
             $preparedRoutingKey = $queueDeclarator->queueName;
         }
 
-        $this->channel->queue_bind($queueDeclarator->queueName, $exchangeDeclarator, $preparedRoutingKey);
+        $this->channel->queue_bind($queueDeclarator->queueName, $exchangeDeclarator->exchangeName, $preparedRoutingKey);
         return $this;
     }
 
