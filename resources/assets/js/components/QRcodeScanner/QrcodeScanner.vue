@@ -24,12 +24,12 @@
             <v-card>
                 <v-card-title class="headline">Выбор камеры</v-card-title>
                 <v-card-text>
-                        <v-alert
+                        <v-alertgit
                                 :value="cameraIsNotSupported"
                                 type="warning"
                         >
                             Камера не найдена или функционал не поддерживается
-                        </v-alert>
+                        </v-alertgit>
                     <template v-for="camera in cameras">
                         <v-btn flat small color="primary" @click="selectCamera(camera)">{{camera.name}}</v-btn>
                     </template>
@@ -73,9 +73,10 @@
         },
         mounted() {
             this.scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-            this.scanner.addListener('scan', (content) => {
+            this.scanner.addListener('scan', (content, image) => {
                 this.scanned.push(content);
                 console.log(content);
+                console.log(image);
             });
 
             Instascan.Camera.getCameras().then((cameras) => {
