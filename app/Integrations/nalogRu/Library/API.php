@@ -4,12 +4,15 @@
 namespace App\Integrations\nalogRu\Library;
 
 use GuzzleHttp;
+use App\Integrations\nalogRu;
 
 class API
 {
     const URL = 'https://proverkacheka.nalog.ru:9999';
     const API_VERSION = 'v1';
     const MOBILE_API = 'mobile';
+
+    private $client;
 
     /**
      * @param string $email
@@ -38,7 +41,7 @@ class API
     {
         $command = 'users/login';
         $this->client()->parameters()->auth($phone, $smsCode)->headers(['User-Agent' => Client::USER_AGENT]);
-        return $this->client()->request($command);
+        return $this->client()->request($command, Client::METHOD_GET);
     }
 
     /**
@@ -52,10 +55,19 @@ class API
         return $this->client()->request($command, CLIENT::METHOD_POST);
     }
 
-    public function isCheckExists()
+    /**
+     * @param string $barcodeString
+     * @param string $phone
+     * @param string $smsCode
+     * @return string
+     */
+    public function checkExist(string $barcodeString, string $phone, string $smsCode)
     {
-        //t=20190613T132300&s=524.39&fn=9289000100393237&i=20509&fp=2249765769&n=1
-        $command = '/ofds/*/inns/*/fss/<номер ФН>/operations/<вид кассового чека>/tickets/<номер ФД>?fiscalSign=<номер ФПД>&date=2018-05-17T17:57:00&sum=3900';
+        $parsedObject = (new BarcodeParser())->simpleParse($barcodeString);
+
+        $command = "/ofds/*/inns/*/fss/{$parsedObject->fiscalNumber}/operations/{$parsedObject->checkType}/tickets/{$parsedObject->fiscalDocument}?fiscalSign={$parsedObject->fiscalSign}&date={$parsedObject->date->format('Y-m-dTH:i:s')}&sum={$parsedObject->sum}";
+        $this->client()->parameters()->auth($phone, $smsCode)->headers(['User-Agent' => Client::USER_AGENT]);
+        return $this->client()->request($command, CLIENT::METHOD_GET);
     }
 
     /**
@@ -64,6 +76,10 @@ class API
     private function client()
     {
         $baseUri = self::URL . '/' . self::API_VERSION . '/' . self::MOBILE_API . '/';
-        return new Client($baseUri);
+
+        if ($this->client === null) {
+            $this->client = new Client($baseUri);
+        }
+        return $this->client;
     }
 }

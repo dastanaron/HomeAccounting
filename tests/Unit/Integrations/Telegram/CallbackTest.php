@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Integrations\Telegram;
 
 use App\Integrations\Messagers\Telegram;
 use Tests\TestCase;

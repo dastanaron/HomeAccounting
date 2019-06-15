@@ -4,6 +4,7 @@
 namespace App\Integrations\nalogRu\Library;
 
 use GuzzleHttp;
+use App\Library\Utilities;
 
 class Client
 {
@@ -53,6 +54,27 @@ class Client
      */
     public function request(string $command, string $method = self::METHOD_POST)
     {
-        return $this->client->request($method, $command, $this->parameters->getParameters())->getBody()->getContents();
+        try {
+            $response = $this->client->request($method, $command, $this->parameters->getParameters());
+            return $response->getBody()->getContents();
+        }
+        catch (GuzzleHttp\Exception\ClientException $e) {
+            return $this->errorString($e);
+        }
+    }
+
+    /**
+     * @param GuzzleHttp\Exception\ClientException $e
+     * @return string
+     */
+    private function errorString(GuzzleHttp\Exception\ClientException $e)
+    {
+        $data = [
+            'code' => $e->getCode(),
+            'message' => $e->getMessage(),
+            'response' => $e->getResponse()->getBody(),
+        ];
+
+        return Utilities\Json::encode($data);
     }
 }
