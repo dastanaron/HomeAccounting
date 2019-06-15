@@ -89,9 +89,13 @@ Route::post('/callback/push-off', 'CallBackController@pushOff');
 /**
  * Analytics methods
  */
-
 Route::get('/analytics', 'AnalyticsController@index');
 Route::get('/analitycs/dynamic-accumulate', 'AnalyticsController@getAccumulateDynamic');
 Route::post('/analytics/get-chart-data', 'AnalyticsController@getDataToChartAnalytics');
 
 Route::post('/analytics/create', 'AnalyticsController@createQueueToAnalyticsData');
+
+/**
+ * QRCodeScannerController
+ */
+Route::get('/qr-code-scanner', 'QrCodeScannerController@index');

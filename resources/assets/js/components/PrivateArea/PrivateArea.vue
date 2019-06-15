@@ -106,7 +106,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
-                <!--<v-list>
+                <v-list>
                     <v-list-tile avatar  @click="barcodeControl()">
                         <v-list-tile-avatar>
                             <img class="qr-code-icon" src="/image/icons/qrcode.png" />
@@ -116,7 +116,7 @@
                             <v-list-tile-sub-title>Сканировать код для занесения чека(test)</v-list-tile-sub-title>
                         </v-list-tile-content>
                     </v-list-tile>
-                </v-list>-->
+                </v-list>
                 <v-list>
                     <v-list-tile avatar  @click="goToPanel()">
                         <v-list-tile-avatar>
@@ -266,10 +266,7 @@
                 this.applicationMenu=false;
             },
             barcodeControl() {
-                this.menuTitle = 'Сканировать чек';
-                this.$refs.swipeComponents.slide(5);
-                this.applicationMenu = false;
-                this.barcodeScannerControl = true;
+                window.location.href="/qr-code-scanner";
             },
             moneyTransactionControlControlApplication() {
                 this.applicationMenu=false;

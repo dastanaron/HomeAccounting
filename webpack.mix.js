@@ -21,4 +21,5 @@ mix.webpackConfig({
 });
 
 mix.js('resources/assets/js/pa.js', 'public/js')
+    .js('resources/assets/js/qrcodeScanner.js', 'public/js')
     .sass('resources/assets/sass/pa.scss', 'public/css').version();
