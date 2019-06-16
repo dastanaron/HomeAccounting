@@ -99,4 +99,5 @@ Route::middleware(['auth'])->group(function () {
      * QRCodeScannerController
      */
     Route::get('/qr-code-scanner', 'QrCodeScannerController@index');
+    Route::post('/qr-code-scanner/send-check', 'QrCodeScannerController@sendCheck');
 });

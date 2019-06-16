@@ -57,16 +57,32 @@ class API
 
     /**
      * @param string $barcodeString
+     * @return string
+     */
+    public function checkExist(string $barcodeString)
+    {
+        $parsedObject = (new BarcodeParser())->simpleParse($barcodeString);
+        $command = '/' . self::API_VERSION;
+        $command .= "/ofds/*/inns/*/fss/{$parsedObject->fiscalNumber}/operations/{$parsedObject->checkType}/tickets/{$parsedObject->fiscalDocument}?fiscalSign={$parsedObject->fiscalSign}&date={$parsedObject->date->format('Y-m-d\TH:i:s')}&sum={$parsedObject->sum}";
+        return $this->client()->request($command, CLIENT::METHOD_GET);
+    }
+
+    /**
+     * @param string $barcodeString
      * @param string $phone
      * @param string $smsCode
      * @return string
      */
-    public function checkExist(string $barcodeString, string $phone, string $smsCode)
+    public function getCheckDetailInfo(string $barcodeString, string $phone, string $smsCode)
     {
         $parsedObject = (new BarcodeParser())->simpleParse($barcodeString);
-
-        $command = "/ofds/*/inns/*/fss/{$parsedObject->fiscalNumber}/operations/{$parsedObject->checkType}/tickets/{$parsedObject->fiscalDocument}?fiscalSign={$parsedObject->fiscalSign}&date={$parsedObject->date->format('Y-m-dTH:i:s')}&sum={$parsedObject->sum}";
-        $this->client()->parameters()->auth($phone, $smsCode)->headers(['User-Agent' => Client::USER_AGENT]);
+        $command = '/' . self::API_VERSION;
+        $command .= "/inns/*/kkts/*/fss/{$parsedObject->fiscalNumber}/tickets/{$parsedObject->fiscalDocument}?fiscalSign={$parsedObject->fiscalSign}&sendToEmail=no";
+        $this->client()->parameters()->auth($phone, $smsCode)->headers([
+            'User-Agent' => Client::USER_AGENT,
+            'Device-Id' => 'none',
+            'Device-OS' => 'Android 5.1'
+        ]);
         return $this->client()->request($command, CLIENT::METHOD_GET);
     }
 
