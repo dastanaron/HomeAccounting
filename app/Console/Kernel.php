@@ -24,8 +24,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('calculate:monthDynamics')->dailyAt('19:00');
+        $schedule->command('currency:parse --debug')->dailyAt('15:00');
+        $schedule->command('webPush:notifications --debug')->everyMinute();
     }
 
     /**
