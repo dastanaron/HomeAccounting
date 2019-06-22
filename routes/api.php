@@ -17,4 +17,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/qr-code-scanner/send-check', 'QrCodeScannerController@sendCheck');
+Route::any('/qr-code-scanner/send-check', 'QrCodeScannerController@sendCheck');
