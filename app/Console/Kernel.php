@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('calculate:monthDynamics')->dailyAt('19:00');
         $schedule->command('currency:parse --debug')->dailyAt('15:00');
         $schedule->command('webPush:notifications --debug')->everyMinute();
+        $schedule->command('nalogru:handle:qrcode --debug')->everyFifteenMinutes();
     }
 
     /**
