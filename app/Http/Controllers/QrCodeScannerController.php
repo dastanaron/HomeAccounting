@@ -7,6 +7,7 @@ use App\Integrations\nalogRu;
 use Illuminate\Support\Facades;
 use App\Models;
 use App\Library\Utilities;
+use Illuminate\Database;
 
 class QrCodeScannerController extends Controller
 {
@@ -39,6 +40,32 @@ class QrCodeScannerController extends Controller
 
         $userId = \Auth::id();
 
+        $isValidCode = (new nalogRu\Library\BarcodeParser())->simpleParse($qrcode)->isValid();
+
+        if ($isValidCode) {
+            $checkQueueModel = new Models\CheckQueue();
+
+            $checkQueueModel->qrcode = $qrcode;
+
+            $checkQueueModel->user_id = $userId;
+
+            try {
+                $isSaved = $checkQueueModel->save();
+            }
+            catch (Database\QueryException $e) {
+                return Facades\Response::json(['status' => 'error', 'message' => 'Cannot save check, may be the check already recorded to base'])->setStatusCode(500);
+            }
+
+            if (!$isSaved) {
+                return Facades\Response::json(['status' => 'error', 'message' => 'Cannot save check, unknown error'])->setStatusCode(500);
+            }
+
+            return Facades\Response::json(['status' => 'saved', 'message' => 'QRcode was saved'])->setStatusCode(200);
+        }
+
+        return Facades\Response::json(['status' => 'error', 'message' => 'qrcode is invalid'])->setStatusCode(500);
+
+        /*
         $networkModel = Models\SocialNetwork::where(['user_id' => $userId, 'social_network' => 'nalog_ru'])->first();
 
         if (empty($networkModel)) {
@@ -68,5 +95,6 @@ class QrCodeScannerController extends Controller
         }
 
         return Facades\Response::json(['status' => 'saved', 'message' => 'Check was saved'])->setStatusCode(200);
+        */
     }
 }

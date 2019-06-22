@@ -62,4 +62,22 @@ t=20190613T132300&s=524.39&fn=9289000100393237&i=20509&fp=2249765769&n=1
      */
     public $sum;
 
+    /**
+     * @return bool
+     */
+    public function isValid()
+    {
+        $reflection = new \ReflectionClass($this);
+        $properties = $reflection->getProperties(\ReflectionProperty::IS_PUBLIC);
+
+        foreach ($properties as $property) {
+            $propertyName = $property->name;
+            if (empty($this->$propertyName)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }
