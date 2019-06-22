@@ -28,7 +28,7 @@ class QrCodeScannerController extends Controller
     {
         $qrcode = $request->input('qrcode');
 
-        $userId = \Auth::id();
+        $userId = \Auth::id() || $request->input('userId');
 
         $isValidCode = (new nalogRu\Library\BarcodeParser())->simpleParse($qrcode)->isValid();
 

@@ -14,7 +14,7 @@ class NalogRuChecker extends Command
      *
      * @var string
      */
-    protected $signature = 'nalogru:handle:qrcode';
+    protected $signature = 'nalogru:handle:qrcode {--debug}';
 
     /**
      * The console command description.
