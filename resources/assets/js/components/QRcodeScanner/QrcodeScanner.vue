@@ -103,7 +103,7 @@
                         this.showAlert('success', 'Чек сохранен');
                     }
                     else {
-                        this.showAlert('error', 'сервер вернул неправильный ответ');
+                        this.showAlert('error', response.data.message);
                     }
                 })
                 .catch(error => {

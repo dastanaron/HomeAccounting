@@ -43,16 +43,16 @@ class QrCodeScannerController extends Controller
                 $isSaved = $checkQueueModel->save();
             }
             catch (Database\QueryException $e) {
-                return Facades\Response::json(['status' => 'error', 'message' => 'Cannot save check, may be the check already recorded to base'])->setStatusCode(500);
+                return Facades\Response::json(['status' => 'error', 'message' => 'Cannot save check, may be the check already recorded to base'])->setStatusCode(200);
             }
 
             if (!$isSaved) {
-                return Facades\Response::json(['status' => 'error', 'message' => 'Cannot save check, unknown error'])->setStatusCode(500);
+                return Facades\Response::json(['status' => 'error', 'message' => 'Cannot save check, unknown error'])->setStatusCode(200);
             }
 
             return Facades\Response::json(['status' => 'saved', 'message' => 'QRcode was saved'])->setStatusCode(200);
         }
 
-        return Facades\Response::json(['status' => 'error', 'message' => 'qrcode is invalid'])->setStatusCode(500);
+        return Facades\Response::json(['status' => 'error', 'message' => 'qrcode is invalid'])->setStatusCode(200);
     }
 }
