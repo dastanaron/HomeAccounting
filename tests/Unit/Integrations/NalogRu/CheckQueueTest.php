@@ -4,14 +4,23 @@ namespace Tests\Unit\Integrations\NalogRu;
 
 use Illuminate\Support;
 use Illuminate\Database;
-use Tests\TestCase;
 use App\Models;
+use Tests\Unit;
 
-class CheckQueueTest extends TestCase
+class CheckQueueTest extends Unit\DB\AbstractDataBaseTest
 {
+
+    use Unit\DB\createUserTrait;
+
+    /**
+     * @var int
+     */
+    private $userId;
+
     protected function setUp()
     {
         parent::setUp();
+        $this->userId = $this->createUser();
     }
 
     /**
@@ -34,6 +43,31 @@ class CheckQueueTest extends TestCase
     /**
      * @dataProvider qrCodesDataProvider
      */
+    public function testInsertWithoutUser($qrCode)
+    {
+        $uuid = Support\Str::uuid()->toString();
+        $model = $this->createModel($qrCode, $uuid);
+
+        $model->user_id = null;
+
+        try {
+            $wasSaved = $model->save();
+        }
+        catch (\Throwable $e) {
+            $this->assertInstanceOf(Database\QueryException::class, $e);
+            $this->assertEquals(23000, (int) $e->getCode());
+        }
+        catch(\Exception $e) {
+            $this->assertInstanceOf(Database\QueryException::class, $e);
+            $this->assertEquals(23000, (int) $e->getCode());
+        }
+
+        $this->assertFalse(isset($wasSaved));
+    }
+
+    /**
+     * @dataProvider qrCodesDataProvider
+     */
     public function testUniqueIndex($qrCode)
     {
         $uuid = Support\Str::uuid()->toString();
@@ -46,8 +80,9 @@ class CheckQueueTest extends TestCase
         try {
             $doubleModel->save();
         }
-        catch(\Exception $e) {
+        catch(\Throwable $e) {
             $this->assertInstanceOf(Database\QueryException::class, $e);
+            $this->assertEquals(23000, (int) $e->getCode());
         }
 
         $query = Models\CheckQueue::where('uuid', '=', $uuid);
@@ -58,7 +93,7 @@ class CheckQueueTest extends TestCase
     public function testAutoUuid()
     {
         $model = new Models\CheckQueue();
-        $model->user_id = 1;
+        $model->user_id = $this->userId;
         $model->qrcode = 't=20190613T1762&s=500&fn=9289000100394547&i=20537&fp=2249765782&n=1';
 
         $this->assertTrue($model->save());
@@ -74,7 +109,7 @@ class CheckQueueTest extends TestCase
     {
         $model = new Models\CheckQueue();
         $model->uuid = $uuid;
-        $model->user_id = 1;
+        $model->user_id = $this->userId;
         $model->qrcode = $qrCode;
         return $model;
     }
