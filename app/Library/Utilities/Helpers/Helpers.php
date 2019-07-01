@@ -9,6 +9,7 @@ use App\Library\Singleton;
 /**
  * Class Helpers
  * @package App\Library\Utilities\Helpers
+ * @method static self getInstance()
  */
 class Helpers extends Singleton
 {

@@ -5,20 +5,32 @@ namespace App\Integrations\nalogRu\Library;
 
 use GuzzleHttp;
 use App\Integrations\nalogRu;
+use App\Library;
 
 class API
 {
     const URL = 'https://proverkacheka.nalog.ru:9999';
     const API_VERSION = 'v1';
     const MOBILE_API = 'mobile';
+    const DATE_FORMAT = 'Y-m-d\TH:i:s';
 
     private $client;
+
+    /**
+     * @var Library\Utilities\Helpers\Helpers
+     */
+    private $helpers;
+
+    public function __construct()
+    {
+        $this->helpers = Library\Utilities\Helpers\Helpers::getInstance();
+    }
 
     /**
      * @param string $email
      * @param string $name
      * @param string $phone format +79991234567
-     * @return string
+     * @return Answer
      */
     public function register(string $email, string $name, string $phone)
     {
@@ -35,7 +47,7 @@ class API
     /**
      * @param string $phone format +79991234567
      * @param string $smsCode
-     * @return string
+     * @return Answer
      */
     public function login(string $phone, string $smsCode)
     {
@@ -46,7 +58,7 @@ class API
 
     /**
      * @param string $phone format +79991234567
-     * @return string
+     * @return Answer
      */
     public function restorePassword(string $phone)
     {
@@ -57,13 +69,14 @@ class API
 
     /**
      * @param string $barcodeString
-     * @return string
+     * @return Answer
      */
     public function checkExist(string $barcodeString)
     {
         $parsedObject = (new BarcodeParser())->simpleParse($barcodeString);
+        $sum = $this->helpers->money()->convertSumToInt($parsedObject->sum);
         $command = '/' . self::API_VERSION;
-        $command .= "/ofds/*/inns/*/fss/{$parsedObject->fiscalNumber}/operations/{$parsedObject->checkType}/tickets/{$parsedObject->fiscalDocument}?fiscalSign={$parsedObject->fiscalSign}&date={$parsedObject->date->format('Y-m-d\TH:i:s')}&sum={$parsedObject->sum}";
+        $command .= "/ofds/*/inns/*/fss/{$parsedObject->fiscalNumber}/operations/{$parsedObject->checkType}/tickets/{$parsedObject->fiscalDocument}?fiscalSign={$parsedObject->fiscalSign}&date={$this->dateToFormat($parsedObject->date)}&sum={$sum}";
         return $this->client()->request($command, CLIENT::METHOD_GET);
     }
 
@@ -71,7 +84,7 @@ class API
      * @param string $barcodeString
      * @param string $phone
      * @param string $smsCode
-     * @return string
+     * @return Answer
      */
     public function getCheckDetailInfo(string $barcodeString, string $phone, string $smsCode)
     {
@@ -84,6 +97,16 @@ class API
             'Device-OS' => 'Android 5.1'
         ]);
         return $this->client()->request($command, CLIENT::METHOD_GET);
+    }
+
+    /**
+     * @param \DateTime $date
+     * @param string $format
+     * @return string
+     */
+    private function dateToFormat(\DateTime $date, string $format = self::DATE_FORMAT)
+    {
+        return $date->format($format);
     }
 
     /**

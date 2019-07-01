@@ -58,9 +58,9 @@ class NalogRuChecker extends Command
 
             $authData = Utilities\Json::decode($networkModel->comment);
 
-            $loginResult = Utilities\Json::decode($api->login($authData['phone'], $authData['code']));
+            $loginResult = $api->login($authData['phone'], $authData['code']);
 
-            if (array_key_exists('code', $loginResult)) {
+            if ($loginResult->code() !== 200) {
                 $this->line('Ошибка авторизации с Nalog.ru');
                 continue;
             }
@@ -74,12 +74,17 @@ class NalogRuChecker extends Command
                 try {
                     $existAnswer = $api->checkExist($check->qrcode);
 
+                    if ($existAnswer->code() !== 204) {
+                        continue;
+                    }
+
                     $checkDetail = $api->getCheckDetailInfo($check->qrcode, $authData['phone'], $authData['code']);
 
                     $checkModel = new Models\Check();
                     $checkModel->user_id = $user->id;
-                    $checkModel->json = $checkDetail;
+                    $checkModel->json = Utilities\Json::encode($checkDetail->response());
                     $checkModel->save();
+
                 }
                 catch (\Exception $e) {
                     $this->line('Невозможно сохранить чек');

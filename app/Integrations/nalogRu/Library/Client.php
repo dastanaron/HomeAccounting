@@ -50,31 +50,25 @@ class Client
     /**
      * @param string $command
      * @param string $method
-     * @return string
+     * @return Answer
      */
     public function request(string $command, string $method = self::METHOD_POST)
     {
         try {
             $response = $this->client->request($method, $command, $this->parameters->getParameters());
-            return $response->getBody()->getContents();
+            return new Answer((int) $response->getStatusCode(), $response->getReasonPhrase(), $response->getBody()->getContents());
         }
         catch (GuzzleHttp\Exception\ClientException $e) {
-            return $this->errorString($e);
+            return $this->errorAnswer($e);
         }
     }
 
     /**
      * @param GuzzleHttp\Exception\ClientException $e
-     * @return string
+     * @return Answer
      */
-    private function errorString(GuzzleHttp\Exception\ClientException $e)
+    private function errorAnswer(GuzzleHttp\Exception\ClientException $e)
     {
-        $data = [
-            'code' => $e->getCode(),
-            'message' => $e->getMessage(),
-            'response' => $e->getResponse()->getBody(),
-        ];
-
-        return Utilities\Json::encode($data);
+        return new Answer((int) $e->getCode(), $e->getMessage(), $e->getResponse()->getBody());
     }
 }

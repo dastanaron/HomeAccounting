@@ -22,4 +22,10 @@ class MoneyHelper
     {
         return (string) str_replace('.', ',', $sum);
     }
+
+    public function convertSumToInt($sum) : int
+    {
+        $prepared = preg_replace('#\.|\,#', '', $sum);
+        return (int) $prepared;
+    }
 }

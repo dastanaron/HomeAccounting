@@ -8,7 +8,6 @@ use App\Library\Utilities;
 
 class APITest extends TestCase
 {
-
     /**
      * @var Library\API
      */
@@ -23,24 +22,19 @@ class APITest extends TestCase
     public function testRegister()
     {
         $answer = $this->api->register(env('TEST_EMAIL'), 'dastanaron', env('TEST_PHONE'));
-
-        $decodedAnswer = Utilities\Json::decode($answer);
-
-        $this->assertTrue(array_key_exists('code', $decodedAnswer));
-        $this->assertSame(409, $decodedAnswer['code']);
+        $this->assertSame(409, $answer->code());
     }
 
     public function testLogin()
     {
         $answer = $this->api->login(env('TEST_PHONE'), env('TEST_SMS_CODE'));
-        $decodedAnswer = Utilities\Json::decode($answer);
 
-        if (count($decodedAnswer) === 2) {
-            $this->assertTrue(array_key_exists('email', $decodedAnswer));
+        if ($answer->code() === 200) {
+            $this->assertTrue(array_key_exists('email', $answer->response()));
+            $this->assertTrue(array_key_exists('name', $answer->response()));
             return;
         }
-        $this->assertTrue(array_key_exists('code', $decodedAnswer));
-        $this->assertSame(403, $decodedAnswer['code']);
+        $this->assertSame(403, $answer->code());
     }
 
     /**
@@ -50,9 +44,8 @@ class APITest extends TestCase
     public function testExistCheck($barcodeString)
     {
         $answer = $this->api->checkExist($barcodeString, env('TEST_PHONE'), env('TEST_SMS_CODE'));
-        $decodedAnswer = Utilities\Json::decode($answer);
-        $this->assertTrue(array_key_exists('code', $decodedAnswer));
-        $this->assertSame(406, $decodedAnswer['code']);
+        $this->assertSame(204, $answer->code());
+        $this->assertSame('No Content', $answer->message());
     }
 
     /**
@@ -61,10 +54,10 @@ class APITest extends TestCase
      */
     public function testGetDetailInfoAboutCheck($barcodeString)
     {
-        $answer = $this->api->getCheckDetailInfo($barcodeString, env('TEST_PHONE'), env('TEST_SMS_CODE'));
-        $decodedAnswer = Utilities\Json::decode($answer);
-        $this->assertTrue(array_key_exists('code', $decodedAnswer));
-        $this->assertSame(404, $decodedAnswer['code']);
+        $answer = $this->api->getCheckDetailInfo($barcodeString, env('TEST_PHONE'), env('TEST_SMS_CODE'));;
+        $this->assertSame(200, $answer->code());
+        $this->assertSame('OK', $answer->message());
+        $this->assertTrue(array_key_exists('document', $answer->response()));
     }
 
     /**

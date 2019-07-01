@@ -29,7 +29,7 @@ class BarcodeParser
         foreach ($array as $key => $value) {
             switch ($key) {
                 case 't':
-                    $object->date = new \DateTime($value);
+                    $object->date = new \DateTime($value, new \DateTimeZone('UTC'));
                     break;
                 case 's':
                     $object->sum = (float) $value;
