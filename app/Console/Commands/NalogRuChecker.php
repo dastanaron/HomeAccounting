@@ -65,7 +65,10 @@ class NalogRuChecker extends Command
                 continue;
             }
 
-            $checks = Models\CheckQueue::whereUserId($user->id)->get();
+            $checks = Models\CheckQueue::whereUserId($user->id)->where([
+                'user_id' => $user->id,
+                'is_processed' => 0,
+            ])->get();
 
             foreach ($checks as $check) {
                 /**
@@ -90,8 +93,9 @@ class NalogRuChecker extends Command
                     $this->line('Невозможно сохранить чек');
                     $this->error($e->getMessage());
                 }
-                //Удаляем если все норм
-                $check->delete();
+                //Помечаем отработанным
+                $check->is_processed = 1;
+                $check->save();
             }
             $this->line('Закончено получение чеков для пользователя ' . $user->name . '(' . $user->id . ')');
         }
