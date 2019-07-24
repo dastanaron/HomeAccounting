@@ -52,7 +52,7 @@ class NalogRuChecker extends Command
             $networkModel = Models\SocialNetwork::where(['user_id' => $user->id, 'social_network' => 'nalog_ru'])->first();
 
             if (empty($networkModel)) {
-                $this->line('Для этого пользователя' . $user->id . 'не найдено интеграции с Nalog.ru');
+                $this->line('Для этого пользователя ' . $user->id . ' не найдено интеграции с Nalog.ru');
                 continue;
             }
 
@@ -69,6 +69,8 @@ class NalogRuChecker extends Command
                 'user_id' => $user->id,
                 'is_processed' => 0,
             ])->get();
+
+            $this->line('Найдено ' . $checks->count() . ' для пользователя ' . $this->prepareUserStringForLog($user));
 
             foreach ($checks as $check) {
                 /**
@@ -99,6 +101,9 @@ class NalogRuChecker extends Command
             }
             $this->line('Закончено получение чеков для пользователя ' . $user->name . '(' . $user->id . ')');
         }
+    }
 
+    private function prepareUserStringForLog(Models\User $user) {
+        return $user->name . ' (id: ' . $user->id . ' )';
     }
 }
