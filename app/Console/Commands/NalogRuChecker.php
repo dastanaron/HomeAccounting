@@ -23,6 +23,8 @@ class NalogRuChecker extends Command
      */
     protected $description = 'Распарсивание qr кодов и получение чеков в Nalog.ru';
 
+    private $debugMode = false;
+
     /**
      * Create a new command instance.
      *
@@ -43,6 +45,8 @@ class NalogRuChecker extends Command
      */
     public function handle()
     {
+        $this->debugMode = env('APP_DEBUG') === true || env('DEBUG') || $this->option('debug');
+
         $api = new nalogRu\Library\API();
 
         $users = Models\User::get();
@@ -52,7 +56,7 @@ class NalogRuChecker extends Command
             $networkModel = Models\SocialNetwork::where(['user_id' => $user->id, 'social_network' => 'nalog_ru'])->first();
 
             if (empty($networkModel)) {
-                $this->line('Для этого пользователя ' . $user->id . ' не найдено интеграции с Nalog.ru');
+                $this->debug('Для этого пользователя ' . $user->id . ' не найдено интеграции с Nalog.ru');
                 continue;
             }
 
@@ -61,7 +65,7 @@ class NalogRuChecker extends Command
             $loginResult = $api->login($authData['phone'], $authData['code']);
 
             if ($loginResult->code() !== 200) {
-                $this->line('Ошибка авторизации с Nalog.ru');
+                $this->debug('Ошибка авторизации с Nalog.ru');
                 continue;
             }
 
@@ -70,7 +74,7 @@ class NalogRuChecker extends Command
                 'is_processed' => 0,
             ])->get();
 
-            $this->line('Найдено ' . $checks->count() . ' для пользователя ' . $this->prepareUserStringForLog($user));
+            $this->debug('Найдено ' . $checks->count() . ' чека для пользователя ' . $this->prepareUserStringForLog($user));
 
             foreach ($checks as $check) {
                 /**
@@ -80,6 +84,7 @@ class NalogRuChecker extends Command
                     $existAnswer = $api->checkExist($check->qrcode);
 
                     if ($existAnswer->code() !== 204) {
+                        $this->debug('Чек с кодом:  ' . $check->qrcode . ' не найден в базе Nalog.ru ');
                         continue;
                     }
 
@@ -92,18 +97,26 @@ class NalogRuChecker extends Command
 
                 }
                 catch (\Exception $e) {
-                    $this->line('Невозможно сохранить чек');
+                    $this->debug('Невозможно сохранить чек');
                     $this->error($e->getMessage());
                 }
                 //Помечаем отработанным
                 $check->is_processed = 1;
                 $check->save();
             }
-            $this->line('Закончено получение чеков для пользователя ' . $user->name . '(' . $user->id . ')');
+            $this->debug('Закончено получение чеков для пользователя ' . $user->name . '(' . $user->id . ')');
         }
     }
 
-    private function prepareUserStringForLog(Models\User $user) {
+    private function debug(string $message)
+    {
+        if ($this->debugMode) {
+            $this->line($message);
+        }
+    }
+
+    private function prepareUserStringForLog(Models\User $user)
+    {
         return $user->name . ' (id: ' . $user->id . ' )';
     }
 }
