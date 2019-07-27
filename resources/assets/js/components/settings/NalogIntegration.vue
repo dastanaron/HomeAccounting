@@ -33,7 +33,7 @@
                         </template>
                         <template v-if="showSMSCodeGroup">
                             <v-flex xs12 sm6 md4>
-                                <v-text-field v-model="smsCode" :rules="rules.smsCodeRules" label="Код из СМС" required></v-text-field>
+                                <v-text-field v-model="registerFormData.smsCode" :rules="rules.smsCodeRules" label="Код из СМС" required></v-text-field>
                             </v-flex>
                         </template>
                     </v-layout>
@@ -63,8 +63,8 @@
                 name: '',
                 email: '',
                 phone: '+7',
+                smsCode: null,
             },
-            smsCode: null,
             rules: {
                 nameRules: [
                     v => !!v || 'Имя обязательно для заполнения',
