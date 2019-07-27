@@ -14,7 +14,9 @@ Route::any('/telegram', function () {
 
     $input = file_get_contents('php://input');
 
-    //TODO: realized callback functional
+    $tempFile = storage_path('logs/telegram') . 'callback.log';
+
+    file_put_contents($tempFile, $input, FILE_APPEND);
 
     return 'ok';
 });

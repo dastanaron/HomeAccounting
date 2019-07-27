@@ -43,28 +43,31 @@ class CRUD
     {
         $integration = $this->getIntegrationByUserId($userId);
         $decodedMeta = Utilities\Json::decode($integration->meta);
-        $meta = new Objects\Meta();
-
-        //todo: сделать валидацию мета данных
-        $meta->name    = $decodedMeta['name'];
-        $meta->email   = $decodedMeta['email'];
-        $meta->smsCode = $decodedMeta['smsCode'];
-        $meta->phone   = $decodedMeta['phone'];
+        $meta = Objects\Meta::parseFromArray($decodedMeta);
         return $meta;
     }
 
-    public function update()
+    /**
+     * @param int $userId
+     * @param Objects\Meta $meta
+     * @return bool
+     */
+    public function updateMeta(int $userId, Objects\Meta $meta): bool
     {
-        // TODO: Implement update() method.
+        $model= $this->getIntegrationByUserId($userId);
+        if ($model === null) {
+            return false;
+        }
+        $model->meta = Utilities\Json::encode($meta);
+        return $model->save();
     }
 
-    public function delete()
+    /**
+     * @param int $userId
+     * @return bool|null
+     */
+    public function delete(int $userId): ?bool
     {
-        // TODO: Implement delete() method.
-    }
-
-    protected function _validatePhone($phoneNumber): bool
-    {
-        return preg_match('#^\+7[0-9]{10}$#', $phoneNumber);
+        return Models\Integration::where(['user_id' => $userId, 'name' => self::INTEGRATION_NAME])->delete();
     }
 }

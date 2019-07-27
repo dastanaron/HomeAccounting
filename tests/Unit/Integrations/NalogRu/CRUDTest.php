@@ -40,8 +40,18 @@ class CRUDTest extends Unit\DB\AbstractDataBaseTest
 
         $this->assertEquals($meta, $metaFromDB);
 
-        //todo: доделать update тест и delete
+        $metaFromDB->smsCode = 3582;
+        $metaFromDB->email   = 'test2@test.test';
 
+        $isUpdated = $crud->updateMeta($this->userId, $metaFromDB);
+        $this->assertTrue($isUpdated, 'model cannot be updated');
+
+        $metaFromDBAfterUpdated = $crud->getMetaByUserId($this->userId);
+        $this->assertEquals(3582, $metaFromDBAfterUpdated->smsCode);
+        $this->assertEquals('test2@test.test', $metaFromDBAfterUpdated->email);
+
+        $isDeleted = $crud->delete($this->userId);
+        $this->assertTrue($isDeleted, 'model cannot be deleted');
     }
 
     /**
