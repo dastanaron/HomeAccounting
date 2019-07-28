@@ -51,18 +51,25 @@ class NalogRuChecker extends Command
 
         $users = Models\User::get();
 
+        $integrationFacade = nalogRu\Facade::getInstance();
+
         foreach ($users as $user) {
 
-            $networkModel = Models\SocialNetwork::where(['user_id' => $user->id, 'social_network' => 'nalog_ru'])->first();
+            $integration = $integrationFacade->getCRUD()->getIntegrationByUserId($user->id);
 
-            if (empty($networkModel)) {
+            if ($integration === null) {
                 $this->debug('Для этого пользователя ' . $user->id . ' не найдено интеграции с Nalog.ru');
                 continue;
             }
 
-            $authData = Utilities\Json::decode($networkModel->comment);
+            if ((bool)$integration->is_active === false) {
+                $this->debug('Для этого пользователя ' . $user->id . ' есть интеграция с Nalog.ru, но она не активна');
+                continue;
+            }
 
-            $loginResult = $api->login($authData['phone'], $authData['code']);
+            $meta = $integrationFacade->getMetaFromIntegration($integration);
+
+            $loginResult = $api->login($meta->phone, $meta->smsCode);
 
             if ($loginResult->code() !== 200) {
                 $this->debug('Ошибка авторизации с Nalog.ru');
@@ -88,7 +95,7 @@ class NalogRuChecker extends Command
                         continue;
                     }
 
-                    $checkDetail = $api->getCheckDetailInfo($check->qrcode, $authData['phone'], $authData['code']);
+                    $checkDetail = $api->getCheckDetailInfo($check->qrcode, $meta->phone, $meta->smsCode);
 
                     $checkModel = new Models\Check();
                     $checkModel->user_id = $user->id;
