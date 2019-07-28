@@ -22,9 +22,6 @@
                 <span>Вернуться в личный кабинет</span>
             </v-tooltip>
         </v-toolbar>
-        <v-alert :type="alertGet.type" dismissible v-model="alertGet.show">
-            {{ alertGet.message }}
-        </v-alert>
         <v-tabs
                 v-model="active"
                 color="primary"
@@ -41,6 +38,9 @@
                     v-for="(item, index) in settingTypes"
                     :key="index"
             >
+                <v-alert :type="alertGet.type" dismissible v-model="alertGet.show">
+                    {{ alertGet.message }}
+                </v-alert>
                 <v-progress-linear indeterminate :active="ListenPreloader" height="3" color="primary"></v-progress-linear>
                 <router-view></router-view>
             </v-tab-item>

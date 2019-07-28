@@ -20,7 +20,6 @@
                 </div>
                 <v-form>
                     <v-layout wrap>
-                        <template v-if="showRegisterGroup">
                             <v-flex xs12 sm6 md4>
                                 <v-text-field v-model="registerFormData.name" :rules="rules.nameRules" label="Имя" required></v-text-field>
                             </v-flex>
@@ -30,17 +29,42 @@
                             <v-flex xs12 sm6 md4>
                                 <v-text-field v-model="registerFormData.phone" :rules="rules.phoneRules" label="Телефон" required></v-text-field>
                             </v-flex>
-                        </template>
-                        <template v-if="showSMSCodeGroup">
+                        <template v-if="(showSMSCodeGroup && showRegisterGroup) || showUpdateGroup">
                             <v-flex xs12 sm6 md4>
-                                <v-text-field v-model="registerFormData.smsCode" :rules="rules.smsCodeRules" label="Код из СМС" required></v-text-field>
+                                <v-switch v-model="smsCodeTypeFieldSwitcher" label="Показать пароль"></v-switch>
+                                <v-text-field :type="smsCodeTypeField" v-model="registerFormData.smsCode" :rules="rules.smsCodeRules" label="Код из СМС" required></v-text-field>
                             </v-flex>
                         </template>
-                    </v-layout>
-                    <v-layout>
                         <v-flex xs12 sm6 md4>
-                            <v-btn color="success">
+                            <v-switch v-model="registerFormData.isActive" label="Интеграция активна"></v-switch>
+                        </v-flex>
+                    </v-layout>
+                    <v-layout v-show="showRegisterGroup">
+                        <v-flex xs12 sm6 md4 v-show="!wantRestorePassword">
+                            <v-btn color="success" :disabled="!registerFormData.isComplete" @click="register()">
                                 Получить СМС код
+                            </v-btn>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4 v-show="wantRestorePassword">
+                            <v-btn color="warning" :disabled="!registerFormData.isComplete" @click="restorePassword()">
+                                Восстановить пароль
+                            </v-btn>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4 v-show="showSMSCodeGroup && showRegisterGroup">
+                            <v-btn color="success" :disabled="!registerFormData.isComplete" @click="createIntegration()">
+                                Сохранить
+                            </v-btn>
+                        </v-flex>
+                    </v-layout>
+                    <v-layout v-show="showUpdateGroup">
+                        <v-flex xs12 sm6 md4>
+                            <v-btn color="primary" :disabled="!registerFormData.isComplete" @click="updateIntegration()">
+                                Обновить
+                            </v-btn>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4>
+                            <v-btn color="warning" :disabled="!registerFormData.isComplete" @click="restorePassword()">
+                                Восстановить пароль
                             </v-btn>
                         </v-flex>
                     </v-layout>
@@ -54,17 +78,24 @@
 </template>
 
 <script>
+    import APIRoutes from './ApiRoutes';
+    import axios from 'axios';
     export default {
         name: "NalogIntegration",
         data: () => ({
             showRegisterGroup: true,
             showSMSCodeGroup: false,
+            showUpdateGroup: false,
+            smsCodeTypeFieldSwitcher: false,
             registerFormData: {
                 name: '',
                 email: '',
                 phone: '+7',
                 smsCode: null,
+                isActive: true,
+                isComplete: false,
             },
+            wantRestorePassword: false,
             rules: {
                 nameRules: [
                     v => !!v || 'Имя обязательно для заполнения',
@@ -84,9 +115,195 @@
                 ]
             }
         }),
-        mounted() {
+        methods: {
+            getSettings() {
+                this.$store.commit('setPreloader', true);
 
-        }
+                axios.get(APIRoutes.nalogRu.getSettings.url)
+                    .then(response => {
+                        if (response.data.code === 1) {
+                            this.registerFormData.email    = response.data.meta.email;
+                            this.registerFormData.name     = response.data.meta.name;
+                            this.registerFormData.phone    = response.data.meta.phone;
+                            this.registerFormData.smsCode  = response.data.meta.smsCode;
+                            this.registerFormData.isActive = Boolean(response.data.integration.is_active);
+                            this.showRegisterGroup         = false;
+                            this.showUpdateGroup           = true;
+                        }
+                        this.$store.commit('setPreloader', false);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        this.$store.commit('AlertError', 'Ошибка сервера, попробуйте позже');
+                        this.$store.commit('setPreloader', false);
+                    });
+            },
+            updateIntegration() {
+                if (this.registerFormData.smsCode === null) {
+                    this.$store.commit('AlertError', 'Заполните поле код из СМС');
+                    return;
+                }
+                this.$store.commit('setPreloader', true);
+
+                axios.put(APIRoutes.nalogRu.update.url, {
+                    name: this.registerFormData.name,
+                    email: this.registerFormData.email,
+                    phone: this.registerFormData.phone,
+                    smsCode: this.registerFormData.smsCode,
+                    isActive: this.registerFormData.isActive
+                })
+                    .then(response => {
+                        if (response.data.code !== 1) {
+                            this.$store.commit('AlertError', 'Обновление интеграции не удалось: ' + this.codeFromAPItoMessage(response.data.code));
+                        }
+                        else {
+                            this.$store.commit('setAlert', {type: 'success', status: true, message: 'Интеграция успешно обновлена'});
+                            window.location.reload();
+                        }
+                        this.$store.commit('setPreloader', false);
+
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        this.$store.commit('AlertError', 'Ошибка сервера, попробуйте позже');
+                        this.$store.commit('setPreloader', false);
+                    });
+            },
+            register() {
+                this.$store.commit('setPreloader', true);
+
+                axios.post(APIRoutes.nalogRu.register.url, {
+                    name: this.registerFormData.name,
+                    email: this.registerFormData.email,
+                    phone: this.registerFormData.phone,
+                    smsCode: null,
+                })
+                .then(response => {
+                    if (response.data.code !== 1) {
+                        this.$store.commit('AlertError', 'Регистрация не удалась: ' + this.codeFromAPItoMessage(response.data.code));
+
+                        if (response.data.code === 2) {
+                            this.wantRestorePassword = true;
+                            this.showSMSCodeGroup = true;
+                        }
+                    }
+                    else {
+                        this.showSMSCodeGroup = true;
+                    }
+                    this.$store.commit('setPreloader', false);
+
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.$store.commit('AlertError', 'Ошибка сервера, попробуйте позже');
+                    this.$store.commit('setPreloader', false);
+                });
+            },
+            restorePassword() {
+                this.$store.commit('setPreloader', true);
+                this.$store.commit('closeAlert');
+
+                axios.post(APIRoutes.nalogRu.restorePassword.url, {
+                    name: this.registerFormData.name,
+                    email: this.registerFormData.email,
+                    phone: this.registerFormData.phone,
+                    smsCode: null,
+                })
+                    .then(response => {
+                        if (response.data.code !== 1) {
+                            this.$store.commit('AlertError', 'Восстановление пароля не удалось: ' + this.codeFromAPItoMessage(response.data.code));
+                        }
+                        else {
+                            this.showSMSCodeGroup = true;
+                        }
+                        this.$store.commit('setPreloader', false);
+
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        this.$store.commit('AlertError', 'Ошибка сервера, попробуйте позже');
+                        this.$store.commit('setPreloader', false);
+                    });
+            },
+            createIntegration() {
+                if (this.registerFormData.smsCode === null) {
+                    this.$store.commit('AlertError', 'Заполните поле код из СМС');
+                    return;
+                }
+
+                this.$store.commit('setPreloader', true);
+                this.$store.commit('closeAlert');
+
+                axios.post(APIRoutes.nalogRu.create.url, {
+                    name: this.registerFormData.name,
+                    email: this.registerFormData.email,
+                    phone: this.registerFormData.phone,
+                    smsCode: this.registerFormData.smsCode,
+                })
+                    .then(response => {
+                        if (response.data.code !== 1) {
+                            this.$store.commit('AlertError', 'Не удалось сохранить интеграцию: ' + this.codeFromAPItoMessage(response.data.code));
+                        }
+                        else {
+                            this.showSMSCodeGroup = false;
+                            this.$store.commit('setAlert', {type: 'success', status: true, message: 'Интеграция успешно созадана'});
+                            window.location.reload();
+                        }
+                        this.$store.commit('setPreloader', false);
+
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        this.$store.commit('AlertError', 'Ошибка сервера, попробуйте позже');
+                        this.$store.commit('setPreloader', false);
+                    });
+            },
+            codeFromAPItoMessage(code) {
+                switch (code) {
+                    case 2:
+                        return 'Клиент уже существует';
+                    case 3:
+                        return 'Номер телефона не валиден';
+                    case 4:
+                        return 'Пользователь не найден';
+                    case 5:
+                        return 'Интеграция не найдена';
+                    case 6:
+                        return 'Интеграция уже существует';
+                    case 7:
+                        return 'Невозможно авторизоваться с этими данными, проверьте телефон и смс-код';
+                }
+            },
+            validateRegistrationForm() {
+                let formData = this.registerFormData;
+                if (formData.name !== ''
+                    && (formData.phone !== '' || formData.phone !== '+7')
+                    && formData.email !== '') {
+                    this.registerFormData.isComplete = true;
+                }
+            }
+        },
+        mounted() {
+            this.getSettings();
+        },
+        computed: {
+            smsCodeTypeField() {
+                if (this.smsCodeTypeFieldSwitcher) {
+                    return 'text';
+                }
+                else {
+                    return 'password';
+                }
+            }
+        },
+        watch: {
+            registerFormData: {
+                handler: function (val, oldVal) {
+                    this.validateRegistrationForm();
+                },
+                deep: true,
+            },
+        },
     }
 </script>
 

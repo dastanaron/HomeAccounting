@@ -14,14 +14,15 @@ class CRUD
     /**
      * @param int $userId
      * @param Objects\Meta $meta
+     * @param bool $active
      * @return bool
      */
-    public function create(int $userId, Objects\Meta $meta): bool
+    public function create(int $userId, Objects\Meta $meta, ?bool $active = true): bool
     {
         $model = new Models\Integration();
         $model->name      = self::INTEGRATION_NAME;
         $model->user_id   = $userId;
-        $model->is_active = 1;
+        $model->is_active = $active;
         $model->meta      = Utilities\Json::encode($meta);
         return $model->save();
     }
@@ -59,6 +60,23 @@ class CRUD
             return false;
         }
         $model->meta = Utilities\Json::encode($meta);
+        return $model->save();
+    }
+
+    /**
+     * @param int $userId
+     * @param Objects\Meta $meta
+     * @param bool|null $active
+     * @return bool
+     */
+    public function updateIntegration(int $userId, Objects\Meta $meta, ?bool $active = true): bool
+    {
+        $model= $this->getIntegrationByUserId($userId);
+        if ($model === null) {
+            return false;
+        }
+        $model->meta      = Utilities\Json::encode($meta);
+        $model->is_active = $active;
         return $model->save();
     }
 

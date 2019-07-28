@@ -57,6 +57,9 @@ const store = new Vuex.Store({
             state.alertControl.show = true;
             state.alertControl.message = 'Ошибка: ' + error;
         },
+        closeAlert(state) {
+            state.alertControl.show = false;
+        },
     },
     getters: {
         getPreloader: state=> {
