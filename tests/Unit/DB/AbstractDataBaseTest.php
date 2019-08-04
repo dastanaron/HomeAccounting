@@ -49,6 +49,12 @@ abstract class AbstractDataBaseTest extends Tests\TestCase
 
     protected function tearDown()
     {
+        $this->clearTables();
+        parent::tearDown();
+    }
+
+    private function clearTables()
+    {
         $tables = $this->getTables();
 
         DB::getPdo()->query("SET FOREIGN_KEY_CHECKS = 0;");
@@ -58,8 +64,6 @@ abstract class AbstractDataBaseTest extends Tests\TestCase
         }
 
         DB::getPdo()->query("SET FOREIGN_KEY_CHECKS = 1;");
-
-        parent::tearDown();
     }
 
     /**
