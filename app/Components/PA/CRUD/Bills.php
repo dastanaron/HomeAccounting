@@ -8,6 +8,7 @@ use App\Library\BaseInterfaces;
 use App\Library\CRUD;
 use App\Models;
 use Illuminate\Database\Eloquent;
+use Illuminate\Support\Facades;
 
 /**
  * Class Bills
@@ -29,20 +30,31 @@ class Bills extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Co
      */
     public function MoneyTransaction()
     {
-        $billSource = Models\Bills::whereId($this->request->input('bill_source'))->where('user_id', '=', $this->userId)->first();
-        $billDestination = Models\Bills::whereId($this->request->input('bill_destination'))->where('user_id', '=', $this->userId)->first();
+        Facades\DB::beginTransaction();
 
-        $sum = $this->helpers->money()->convertSumWithCommaToSumWithDot($this->request->input('sum'));
+        try {
+            $billSource = Models\Bills::whereId($this->request->input('bill_source'))->where('user_id', '=', $this->userId)->first();
+            $billDestination = Models\Bills::whereId($this->request->input('bill_destination'))->where('user_id', '=', $this->userId)->first();
 
-        if(empty($billSource) || empty($billDestination) || empty($sum)) {
+            $sum = $this->helpers->money()->convertSumWithCommaToSumWithDot($this->request->input('sum'));
+
+            if(empty($billSource) || empty($billDestination) || empty($sum)) {
+                return false;
+            }
+
+            $billSource->sum = $billSource->sum - $sum;
+
+            $billDestination->sum = $billDestination->sum + $sum;
+            $billSource->save();
+            $billDestination->save();
+            Facades\DB::commit();
+            return true;
+        }
+        catch (\Throwable $e) {
+            Facades\DB::rollback();
+            logger($e->getMessage(), [$e]);
             return false;
         }
-
-        $billSource->sum = $billSource->sum - $sum;
-
-        $billDestination->sum = $billDestination->sum + $sum;
-
-        return $billSource->save() && $billDestination->save();
 
     }
 

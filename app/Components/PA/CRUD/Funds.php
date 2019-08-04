@@ -7,6 +7,7 @@ use App\Library\CRUD;
 use App\Models;
 use Illuminate\Http;
 use Illuminate\Database;
+use Illuminate\Support\Facades;
 
 /**
  * Class Funds
@@ -65,12 +66,18 @@ class Funds extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Ar
         $funds->cause = $this->request->input('cause');
         $funds->date = $this->request->input('date');
 
-        $saved = (bool) $funds->save();
+        Facades\DB::beginTransaction();
 
-        if($saved) {
+        try {
+            $saved = (bool) $funds->save();
             $this->billsCalculate($funds->rev, $funds->sum);
+            Facades\DB::commit();
         }
-
+        catch (\Throwable $e) {
+            Facades\DB::rollback();
+            logger($e->getMessage(), [$e]);
+            return false;
+        }
         return $saved;
 
     }
@@ -80,6 +87,7 @@ class Funds extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Ar
      */
     public function update() : bool
     {
+        Facades\DB::beginTransaction();
         $funds = Models\Funds::whereId($this->request->input('funds_id'))->first();
 
         if(empty($funds)) {
@@ -92,24 +100,30 @@ class Funds extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Ar
          */
         $rev = $this->request->input('rev');
 
-        if($rev == 1) {
-            $this->billsCalculate(2, $funds->sum);
-        }
-        else if($rev == 2) {
-            $this->billsCalculate(1, $funds->sum);
-        }
+        try {
+            if($rev == 1) {
+                $this->billsCalculate(2, $funds->sum);
+            }
+            else if($rev == 2) {
+                $this->billsCalculate(1, $funds->sum);
+            }
 
-        $funds->rev = $rev;
-        $funds->category_id = $this->request->input('category_id');
-        $funds->sum = $this->helpers->money()->convertSumWithCommaToSumWithDot($this->request->input('sum'));
-        $funds->cause = $this->request->input('cause');
-        $funds->date = $this->request->input('date');
+            $funds->rev = $rev;
+            $funds->category_id = $this->request->input('category_id');
+            $funds->sum = $this->helpers->money()->convertSumWithCommaToSumWithDot($this->request->input('sum'));
+            $funds->cause = $this->request->input('cause');
+            $funds->date = $this->request->input('date');
 
-        $saved = (bool) $funds->save();
-
-        if($saved) {
+            $saved = (bool) $funds->save();
             $this->billsCalculate($funds->rev, $funds->sum);
+            Facades\DB::commit();
         }
+        catch (\Throwable $e) {
+            Facades\DB::rollback();
+            logger($e->getMessage(), [$e]);
+            return false;
+        }
+
 
         return $saved;
     }
@@ -120,6 +134,7 @@ class Funds extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Ar
      */
     public function delete() : bool
     {
+        Facades\DB::beginTransaction();
         $funds = Models\Funds::whereId($this->request->input('funds_id'))->first();
 
         if(empty($funds)) {
@@ -134,14 +149,23 @@ class Funds extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Ar
          */
         $rev = $funds->rev;
 
-        if($rev == 1) {
-            $this->billsCalculate(2, $funds->sum);
+        try {
+            if($rev == 1) {
+                $this->billsCalculate(2, $funds->sum);
+            }
+            else if($rev == 2) {
+                $this->billsCalculate(1, $funds->sum);
+            }
+            $deleted = $funds->delete();
+            Facades\DB::commit();
         }
-        else if($rev == 2) {
-            $this->billsCalculate(1, $funds->sum);
+        catch (\Throwable $e) {
+            logger($e->getMessage(), [$e]);
+            Facades\DB::rollback();
+            return false;
         }
 
-        return $funds->delete();
+        return $deleted;
     }
 
     /**

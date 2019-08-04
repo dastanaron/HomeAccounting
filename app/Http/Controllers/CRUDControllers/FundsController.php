@@ -36,7 +36,7 @@ class FundsController extends Http\Controllers\Controller
             return Response::json(['status' => 200, 'message' => 'Fund created success'])->setStatusCode(200);
         }
         else {
-            return Response::json(['status' => 400, 'message' => 'Fund is not created'])->setStatusCode(400);
+            return Response::json(['status' => 400, 'message' => 'Fund cannot be created'])->setStatusCode(400);
         }
     }
 
@@ -49,27 +49,26 @@ class FundsController extends Http\Controllers\Controller
         $fundsCRUD = new CRUD\Funds($request);
 
         if($fundsCRUD->update() === true) {
-            return Response::json(['status' => 200, 'message' => 'Fund is updated'])->setStatusCode(200);
+            return Response::json(['status' => 200, 'message' => 'Fund has been updated'])->setStatusCode(200);
         }
         else {
-            return Response::json(['status' => 400, 'message' => 'Fund is not saved'])->setStatusCode(400);
+            return Response::json(['status' => 400, 'message' => 'Fund cannot be saved'])->setStatusCode(400);
         }
     }
 
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
      */
     public function deleteFund(Request $request)
     {
         $fundsCRUD = new CRUD\Funds($request);
 
         if($fundsCRUD->delete() === true) {
-            return Response::json(['status' => 200, 'message' => 'Fund is deleted'])->setStatusCode(200);
+            return Response::json(['status' => 200, 'message' => 'Fund was deleted'])->setStatusCode(200);
         }
         else {
-            return Response::json(['status' => 400, 'message' => 'Fund is not deleted'])->setStatusCode(400);
+            return Response::json(['status' => 400, 'message' => 'Fund was not deleted'])->setStatusCode(400);
         }
     }
 
