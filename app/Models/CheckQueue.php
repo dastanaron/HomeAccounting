@@ -10,6 +10,7 @@ use Illuminate\Support;
  * @property int $user_id
  * @property string $qrcode
  * @property string $control_sum
+ * @property int $is_processed
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read User $user

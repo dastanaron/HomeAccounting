@@ -100,4 +100,7 @@ Route::middleware(['auth'])->group(function () {
      */
     Route::get('/qr-code-scanner', 'QrCodeScannerController@index');
     Route::post('/qr-code-scanner/send-check', 'QrCodeScannerController@sendCheck');
+
+    Route::get('/settings', 'SettingsController@index');
+    Route::get('/settings/{any}', 'SettingsController@index')->where('any', '.*');
 });
