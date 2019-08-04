@@ -118,6 +118,17 @@
                     </v-list-tile>
                 </v-list>
                 <v-list>
+                    <v-list-tile avatar  @click="goToSettings()">
+                        <v-list-tile-avatar>
+                            <v-icon>settings</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Настройки [beta]</v-list-tile-title>
+                            <v-list-tile-sub-title>Настройки (общие, интеграции)</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+                <v-list>
                     <v-list-tile avatar  @click="goToPanel()">
                         <v-list-tile-avatar>
                             <v-icon>dashboard</v-icon>
@@ -274,6 +285,9 @@
             },
             goToPanel() {
               window.location.href = '/home';
+            },
+            goToSettings() {
+                window.location.href = '/settings';
             },
         },
         computed: {
