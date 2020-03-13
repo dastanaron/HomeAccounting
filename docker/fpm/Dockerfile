@@ -41,8 +41,6 @@ ENV XDEBUG_ENABLED=$XDEBUG_ENABLED
 COPY php/xdebug_configure.sh /tmp/
 RUN chmod +x /tmp/xdebug_configure.sh && /tmp/xdebug_configure.sh
 
-#RUN apt install supervisor
-
 # Запускаем контейнер
 # Из документации: The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable,
 # or they can omit the executable, in which case you must specify an ENTRYPOINT instruction as well.
