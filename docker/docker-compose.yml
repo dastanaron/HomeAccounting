@@ -23,7 +23,6 @@ services:
     - ${MYSQL_DUMP_FILES}:/usr/local/test-base/
     ports:
     - "3306:3306"
-    #command: mysql -u root -proot accounting < /usr/local/test-base/accounting.sql #просто чтобы записать команду для развертывания тестовой базы
 
   #nginx без изменений
   nginx:
@@ -42,17 +41,15 @@ services:
     env_file: .env
     depends_on:
       - fpm
-      - mysql
 
   #Настроенный fpm со всеми либами
   fpm:
     env_file: .env
     build:
-      context: fpm
+      context: php
       dockerfile: Dockerfile
       args:
         USER: ${FPM_USER}
-        XDEBUG_ENABLED: ${XDEBUG_ENABLED}
     volumes:
       - ./..:/var/www/html/HomeAccountingLaravel/
     expose:
