@@ -9,5 +9,5 @@ COMPOSE_FILE="-f docker-compose.yml"
 
 docker-compose -p ${PROJECT_NAME} ${COMPOSE_FILE} up --build -d --remove-orphans
 
-#echo running services
-#docker-compose -p ${PROJECT_NAME} ${COMPOSE_FILE} ps
+echo running services
+docker-compose -p ${PROJECT_NAME} ${COMPOSE_FILE} ps
