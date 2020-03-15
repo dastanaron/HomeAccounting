@@ -7,7 +7,7 @@ export $(cat ./.env | xargs)
 PROJECT_NAME=accounting
 COMPOSE_FILE="-f docker-compose.yml"
 
-docker-compose -p ${PROJECT_NAME} ${COMPOSE_FILE} up --build #-d --remove-orphans
+docker-compose -p ${PROJECT_NAME} ${COMPOSE_FILE} up --build -d --remove-orphans
 
 #echo running services
 #docker-compose -p ${PROJECT_NAME} ${COMPOSE_FILE} ps
