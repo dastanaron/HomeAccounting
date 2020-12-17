@@ -141,11 +141,20 @@ class CalculateMonthDynamics extends Console\Command
         $expenseSum = 0;
 
         foreach($funds->get() as $item) {
+            $currency = $item->bills->currency;
             if($item->rev == 1) {
-                $incomeSum += $item->sum;
+                if($currency === 643) {
+                    $incomeSum += $item->sum;
+                } else {
+                    $incomeSum += $this->convertCurrency($item->sum, $currency);
+                }
             }
             elseif($item->rev == 2) {
-                $expenseSum += $item->sum;
+                if($currency === 643) {
+                    $expenseSum += $item->sum;
+                } else {
+                    $expenseSum += $this->convertCurrency($item->sum, $currency);
+                }
             }
             else {
                 throw new \Exception('Ошибка, не расход и не доход' . var_export($item->toArray(), true));
@@ -153,6 +162,20 @@ class CalculateMonthDynamics extends Console\Command
         }
 
         return $incomeSum - $expenseSum;
+    }
+
+
+    private function convertCurrency($value, int $currencyCode): float
+    {
+        $currency = Models\Currency::whereNumCode($currencyCode)->first();
+
+        if (!$currency) {
+            throw new \Exception('Error currency code');
+        }
+
+        $sum = $currency->value / $currency->nominal * $value;
+
+        return round($sum, 2);
     }
 
 
