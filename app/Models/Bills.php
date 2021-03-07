@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent;
 
 /**
  * Class Bills
- *
  * @property int $id
  * @property int $user_id
  * @property string $name
@@ -14,6 +13,7 @@ use Illuminate\Database\Eloquent;
  * @property int|null $currency
  * @property string|null $deadline
  * @property string|null $comment
+ * @property int $is_archive
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read User $user

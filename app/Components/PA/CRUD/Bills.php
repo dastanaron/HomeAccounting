@@ -22,7 +22,7 @@ class Bills extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Co
      */
     public function getList() : Eloquent\Collection
     {
-        return Models\Bills::whereUserId($this->userId)->get();
+        return Models\Bills::whereUserId($this->userId)->where('is_archive', '=', false)->get();
     }
 
     /**
