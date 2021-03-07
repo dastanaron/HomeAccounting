@@ -99,6 +99,7 @@ export default {
             this.billFormData.name = this.billFormData.sum =
                 this.billFormData.deadline = this.billFormData.comment =
                     this.billFormData.id = '';
+            this.billFormData.isArchive = false;
 
             this.billFormTitle = 'Создание нового счета';
             this.billFormType = 'create';
@@ -154,6 +155,7 @@ export default {
             this.billFormData.deadline = object.deadline;
             this.billFormData.currency = object.currency;
             this.billFormData.comment = object.comment;
+            this.billFormData.isArchive = object.is_archive;
 
             this.billFormType = 'update';
 
