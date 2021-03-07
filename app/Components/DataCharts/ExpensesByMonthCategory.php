@@ -2,7 +2,10 @@
 
 namespace App\Components\DataCharts;
 
-use App\Models;
+use App\{
+    Components,
+    Models
+};
 use App\Library\Utilities;
 
 class ExpensesByMonthCategory extends AbstractChartData
@@ -23,7 +26,11 @@ class ExpensesByMonthCategory extends AbstractChartData
             {
                 $categoryName = $item['category_name'];
 
-                $sum += $item['sum'];
+                if($item['currency_code'] === 643) {
+                    $sum += $item['sum'];
+                } else {
+                    $sum +=  Components\Currency::convertCurrency($item['sum'], $item['currency_code']);
+                }
             }
 
             if(!empty($sum) && !empty($categoryName))
@@ -64,8 +71,9 @@ class ExpensesByMonthCategory extends AbstractChartData
      */
     public function queryFunds()
     {
-        return Models\Funds::select('funds.user_id', 'funds.sum', 'funds.date', 'funds.cause', 'rev_categories.id as category_id', 'rev_categories.name as category_name')
-            ->leftJoin('rev_categories', 'funds.category_id', 'rev_categories.id')
+        return Models\Funds::select('funds.user_id', 'funds.sum', 'funds.date', 'funds.cause', 'rev_categories.id as category_id', 'rev_categories.name as category_name', 'bills.currency as currency_code')
+            ->leftJoin('rev_categories', 'funds.category_id', '=', 'rev_categories.id')
+            ->leftJoin('bills', 'funds.bills_id', '=', 'bills.id')
             ->where('funds.user_id', '=', $this->userId)
             ->where('funds.rev', '=', $this->fundsRev)
             ->whereBetween('funds.date', [$this->dateStart, $this->dateEnd]);
