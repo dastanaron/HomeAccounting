@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models;
+use App\{
+    Components,
+    Models
+};
 use Carbon\Carbon;
 use Illuminate\Console;
 
@@ -146,14 +149,14 @@ class CalculateMonthDynamics extends Console\Command
                 if($currency === 643) {
                     $incomeSum += $item->sum;
                 } else {
-                    $incomeSum += $this->convertCurrency($item->sum, $currency);
+                    $incomeSum += Components\Currency::convertCurrency($item->sum, $currency);
                 }
             }
             elseif($item->rev == 2) {
                 if($currency === 643) {
                     $expenseSum += $item->sum;
                 } else {
-                    $expenseSum += $this->convertCurrency($item->sum, $currency);
+                    $expenseSum += Components\Currency::convertCurrency($item->sum, $currency);
                 }
             }
             else {

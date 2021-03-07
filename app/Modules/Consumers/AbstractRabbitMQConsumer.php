@@ -1,10 +1,13 @@
 <?php
-
+declare(strict_types=1);
 
 namespace App\Modules\Consumers;
 
 use App\Library\Queue;
 use PhpAmqpLib;
+use Illuminate\{
+    Support\Facades
+};
 
 /**
  * Class AbstractRabbitMQConsumer
@@ -78,5 +81,10 @@ abstract class AbstractRabbitMQConsumer
     {
         $channel->close();
         $connection->close();
+    }
+
+    public static function errorLog(string $message): void
+    {
+        Facades\Log::error($message);
     }
 }
