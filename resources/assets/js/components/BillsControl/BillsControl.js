@@ -28,6 +28,7 @@ export default {
             deadline: '',
             currency: '',
             comment: '',
+            isArchive: false,
             sumRules: [
                 v => !!v || 'Сумма обязательна к заполнению',
                 v => /^\d+[\,]?\d*$/.test(v) || 'Сумма должна быть числом вида (100 или 100,25)'
@@ -128,6 +129,7 @@ export default {
                         deadline: this.billFormData.deadline,
                         currency: this.billFormData.currency,
                         comment: this.billFormData.comment,
+                        is_archive: this.billFormData.isArchive
                     }
             })
                 .then(response=> {

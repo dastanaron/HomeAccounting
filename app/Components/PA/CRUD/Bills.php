@@ -99,6 +99,7 @@ class Bills extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Co
         $bill->sum = $this->helpers->money()->convertSumWithCommaToSumWithDot($this->request->input('sum'));
         $bill->deadline = $this->request->input('deadline');
         $bill->currency = $this->request->input('currency');
+        $bill->is_archive = $this->request->input('is_archive', false);
         $bill->comment = $this->request->input('comment');
 
         return $bill->save();

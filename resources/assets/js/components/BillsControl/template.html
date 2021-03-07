@@ -144,6 +144,12 @@
                             <v-flex xs12>
                                 <v-text-field v-model="billFormData.comment" label="Коммментарий"></v-text-field>
                             </v-flex>
+                            <v-flex xs12>
+                                <v-checkbox
+                                        v-model="billFormData.isArchive"
+                                        label="Убрать в архив"
+                                ></v-checkbox>
+                            </v-flex>
                         </v-layout>
                     </v-container>
                     <small>*-поля обязательные для заполнения</small>
