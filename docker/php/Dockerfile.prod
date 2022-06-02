@@ -50,7 +50,9 @@ COPY ./docker/php/config/nginx.conf /etc/nginx/nginx.conf
 # Configure supervisord
 COPY ./docker/php/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-WORKDIR /var/www/html/HomeAccountingLaravel/
+WORKDIR /var/www/html/
+
+RUN composer install --no-dev
 
 # Expose the port nginx is reachable on
 EXPOSE 8080

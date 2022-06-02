@@ -6,8 +6,8 @@ docker run -d --name mysql --network home_accounting --restart always -e MYSQL_R
 
 docker run -d --name rabbit --network home_accounting --restart always -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest -p 15672:15672 rabbitmq:3.7-management
 
-#BUILD cd /home/dastanaron/homeAccounting/repo/HomeAccounting/docker/fpm && docker build -t home_accounting -f Dockerfile.prod ../../
-docker run -d --name home_accounting --network home_accounting --restart always -v /home/dastanaron/homeAccounting/data/storage:/var/www/html/HomeAccountingLaravel/storage home_accounting:latest
+#BUILD cd /home/dastanaron/homeAccounting/repo/HomeAccounting/docker/php && docker build -t home_accounting -f Dockerfile.prod ../../
+docker run -d --name home_accounting --network home_accounting --restart always -v /home/dastanaron/homeAccounting/data/storage:/var/www/html/storage home_accounting:latest
 
 #BUILD_NGINX: cd /home/dastanaron/homeAccounting/repo/HomeAccounting/docker/nginx && docker build -t home_accounting_nginx -f Dockerfile.prod ../../
 docker run -d --name home_accounting_nginx --network home_accounting --restart always -p 8081:80 home_accounting_nginx:latest
