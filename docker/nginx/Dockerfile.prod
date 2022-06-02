@@ -1,5 +1,7 @@
 FROM nginx:1.21.6
 
+COPY ./ /var/www/html/HomeAccountingLaravel/
+
 COPY nginx.conf /etc/nginx/
 RUN sed -i -e "s/{USER}/root/g" /etc/nginx/nginx.conf
 

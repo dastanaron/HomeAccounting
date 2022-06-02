@@ -4,7 +4,7 @@ ARG USER
 
 RUN mkdir -p /var/www/html/HomeAccountingLaravel/
 
-COPY ../../ /var/www/html/HomeAccountingLaravel/
+COPY ./ /var/www/html/HomeAccountingLaravel/
 
 RUN apt-get update && apt-get install -y \
     curl \
