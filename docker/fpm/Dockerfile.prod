@@ -1,4 +1,4 @@
-FROM php:7.1-fpm
+FROM php:7.2-fpm as build
 
 ARG USER
 
@@ -17,15 +17,14 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) bcmath
 
-RUN pecl install xdebug-2.7.1 \
-        && docker-php-ext-enable xdebug
-
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY ./docker/fpm/php-fpm.d/www.conf /usr/local/etc/php-fpm.d/
+RUN composer install --no-dev
 
-RUN sed -i -e "s/{USER}/root/g" /usr/local/etc/php-fpm.d/www.conf
+FROM php:7.2-fpm
+
+COPY --from=build /var/www/html/HomeAccountingLaravel/ /var/www/html/HomeAccountingLaravel/
 
 EXPOSE 9000
 
