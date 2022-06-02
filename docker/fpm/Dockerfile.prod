@@ -23,7 +23,7 @@ RUN pecl install xdebug-2.7.1 \
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/
+COPY ./docker/fpm/php-fpm.d/www.conf /usr/local/etc/php-fpm.d/
 
 RUN sed -i -e "s/{USER}/root/g" /usr/local/etc/php-fpm.d/www.conf
 
