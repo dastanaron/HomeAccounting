@@ -6,7 +6,7 @@ docker run -d --name mysql --network home_accounting --restart always -e MYSQL_R
 
 docker run -d --name rabbit --network home_accounting --restart always -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest -p 15672:15672 rabbitmq:3.7-management
 
-#docker run -d --name home_accounting --network home_accounting --restart always
+docker run -d --name home_accounting --network home_accounting --restart always 
 
 docker stop mysql && docker rm mysql
 docker stop rabbit && docker rm rabbit
