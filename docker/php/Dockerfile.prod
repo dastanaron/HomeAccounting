@@ -4,6 +4,11 @@ RUN mkdir -p /var/www/html/
 
 COPY ./ /var/www/html/
 
+ARG USER=docker
+ARG UID=1000
+ARG GID=1000
+
+
 # Install packages
 RUN apk add --update \
     php7-cli \
@@ -39,7 +44,17 @@ RUN apk add --update \
     nginx \
     curl \
     && curl --insecure https://getcomposer.org/composer.phar -o /usr/bin/composer \
-    && chmod +x /usr/bin/composer
+    && chmod +x /usr/bin/composer \
+    && addgroup --gid "${GID}" "${USER}" \
+    && adduser \
+        --disabled-password \
+        --gecos "" \
+        --home "$(pwd)" \
+        --ingroup "${USER}" \
+        --no-create-home \
+        --uid "${UID}" \
+        "${USER}"
+
 
 # Configure PHP-FPM
 COPY ./docker/php/config/fpm-pool.conf /etc/php7/php-fpm.d/www.conf
@@ -51,6 +66,8 @@ COPY ./docker/php/config/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/php/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 WORKDIR /var/www/html/
+
+USER ${UID}:${GID}
 
 RUN composer install --no-dev
 
