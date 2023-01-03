@@ -81,13 +81,6 @@ class Consumer extends Modules\Consumers\AbstractRabbitMQConsumer
     {
         switch ($unpackMessage['chartType'])
         {
-            case 'dayJump':
-                $chartData = DataCharts\ExpensesByCategory::init(
-                    $unpackMessage['userId'],
-                    $unpackMessage['dateStart'],
-                    $unpackMessage['dateEnd']
-                );
-                return $chartData;
             case 'categoryMonth':
                 $chartData = DataCharts\ExpensesByMonthCategory::init(
                     $unpackMessage['userId'],
