@@ -25,6 +25,11 @@ class Bills extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Co
         return Models\Bills::whereUserId($this->userId)->where('is_archive', '=', false)->get();
     }
 
+    public function getById() : Models\Bills
+    {
+        return Models\Bills::whereId($this->request->route('id'))->first();
+    }
+
     /**
      * @return bool
      */

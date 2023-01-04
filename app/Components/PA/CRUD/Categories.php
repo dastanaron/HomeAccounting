@@ -23,6 +23,11 @@ class Categories extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfac
         return Models\revCategories::whereUserId($this->userId)->get();
     }
 
+    public function getById() : Models\revCategories
+    {
+        return Models\revCategories::whereId($this->request->route('id'))->first();
+    }
+
     /**
      * @return bool
      */

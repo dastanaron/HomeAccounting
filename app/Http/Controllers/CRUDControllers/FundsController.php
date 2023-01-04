@@ -24,6 +24,11 @@ class FundsController extends Http\Controllers\Controller
         return Response::json($fundsCRUD->getList())->setStatusCode(200);
     }
 
+    public function getById(Request $request) {
+        $fundsCRUD = new CRUD\Funds($request);
+        return Response::json($fundsCRUD->getById())->setStatusCode(200);
+    }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

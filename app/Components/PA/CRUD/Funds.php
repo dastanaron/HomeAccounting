@@ -51,6 +51,13 @@ class Funds extends CRUD\AbstractCUDWithRelatedUser implements BaseInterfaces\Ar
         return ['paginate' =>$query->paginate($elementsPerPage), 'totalSum' => $totalSum];
     }
 
+    public function getById(): Models\Funds
+    {
+        $query = $this->FundsSelectQuery()->where('funds.id', '=', $this->request->route('id'));
+
+        return $query->first();
+    }
+
     /**
      * @return bool
      */

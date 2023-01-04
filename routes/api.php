@@ -22,6 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
  */
 Route::middleware(['auth:api'])->namespace('CRUDControllers')->group(function () {
     Route::get('/pa/bills-list', 'BillsController@getBills');
+    Route::get('/pa/bills/{id}', 'BillsController@getById');
 
     Route::post('/pa/bills', 'BillsController@createBill');
     Route::put('/pa/bills', 'BillsController@setBill');
@@ -35,6 +36,7 @@ Route::middleware(['auth:api'])->namespace('CRUDControllers')->group(function ()
  */
 Route::middleware(['auth:api'])->namespace('CRUDControllers')->group(function () {
     Route::get('/pa/funds-list', 'FundsController@getFunds');
+    Route::get('/pa/funds/{id}', 'FundsController@getById');
 
     Route::post('/pa/funds', 'FundsController@createFund');
     Route::put('/pa/funds', 'FundsController@setFund');
@@ -46,6 +48,7 @@ Route::middleware(['auth:api'])->namespace('CRUDControllers')->group(function ()
  */
 Route::middleware(['auth:api'])->namespace('CRUDControllers')->group(function () {
     Route::get('/pa/categories-list', 'CategoriesController@getCategories');
+    Route::get('/pa/categories/{id}', 'CategoriesController@getById');
 
     Route::post('/pa/categories', 'CategoriesController@createCategory');
     Route::put('/pa/categories', 'CategoriesController@setCategory');

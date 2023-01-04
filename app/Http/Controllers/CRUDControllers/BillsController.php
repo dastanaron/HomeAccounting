@@ -24,6 +24,13 @@ class BillsController extends Http\Controllers\Controller
         return Response::json($billsCRUD->getList())->setStatusCode(200);
     }
 
+    public function getById(Request $request)
+    {
+        $billsCRUD = new CRUD\Bills($request);
+
+        return Response::json($billsCRUD->getById())->setStatusCode(200);
+    }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

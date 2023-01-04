@@ -23,6 +23,12 @@ class CategoriesController extends Http\Controllers\Controller
         return Response::json($categoriesCRUD->getList())->setStatusCode(200);
     }
 
+    public function getById(Request $request)
+    {
+        $categoriesCRUD = new CRUD\Categories($request);
+        return Response::json($categoriesCRUD->getById())->setStatusCode(200);
+    }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
